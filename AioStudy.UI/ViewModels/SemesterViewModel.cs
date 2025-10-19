@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AioStudy.UI.ViewModels
+{
+    public class SemesterViewModel : ViewModelBase
+    {
+        private MainViewModel _mainViewModel;
+
+        public SemesterViewModel(MainViewModel mainViewModel)
+        {
+            _mainViewModel = mainViewModel;
+        }
+    }
+}

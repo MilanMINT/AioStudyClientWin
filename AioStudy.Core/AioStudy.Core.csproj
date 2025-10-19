@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\AioStudy.Data\AioStudy.Data.csproj" />
+	</ItemGroup>
+
 </Project>

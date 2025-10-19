@@ -4,9 +4,192 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AioStudy.UI"
+        xmlns:vm="clr-namespace:AioStudy.UI.ViewModels"
+        xmlns:views="clr-namespace:AioStudy.UI.Views"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="AioStudy" Height="800" Width="1300" MinHeight="300" MinWidth="500"
+        ResizeMode="CanResizeWithGrip"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
 
-    </Grid>
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PomodoroViewModel}">
+            <views:PomodoroView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SemesterViewModel}">
+            <views:SemesterView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GradesViewModel}">
+            <views:GradesView/>
+        </DataTemplate>
+    </Window.Resources>
+    
+
+    <Border CornerRadius="6"
+            BorderThickness="1.5" Background="#212226">
+        <Border.BorderBrush>
+            <LinearGradientBrush>
+                <GradientStop Color="#608BC1" Offset="0.0"/>
+                <GradientStop Color="#133E87" Offset="1.0"/>
+                <GradientStop Color="#a5bacc" Offset="0.7"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="0.3"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <DockPanel  x:Name="MainControlBar"
+                        LastChildFill="False"
+                        Grid.Row="0"
+                        FlowDirection="RightToLeft"
+                        Background="Transparent"
+                        Margin="0 0 5 0"
+                        MouseLeftButtonDown="MainControlBar_MouseLeftButtonDown"
+                        MouseEnter="MainControlBar_MouseEnter">
+                <Button x:Name="btnCloseApp"
+                        Style="{StaticResource controlButton}"
+                        Click="BtnCloseApp_Click"
+                        >
+                    <MaIc:MaterialIcon Style="{StaticResource controlButtonIcon}" Kind="Close" />
+                </Button>
+
+                <Button x:Name="btnMaxApp"
+                        Style="{StaticResource controlButton}"
+                        Click="BtnMaxApp_Click"
+                        >
+                    <MaIc:MaterialIcon Style="{StaticResource controlButtonIcon}" Kind="WindowMaximize" />
+                </Button>
+
+                <Button x:Name="btnMinApp"
+                        Style="{StaticResource controlButton}"
+                        Click="BtnMinApp_Click"
+                        >
+                    <MaIc:MaterialIcon Style="{StaticResource controlButtonIcon}" Kind="WindowMinimize" />
+                </Button>
+
+                <Image Source="/Assets/AioStudyLogo.png"
+                       Width="20" Height="20"
+                       Margin="0 5 10 0"
+                       VerticalAlignment="Center"
+                       DockPanel.Dock="Right"/>
+                <Rectangle Width="2" Height="15" Fill="white" 
+                           Margin="0 5 6 0"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Right"/>
+                <TextBlock DockPanel.Dock="Right"
+                           Text="{Binding CurrentViewName}"
+                           Foreground="White"
+                           VerticalAlignment="Center"
+                           Margin="0 4 6 0">
+                </TextBlock>
+
+            </DockPanel>
+            <Border Grid.Row="2" Height="1" Background="#E8E8E8"/>
+
+            <!-- ==================== Sidebar Grid ==================== -->
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" BorderBrush="#444" 
+                        Background="#191A1C"
+                        CornerRadius="0 0 0 6">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#222324" 
+                                          Direction="0" 
+                                          ShadowDepth="4" 
+                                          Opacity="0.15" 
+                                          BlurRadius="7"/>
+                    </Border.Effect>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Vertical" Margin="0 20 0 0">
+
+                            <RadioButton Style="{StaticResource menuButton}" IsChecked="true"
+                                        Tag="white" Command="{Binding ShowDashboardCMD}">
+                                <StackPanel Orientation="Horizontal">
+                                    <MaIc:MaterialIcon Kind="ViewDashboard" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Dashboard" Style="{StaticResource menuButtonText}"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton Style="{StaticResource menuButton}"
+                                         Tag="white" Command="{Binding ShowPomodoroCMD}">
+                                <StackPanel Orientation="Horizontal">
+                                    <MaIc:MaterialIcon Kind="ClockOutline" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Pomodoro" Style="{StaticResource menuButtonText}"/>
+                                </StackPanel>
+                            </RadioButton>
+                            
+                            <RadioButton Style="{StaticResource menuButton}"
+                                         Tag="white" Command="{Binding ShowSemesterCMD}">
+                                <StackPanel Orientation="Horizontal">
+                                    <MaIc:MaterialIcon Kind="BookArrowDownOutline" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Semester" Style="{StaticResource menuButtonText}"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton Style="{StaticResource menuButton}"
+                                        Tag="white" Command="{Binding ShowGradesCMD}">
+                                <StackPanel Orientation="Horizontal">
+                                    <MaIc:MaterialIcon Kind="Grade" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Grades" Style="{StaticResource menuButtonText}"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton Style="{StaticResource menuButton}"
+                                         Tag="white" Command="{Binding ShowSettingsCMD}">
+                                <StackPanel Orientation="Horizontal">
+                                    <MaIc:MaterialIcon Kind="SettingsOutline" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Settings" Style="{StaticResource menuButtonText}"/>
+                                </StackPanel>
+                            </RadioButton>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1">
+                    <ContentControl Content="{Binding CurrentViewModel}"/>
+                </Border>
+            </Grid>
+            <!-- ==================== Sidebar Grid End ==================== -->
+            
+        </Grid>
+        
+    </Border>
+    
+
+    <!--<Grid>
+        <Button Width="200" Height="50" Command="{Binding Dark}">
+            Dark
+        </Button>
+        <Button Width="200" Height="50"
+                Margin="550,422,550,312" Command="{Binding Light}">
+            Light
+        </Button>
+
+    </Grid>-->
+
+
 </Window>

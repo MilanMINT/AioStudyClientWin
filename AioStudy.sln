@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioStudy.UI", "AioStudy.UI\AioStudy.UI.csproj", "{565A67DC-BD6D-4700-BEDE-11FE1B018875}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -22,12 +22,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioStudy.Data", "AioStudy.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioStudy.Models", "AioStudy.Models\AioStudy.Models.csproj", "{F1A4E82C-B89F-438B-8F57-931454AA9A07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AioStudy.Tests", "AioStudy.Tests\AioStudy.Tests.csproj", "{CAB28D53-2198-4DF7-8966-E960619F8225}"
-	ProjectSection(ProjectDependencies) = postProject
-		{16F4262C-293E-4954-915B-AD4A1C8E4069} = {16F4262C-293E-4954-915B-AD4A1C8E4069}
-		{565A67DC-BD6D-4700-BEDE-11FE1B018875} = {565A67DC-BD6D-4700-BEDE-11FE1B018875}
-		{B77CE22C-324E-4626-8DE2-991C417089F5} = {B77CE22C-324E-4626-8DE2-991C417089F5}
-		{F1A4E82C-B89F-438B-8F57-931454AA9A07} = {F1A4E82C-B89F-438B-8F57-931454AA9A07}
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Global
@@ -52,10 +49,6 @@ Global
 		{F1A4E82C-B89F-438B-8F57-931454AA9A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1A4E82C-B89F-438B-8F57-931454AA9A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1A4E82C-B89F-438B-8F57-931454AA9A07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CAB28D53-2198-4DF7-8966-E960619F8225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CAB28D53-2198-4DF7-8966-E960619F8225}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CAB28D53-2198-4DF7-8966-E960619F8225}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CAB28D53-2198-4DF7-8966-E960619F8225}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
