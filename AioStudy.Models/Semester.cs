@@ -14,11 +14,15 @@ namespace AioStudy.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public required string Name { get; set; }
+        public string Name { get; set; }
         [AllowNull]
         public DateTime StartDate { get; set; }
         [AllowNull]
         public DateTime EndDate { get; set; }
+        [AllowNull]
+        public string? Color { get; set; } = null;
+        [AllowNull]
+        public string? Description { get; set; } = null;
         [AllowNull]
         public float? AverageSemesterGrade { get; set; } = null;
         [NotMapped]
@@ -28,10 +32,7 @@ namespace AioStudy.Models
 
 
         public Semester() { }
-        public Semester(string name)
-        {
-            Name = name;
-        }
+
         public Semester(string name, DateTime startDate, DateTime endDate)
         {
             Name = name;

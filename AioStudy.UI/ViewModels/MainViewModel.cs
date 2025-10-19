@@ -8,6 +8,7 @@ using AioStudy.UI.Commands;
 using AioStudy.Core.Manager.Settings;
 using AioStudy.Core.Util;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -61,9 +62,15 @@ namespace AioStudy.UI.ViewModels
             ShowGradesCMD = new RelayCommand(ExecuteShowGradesCommand);
 
             // Alle ViewModels einmal erstellen
-            _dashboardViewModel = new DashboardViewModel(this);
             _pomodoroViewModel = new PomodoroViewModel(this);
-            _semesterViewModel = new SemesterViewModel(this);
+
+
+            _semesterViewModel = App.ServiceProvider.GetRequiredService<SemesterViewModel>();
+            _semesterViewModel.SetMainViewModel(this);
+
+            _dashboardViewModel = App.ServiceProvider.GetRequiredService<DashboardViewModel>();
+            _dashboardViewModel.SetMainViewModel(this);
+
             _settingsViewModel = new SettingsViewModel(this);
             _gradesViewModel = new GradesViewModel(this);
 

@@ -12,7 +12,9 @@
         ResizeMode="CanResizeWithGrip"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
 
 
     <Window.Resources>
@@ -30,6 +32,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:GradesViewModel}">
             <views:GradesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ModulesViewModel}">
+            <views:ModulesView/>
         </DataTemplate>
     </Window.Resources>
     

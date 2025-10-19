@@ -22,11 +22,14 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public DashboardViewModel(MainViewModel mainViewModel)
+        public DashboardViewModel()
+        {
+            Text = "Initial Text"; // Optional: Test-Text zum Debugging
+        }
+
+        public void SetMainViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
-            Text = "Initial Text"; // Optional: Test-Text zum Debugging
-
         }
     }
 }

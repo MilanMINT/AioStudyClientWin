@@ -18,13 +18,15 @@ namespace AioStudy.Models
         [AllowNull]
         public Semester? Semester { get; set; } = null;
         [Required]
-        public required string Name { get; set; } 
+        public string Name { get; set; } 
         [Required]
         public int LearnedMinutes { get; set; } = 0;
         [AllowNull]
         public DateTime? ExamDate { get; set; }
         [AllowNull]
         public float? Grade { get; set; } = null;
+        [AllowNull]
+        public string? Color { get; set; } = null;
         [Required]
         public DateTime Created { get; set; } = DateTime.Now;
         [NotMapped]
