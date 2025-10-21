@@ -48,7 +48,7 @@
                 
             </Border>
 
-            <StackPanel Grid.Row="2" Margin="30" VerticalAlignment="Center">
+            <StackPanel Grid.Row="2" Margin="30">
                 <!-- Semester Name Input -->
                 <StackPanel>
                     <Label Content="Semestername"
@@ -91,8 +91,39 @@
                     </StackPanel>
                 </Grid>
 
-                <xctk:ColorPicker SelectedColor="{Binding SemesterColor, Mode=TwoWay}" 
-                                  Style="{StaticResource GradientColorPicker}" />
+                
+                <!-- Color and Desc - Nebeneinander -->
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <Label Content="Color" 
+                               FontWeight="Bold" 
+                               Foreground="#E6E5E5" 
+                               FontSize="14"/>
+                        <xctk:ColorPicker SelectedColor="{Binding SemesterColor, Mode=TwoWay}" 
+                        Style="{StaticResource GradientColorPicker}" />
+                    </StackPanel>
+
+                    <!-- Semester Name Input -->
+                    <StackPanel Grid.Column="2">
+                        <Label Content="Description"
+                                Foreground="#E6E5E5"
+                                FontSize="14"
+                                FontWeight="Bold"/>
+                        <xctk:WatermarkTextBox x:Name="SemesterDescTextBox"
+                                               Style="{StaticResource GradientTextBox}"
+                                               Watermark="Semester Name eingeben..."
+                                               Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
+                                               Height="35"/>
+                    </StackPanel>
+
+
+                </Grid>
 
 
             </StackPanel>

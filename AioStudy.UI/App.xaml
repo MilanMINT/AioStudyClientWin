@@ -600,7 +600,7 @@
                 <Setter Property="BorderThickness" Value="1.5"/>
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="FontWeight" Value="Normal"/>
-                <Setter Property="Height" Value="40"/>
+                <Setter Property="Height" Value="35"/>
                 <Setter Property="UseLayoutRounding" Value="True"/>
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
                 <Setter Property="Background" Value="#2A2D35"/>
