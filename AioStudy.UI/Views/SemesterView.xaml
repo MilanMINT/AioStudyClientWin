@@ -85,10 +85,10 @@
                 <TextBlock Text="Semester Verwaltung"
                            FontSize="28"
                            FontWeight="Bold"
-                           Foreground="White"
+                           Foreground="#E6E5E5"
                            Margin="0,0,0,2"/>
                 <TextBlock Text="Verwalten Sie Ihre Semester und Module"
-                           FontSize="14"
+                           FontSize="13"
                            Foreground="#B0B3BA"/>
             </StackPanel>
             
@@ -98,32 +98,31 @@
                        VerticalAlignment="Center">
 
                 <!-- Aktualisieren Button -->
-                <Button Style="{StaticResource ModernHeaderButton}"
+                <Button Style="{StaticResource GradientButton}"
                         Command="{Binding LoadSemestersCommand}"
-                        Background="#353842"
                         Foreground="White"
                         VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Center"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Margin="0 0 20 0"
-                        Width="40"
+                        Margin="0 0 10 0"
+                        Width="70"
                         ToolTip="Semester-Liste aktualisieren">
                         <MaIc:MaterialIcon Kind="Refresh"
-                                        Foreground="White"
+                                        Foreground="#E6E5E5"
                                         Width="20"
                                         Height="20"/>
                 </Button>
 
                 <!-- Semester hinzufügen Button -->
                 <Button Command="{Binding AddSemesterCommand}"
-                        Style="{StaticResource ButtonStyle}"
+                        Style="{StaticResource GradientButton}"
                         Foreground="White"
                         Padding="28,8"
                         ToolTip="Neues Semester hinzufügen">
                         <TextBlock Text="Hinzufügen" 
-                                   Foreground="White"
-                                   FontSize="13"
+                                   Foreground="#E6E5E5"
+                                   FontSize="14"
                                    FontWeight="Bold"/>
                 </Button>
             </StackPanel>

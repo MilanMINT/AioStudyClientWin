@@ -20,6 +20,7 @@ namespace AioStudy.UI.ViewModels
         private SettingsViewModel _settingsViewModel;
         private GradesViewModel _gradesViewModel;
         private SemesterViewModel _semesterViewModel;
+        private ModulesViewModel _modulesViewModel;
 
         private string _currentViewName;
         
@@ -30,6 +31,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand ShowSemesterCMD { get; }
         public RelayCommand ShowPomodoroCMD { get; }
         public RelayCommand ShowGradesCMD { get; }
+        public RelayCommand ShowModulesCMD { get; }
 
         public ViewModelBase CurrentViewModel
         {
@@ -53,6 +55,7 @@ namespace AioStudy.UI.ViewModels
 
         public MainViewModel()
         {
+            // Commands initialisieren
             Dark = new RelayCommand(ExecuteDarkCommand);
             Light = new RelayCommand(ExecuteLightCommand);
             ShowDashboardCMD = new RelayCommand(ExecuteShowDashboardCommand);
@@ -60,10 +63,7 @@ namespace AioStudy.UI.ViewModels
             ShowSemesterCMD = new RelayCommand(ExecuteShowSemesterCommand);
             ShowPomodoroCMD = new RelayCommand(ExecuteShowPomodoroCommand);
             ShowGradesCMD = new RelayCommand(ExecuteShowGradesCommand);
-
-            // Alle ViewModels einmal erstellen
-            _pomodoroViewModel = new PomodoroViewModel(this);
-
+            ShowModulesCMD = new RelayCommand(ExecuteShowModulesCommand);
 
             _semesterViewModel = App.ServiceProvider.GetRequiredService<SemesterViewModel>();
             _semesterViewModel.SetMainViewModel(this);
@@ -71,13 +71,25 @@ namespace AioStudy.UI.ViewModels
             _dashboardViewModel = App.ServiceProvider.GetRequiredService<DashboardViewModel>();
             _dashboardViewModel.SetMainViewModel(this);
 
+            // ViewModels von DI bekommen
+            _modulesViewModel = App.ServiceProvider.GetRequiredService<ModulesViewModel>();
+            _modulesViewModel.SetMainViewModel(this);
+
+            // Direkt instanziierte ViewModels (haben keine DB-Abhängigkeiten)
+            _pomodoroViewModel = new PomodoroViewModel(this);
             _settingsViewModel = new SettingsViewModel(this);
             _gradesViewModel = new GradesViewModel(this);
 
+            // Standard View setzen
             CurrentViewModel = _dashboardViewModel;
             CurrentViewName = "Dashboard";
         }
 
+        private void ExecuteShowModulesCommand(object? obj)
+        {
+            CurrentViewModel = _modulesViewModel;
+            CurrentViewName = "Modules";
+        }
 
         private void ExecuteShowGradesCommand(object? obj)
         {

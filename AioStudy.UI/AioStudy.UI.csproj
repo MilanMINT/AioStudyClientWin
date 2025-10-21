@@ -67,4 +67,8 @@
 	  <Resource Include="Assets\Fonts\Inter-Regular.otf" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Converters\" />
+	</ItemGroup>
+
 </Project>

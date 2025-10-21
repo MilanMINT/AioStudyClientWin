@@ -156,6 +156,14 @@
                             </RadioButton>
 
                             <RadioButton Style="{StaticResource menuButton}"
+                                        Tag="white" Command="{Binding ShowModulesCMD}">
+                                <StackPanel Orientation="Horizontal">
+                                    <MaIc:MaterialIcon Kind="ReportScatterPlot" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Modules" Style="{StaticResource menuButtonText}"/>
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton Style="{StaticResource menuButton}"
                                         Tag="white" Command="{Binding ShowGradesCMD}">
                                 <StackPanel Orientation="Horizontal">
                                     <MaIc:MaterialIcon Kind="Grade" Style="{StaticResource menuButtonIcon}"/>

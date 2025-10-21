@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using AioStudy.UI.Commands;
+using AioStudy.UI.Views.Forms;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -50,28 +51,28 @@ namespace AioStudy.UI.ViewModels
             LoadSemestersCommand = new RelayCommand(async _ => await LoadSemestersAsync());
             AddSemesterCommand = new RelayCommand(async _ => await AddSampleSemesterAsync());
             DeleteSemesterCommand = new RelayCommand(async param => await DeleteSemesterAsync(param));
-            OpenSpecificModulesViewCMD = new RelayCommand(OpenModulesBySemester);
+            //OpenSpecificModulesViewCMD = new RelayCommand(OpenModulesBySemester);
 
             _ = LoadSemestersAsync();
         }
 
-        private void OpenModulesBySemester(object? obj)
-        {
-            if (obj is Semester semester)
-            {
-                try
-                {
-                    var modulesViewModel = App.ServiceProvider.GetRequiredService<ModulesViewModel>();
-                    modulesViewModel.SetSelectedSemester(semester);
-                    _mainViewModel.CurrentViewModel = modulesViewModel;
-                }
-                catch (Exception)
-                {
+        //private void OpenModulesBySemester(object? obj)
+        //{
+        //    if (obj is Semester semester)
+        //    {
+        //        try
+        //        {
+        //            var modulesViewModel = App.ServiceProvider.GetRequiredService<ModulesViewModel>();
+        //            modulesViewModel.SetSelectedSemester(semester);
+        //            _mainViewModel.CurrentViewModel = modulesViewModel;
+        //        }
+        //        catch (Exception)
+        //        {
 
-                    throw;
-                }
-            }
-        }
+        //            throw;
+        //        }
+        //    }
+        //}
 
         public void SetMainViewModel(MainViewModel mainViewModel)
         {
@@ -103,20 +104,24 @@ namespace AioStudy.UI.ViewModels
 
         private async Task AddSampleSemesterAsync()
         {
-            try
-            {
-                var newSemester = await _semesterDbService.CreateSemesterAsync(
-                    $"SemesterWiSe {DateTime.Now:yyyy-MM}",
-                    DateTime.Now,
-                    DateTime.Now.AddMonths(16)
-                );
-                
-                Semesters.Add(newSemester);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Fehler beim Erstellen des Semesters: {ex.Message}");
-            }
+            var addWindow = new AddSemesterView();
+            addWindow.Owner = System.Windows.Application.Current.MainWindow;
+            addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+            addWindow.ShowDialog();
+            //try
+            //{
+            //    var newSemester = await _semesterDbService.CreateSemesterAsync(
+            //        $"SemesterWiSe {DateTime.Now:yyyy-MM}",
+            //        DateTime.Now.ToUniversalTime(),  // Convert to UTC
+            //        DateTime.Now.AddMonths(16).ToUniversalTime()  // Convert to UTC
+            //    );
+
+            //    Semesters.Add(newSemester);
+            //}
+            //catch (Exception ex)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"Fehler beim Erstellen des Semesters: {ex.Message}");
+            //}
         }
 
         private async Task DeleteSemesterAsync(object parameter)

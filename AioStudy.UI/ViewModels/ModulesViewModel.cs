@@ -1,4 +1,5 @@
-﻿using AioStudy.Models;
+﻿using AioStudy.Core.Data.Services;
+using AioStudy.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace AioStudy.UI.ViewModels
 {
     public class ModulesViewModel : ViewModelBase
     {
-        private readonly MainViewModel _mainViewModel;
-        private readonly SemesterViewModel _semesterViewModel;
+        private MainViewModel _mainViewModel;
+        private readonly ModulesDbService _modulesDbService;
 
         private string _semesterName;
 
@@ -26,24 +27,14 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public ModulesViewModel(MainViewModel mainViewModel, SemesterViewModel semesterViewModel)
+        public ModulesViewModel(ModulesDbService modulesDbService)
         {
-            _mainViewModel = mainViewModel;
-            _semesterViewModel = semesterViewModel;
+            _modulesDbService = modulesDbService;
         }
 
-        public void SetSelectedSemester(Semester semester)
+        public void SetMainViewModel(MainViewModel mainViewModel)
         {
-            _selectedSemester = semester;
-
-            if (semester != null)
-            {
-                SemesterName = $"Module für: {semester.Name}";
-            }
-            else
-            {
-                SemesterName = "Kein Semester ausgewählt";
-            }
+            _mainViewModel = mainViewModel;
         }
     }
 }

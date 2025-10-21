@@ -2,9 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:AioStudy.UI"
              StartupUri="MainWindow.xaml">
-    
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -207,6 +208,447 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+
+            <!-- Gradient Button Style - Passend zu MainWindow und AddSemesterView -->
+            <Style x:Key="GradientButton" TargetType="Button">
+                <Setter Property="BorderThickness" Value="1.5"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="FontWeight" Value="Medium"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Padding" Value="20,8"/>
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Background" Value="#212226"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#608BC1" Offset="0.0"/>
+                            <GradientStop Color="#133E87" Offset="1.0"/>
+                            <GradientStop Color="#a5bacc" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border x:Name="border"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="6"
+                                                    UseLayoutRounding="True"
+                                                    SnapsToDevicePixels="True">
+                                    <ContentPresenter x:Name="contentPresenter"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                Margin="{TemplateBinding Padding}"
+                                                                TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                </Border>
+
+                                <Border x:Name="shadowEffect"
+                                                Background="Transparent"
+                                                CornerRadius="6"
+                                                Margin="0,2,0,-2"
+                                                Opacity="0.3">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#4A5568"
+                                                          Direction="270"
+                                                          ShadowDepth="2"
+                                                          BlurRadius="4"
+                                                          Opacity="1"/>
+                                    </Border.Effect>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <!-- Hover Effect -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background">
+                                        <Setter.Value>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#2A3040" Offset="0.0"/>
+                                                <GradientStop Color="#1A1D24" Offset="1.0"/>
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter TargetName="border" Property="BorderBrush">
+                                        <Setter.Value>
+                                            <LinearGradientBrush>
+                                                <GradientStop Color="#7BA3D3" Offset="0.0"/>
+                                                <GradientStop Color="#1E4A99" Offset="1.0"/>
+                                                <GradientStop Color="#B5C7DA" Offset="0.7"/>
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter TargetName="shadowEffect" Property="Opacity" Value="0.5"/>
+                                    <Setter TargetName="shadowEffect" Property="Margin" Value="0,3,0,-3"/>
+                                    <Setter Property="Foreground" Value="#F0F8FF"/>
+                                </Trigger>
+
+                                <!-- Pressed Effect -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#1A1D24"/>
+                                    <Setter TargetName="shadowEffect" Property="Margin" Value="0,1,0,-1"/>
+                                    <Setter Property="Foreground" Value="#E0E0E0"/>
+                                </Trigger>
+
+                                <!-- Disabled Effect -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#2D2D30"/>
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#4D4D50"/>
+                                    <Setter Property="Foreground" Value="#808080"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Rote Variante -->
+            <Style x:Key="RedGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Background" Value="#2D1B1B"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#FF6B6B" Offset="0.0"/>
+                            <GradientStop Color="#EE5A52" Offset="1.0"/>
+                            <GradientStop Color="#FF8E85" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Grüne Variante -->
+            <Style x:Key="GreenGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Background" Value="#1B2D1B"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#51CF66" Offset="0.0"/>
+                            <GradientStop Color="#40C057" Offset="1.0"/>
+                            <GradientStop Color="#8CE99A" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Violette Variante -->
+            <Style x:Key="PurpleGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Background" Value="#241B2D"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#9775FA" Offset="0.0"/>
+                            <GradientStop Color="#7950F2" Offset="1.0"/>
+                            <GradientStop Color="#B197FC" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Graue Variante -->
+            <Style x:Key="GrayGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Background" Value="#2D2D2F"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#8E8E93" Offset="0.0"/>
+                            <GradientStop Color="#5A5A5E" Offset="1.0"/>
+                            <GradientStop Color="#AEAEB2" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Gelbe Variante -->
+            <Style x:Key="YellowGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Background" Value="#2D2A1B"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#FFD60A" Offset="0.0"/>
+                            <GradientStop Color="#FF8500" Offset="1.0"/>
+                            <GradientStop Color="#FFEC5C" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Kleine Größe Variante -->
+            <Style x:Key="SmallGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Height" Value="32"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Padding" Value="12,4"/>
+            </Style>
+
+            <!-- Große Größe Variante -->
+            <Style x:Key="LargeGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Height" Value="48"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="24,12"/>
+            </Style>
+
+
+            <!-- Gradient TextBox Style - Nur Aussehen, keine Funktionalität ändern -->
+            <Style x:Key="GradientTextBox" TargetType="xctk:WatermarkTextBox">
+                <Setter Property="BorderThickness" Value="1.5"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Padding" Value="5 0 0 0"/>
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Background" Value="#2A2D35"/>
+                <Setter Property="CaretBrush" Value="White"/>
+                <Setter Property="SelectionBrush" Value="#608BC1"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#608BC1" Offset="0.0"/>
+                            <GradientStop Color="#133E87" Offset="1.0"/>
+                            <GradientStop Color="#a5bacc" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="xctk:WatermarkTextBox">
+                            <Grid>
+                                <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                UseLayoutRounding="True"
+                                SnapsToDevicePixels="True">
+
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                            Margin="{TemplateBinding Padding}"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            IsTabStop="False"/>
+                                </Border>
+
+                                <Border x:Name="shadowEffect"
+                                Background="Transparent"
+                                CornerRadius="6"
+                                Margin="0,2,0,-2"
+                                Opacity="0.2">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="#4A5568"
+                                                Direction="270"
+                                                ShadowDepth="1"
+                                                BlurRadius="3"
+                                                Opacity="1"/>
+                                    </Border.Effect>
+                                </Border>
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <!-- Focus Effect -->
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter TargetName="border" Property="BorderBrush">
+                                        <Setter.Value>
+                                            <LinearGradientBrush>
+                                                <GradientStop Color="#7BA3D3" Offset="0.0"/>
+                                                <GradientStop Color="#1E4A99" Offset="1.0"/>
+                                                <GradientStop Color="#B5C7DA" Offset="0.7"/>
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter TargetName="border" Property="Background" Value="#353842"/>
+                                    <Setter TargetName="shadowEffect" Property="Opacity" Value="0.4"/>
+                                    <Setter TargetName="shadowEffect" Property="Margin" Value="0,3,0,-3"/>
+                                </Trigger>
+
+                                <!-- MouseOver Effect -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#353842"/>
+                                    <Setter TargetName="shadowEffect" Property="Opacity" Value="0.3"/>
+                                </Trigger>
+
+                                <!-- Disabled Effect -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#2D2D30"/>
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#4D4D50"/>
+                                    <Setter Property="Foreground" Value="#808080"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Farbvarianten für TextBoxen -->
+            <Style x:Key="GreenGradientTextBox" TargetType="xctk:WatermarkTextBox" BasedOn="{StaticResource GradientTextBox}">
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#51CF66" Offset="0.0"/>
+                            <GradientStop Color="#40C057" Offset="1.0"/>
+                            <GradientStop Color="#8CE99A" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="RedGradientTextBox" TargetType="xctk:WatermarkTextBox" BasedOn="{StaticResource GradientTextBox}">
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#FF6B6B" Offset="0.0"/>
+                            <GradientStop Color="#EE5A52" Offset="1.0"/>
+                            <GradientStop Color="#FF8E85" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
+            <!-- Vereinfachter Gradient DatePicker Style -->
+            <Style x:Key="GradientDatePicker" TargetType="DatePicker">
+                <Setter Property="BorderThickness" Value="1.5"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Padding" Value="15,8"/>
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Background" Value="#2A2D35"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#608BC1" Offset="0.0"/>
+                            <GradientStop Color="#133E87" Offset="1.0"/>
+                            <GradientStop Color="#a5bacc" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                
+                <!-- Nur Style-Anpassungen, kein komplettes Template -->
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#353842"/>
+                        <Setter Property="BorderBrush">
+                            <Setter.Value>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#7BA3D3" Offset="0.0"/>
+                                    <GradientStop Color="#1E4A99" Offset="1.0"/>
+                                    <GradientStop Color="#B5C7DA" Offset="0.7"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                    
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="Background" Value="#353842"/>
+                        <Setter Property="BorderBrush">
+                            <Setter.Value>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#7BA3D3" Offset="0.0"/>
+                                    <GradientStop Color="#1E4A99" Offset="1.0"/>
+                                    <GradientStop Color="#B5C7DA" Offset="0.7"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+                    
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="#2D2D30"/>
+                        <Setter Property="BorderBrush" Value="#4D4D50"/>
+                        <Setter Property="Foreground" Value="#808080"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Farbvarianten -->
+            <Style x:Key="GreenGradientDatePicker" TargetType="DatePicker" BasedOn="{StaticResource GradientDatePicker}">
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#51CF66" Offset="0.0"/>
+                            <GradientStop Color="#40C057" Offset="1.0"/>
+                            <GradientStop Color="#8CE99A" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="RedGradientDatePicker" TargetType="DatePicker" BasedOn="{StaticResource GradientDatePicker}">
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#FF6B6B" Offset="0.0"/>
+                            <GradientStop Color="#EE5A52" Offset="1.0"/>
+                            <GradientStop Color="#FF8E85" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
+            <!-- Vereinfachter Gradient ColorPicker Style -->
+            <Style x:Key="GradientColorPicker" TargetType="xctk:ColorPicker">
+                <Setter Property="BorderThickness" Value="1.5"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="UseLayoutRounding" Value="True"/>
+                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                <Setter Property="Background" Value="#2A2D35"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#608BC1" Offset="0.0"/>
+                            <GradientStop Color="#133E87" Offset="1.0"/>
+                            <GradientStop Color="#a5bacc" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+
+                <!-- Nur Style-Anpassungen für Hover und Focus -->
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#353842"/>
+                        <Setter Property="BorderBrush">
+                            <Setter.Value>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#7BA3D3" Offset="0.0"/>
+                                    <GradientStop Color="#1E4A99" Offset="1.0"/>
+                                    <GradientStop Color="#B5C7DA" Offset="0.7"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="Background" Value="#353842"/>
+                        <Setter Property="BorderBrush">
+                            <Setter.Value>
+                                <LinearGradientBrush>
+                                    <GradientStop Color="#7BA3D3" Offset="0.0"/>
+                                    <GradientStop Color="#1E4A99" Offset="1.0"/>
+                                    <GradientStop Color="#B5C7DA" Offset="0.7"/>
+                                </LinearGradientBrush>
+                            </Setter.Value>
+                        </Setter>
+                    </Trigger>
+
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="#2D2D30"/>
+                        <Setter Property="BorderBrush" Value="#4D4D50"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
 
         </ResourceDictionary>
     </Application.Resources>
