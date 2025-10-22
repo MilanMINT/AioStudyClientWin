@@ -8,9 +8,11 @@ namespace AioStudy.UI.ViewModels.Forms
 {
     public class AddSemesterViewModel : ViewModelBase
     {
-        public AddSemesterViewModel()
+        private readonly SemesterViewModel _semesterViewModel;
+
+        public AddSemesterViewModel(SemesterViewModel semesterViewModel)
         {
-            
+            _semesterViewModel = semesterViewModel;
         }
     }
 }

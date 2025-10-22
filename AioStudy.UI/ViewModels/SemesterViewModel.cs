@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using AioStudy.UI.Commands;
 using AioStudy.UI.Views.Forms;
+using AioStudy.UI.ViewModels.Forms;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -105,6 +106,8 @@ namespace AioStudy.UI.ViewModels
         private async Task AddSampleSemesterAsync()
         {
             var addWindow = new AddSemesterView();
+            var viewModel = App.ServiceProvider.GetRequiredService<AddSemesterViewModel>();
+            addWindow.DataContext = viewModel;
             addWindow.Owner = System.Windows.Application.Current.MainWindow;
             addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
             addWindow.ShowDialog();

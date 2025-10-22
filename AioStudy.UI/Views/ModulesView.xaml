@@ -116,7 +116,7 @@
                 </Button>
 
                 <!-- Semester hinzufügen Button -->
-                <Button Command="{Binding AddSemesterCommand}"
+                <Button Command="{Binding CreateModuleCommand}"
                     Style="{StaticResource ButtonStyle}"
                     Foreground="White"
                     Padding="28,8"
@@ -141,7 +141,7 @@
                 <Style TargetType="ScrollBar" BasedOn="{StaticResource LocalScrollBar}"/>
             </ScrollViewer.Resources>
 
-            <ItemsControl ItemsSource="{Binding Semesters}">
+            <ItemsControl ItemsSource="{Binding Modules}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Background="#2A2D35" 
@@ -244,13 +244,13 @@
                                 <!-- Delete Button with improved design -->
                                 <Border Grid.Column="3" 
                                     VerticalAlignment="Center">
-                                    <Button Command="{Binding DataContext.DeleteSemesterCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
+                                    <Button Command="{Binding DataContext.DeleteModuleCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
                                         CommandParameter="{Binding}"
                                         Background="#FF4757"
                                         Width="38"
                                         Height="38"
                                         Cursor="Hand"
-                                        ToolTip="Semester löschen"
+                                        ToolTip="Modul löschen"
                                         BorderThickness="0"
                                         UseLayoutRounding="True">
                                         <Button.Style>

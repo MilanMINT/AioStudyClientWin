@@ -17,22 +17,23 @@ using System.Windows.Shapes;
 namespace AioStudy.UI.Views.Forms
 {
     /// <summary>
-    /// Interaction logic for AddSemesterView.xaml
+    /// Interaction logic for AddModuleView.xaml
     /// </summary>
-    public partial class AddSemesterView : Window
+    public partial class AddModuleView : Window
     {
-
-        public AddSemesterView()
-        {
-            InitializeComponent();
-        }
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
-        private void AddSemesterControll_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        public AddModuleView()
+        {
+            InitializeComponent();
+        }
+
+        private void AddModuleControll_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             WindowInteropHelper helper = new WindowInteropHelper(this);
             SendMessage(helper.Handle, 161, 2, 0);
         }
+
     }
 }

@@ -6,6 +6,7 @@ using AioStudy.Data.Interfaces;
 using AioStudy.Data.Services;
 using AioStudy.Models;
 using AioStudy.UI.ViewModels;
+using AioStudy.UI.ViewModels.Forms;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
@@ -64,6 +65,8 @@ namespace AioStudy.UI
             services.AddTransient<DashboardViewModel>();
             services.AddTransient<ModulesViewModel>();
             services.AddTransient<MainViewModel>();
+            services.AddTransient<AddSemesterViewModel>();
+            services.AddTransient<AddModuleViewModel>();
 
             //WPF Services
             services.AddSingleton<WpfThemeService>();

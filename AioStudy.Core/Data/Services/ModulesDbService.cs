@@ -17,9 +17,8 @@ namespace AioStudy.Core.Data.Services
             _moduleRepository = moduleRepository;
         }
 
-        public async Task<Module> CreateModuleAsync(string name)
+        public async Task<Module> CreateModuleAsync(Module module)
         {
-            var module = new Module(name);
             return await _moduleRepository.CreateAsync(module);
         }
 

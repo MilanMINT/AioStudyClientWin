@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:AioStudy.UI"
         xmlns:vm="clr-namespace:AioStudy.UI.ViewModels"
         xmlns:views="clr-namespace:AioStudy.UI.Views"
+        xmlns:controls="clr-namespace:AioStudy.UI.Views.Controls"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
         mc:Ignorable="d"
         Title="AioStudy" Height="800" Width="1300" MinHeight="300" MinWidth="500"
@@ -56,6 +57,8 @@
                 <RowDefinition Height="0.3"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+
+            
 
             <DockPanel  x:Name="MainControlBar"
                         LastChildFill="False"
@@ -183,7 +186,25 @@
                 </Border>
 
                 <Border Grid.Column="1">
-                    <ContentControl Content="{Binding CurrentViewModel}"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="120"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentControl Content="{Binding CurrentViewModel}"
+                                        Grid.RowSpan="2"
+                                        Grid.ColumnSpan="2"/>
+                        <!-- Toast Overlay - HINZUGEFÜGT -->
+                        <controls:ToastNotification x:Name="ToastOverlay" 
+                                                   Visibility="Collapsed"
+                                                   Panel.ZIndex="999"
+                                                    Grid.Column="1"
+                                                    Grid.RowSpan="2"/>
+                    </Grid>
                 </Border>
             </Grid>
             <!-- ==================== Sidebar Grid End ==================== -->

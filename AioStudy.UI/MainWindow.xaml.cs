@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Runtime.InteropServices;
 using System.Runtime;
 using System.Windows.Interop;
+using AioStudy.UI.Views.Controls;
 
 namespace AioStudy.UI
 {
@@ -22,6 +23,12 @@ namespace AioStudy.UI
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        // ✅ KORRIGIERT: Greift auf das XAML-Element zu
+        public ToastNotification GetToastOverlay()
+        {
+            return ToastOverlay; // Das ist das XAML-Element!
+        }
 
         public MainWindow()
         {
