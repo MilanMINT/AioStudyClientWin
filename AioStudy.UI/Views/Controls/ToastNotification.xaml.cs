@@ -31,6 +31,9 @@ namespace AioStudy.UI.Views.Controls
         private Color _borderColor;
         private Brush _iconBackground = Brushes.Transparent;
 
+        private CancellationTokenSource? _currentToastCancellation;
+        private bool _isShowing = false;
+
         public string Title
         {
             get => _title;
@@ -61,36 +64,85 @@ namespace AioStudy.UI.Views.Controls
             set => SetProperty(ref _iconBackground, value);
         }
 
+        public bool IsShowing => _isShowing;
+
         public ToastNotification()
         {
             InitializeComponent();
             DataContext = this;
         }
 
+        // ✅ ERWEITERT: Mit Override-Support
         public async Task ShowAsync(string title, string message, ToastType type, int durationMs = 3000)
         {
+            if (_isShowing)
+            {
+                _currentToastCancellation?.Cancel();
+                await HideImmediatelyAsync();
+            }
+
             Title = title;
             Message = message;
             SetupAppearance(type);
+            _isShowing = true;
 
-            Visibility = Visibility.Visible;
+            _currentToastCancellation = new CancellationTokenSource();
+            var cancellationToken = _currentToastCancellation.Token;
 
-            // Show Animation
-            var showStoryboard = (Storyboard)Resources["ShowAnimation"];
-            showStoryboard.Begin(ToastContainer);
+            try
+            {
+                Visibility = Visibility.Visible;
 
-            // Auto-Hide nach Duration
-            await Task.Delay(durationMs);
-            await HideAsync();
+                var showStoryboard = (Storyboard)Resources["ShowAnimation"];
+                showStoryboard.Begin(ToastContainer);
+
+                await Task.Delay(durationMs, cancellationToken);
+
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    await HideAsync();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                System.Diagnostics.Debug.WriteLine("Toast wurde überschrieben");
+            }
+            finally
+            {
+                _isShowing = false;
+            }
+        }
+
+        private async Task HideImmediatelyAsync()
+        {
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                Visibility = Visibility.Collapsed;
+                ToastContainer.Opacity = 0;
+                _isShowing = false;
+            });
         }
 
         public async Task HideAsync()
         {
-            var hideStoryboard = (Storyboard)Resources["HideAnimation"];
-            hideStoryboard.Completed += (s, e) => Visibility = Visibility.Collapsed;
-            hideStoryboard.Begin(ToastContainer);
+            if (!_isShowing)
+            {
+                return;
+            }
 
-            await Task.Delay(200); // Animation duration
+            await Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+
+                var hideStoryboard = (Storyboard)Resources["HideAnimation"];
+                hideStoryboard.Completed += (s, e) =>
+                {
+                    Visibility = Visibility.Collapsed;
+                    _isShowing = false;
+                };
+
+                hideStoryboard.Begin(ToastContainer);
+                await Task.Delay(200); 
+            });
         }
 
         private void SetupAppearance(ToastType type)
@@ -130,6 +182,7 @@ namespace AioStudy.UI.Views.Controls
 
         internal async Task CloseAsync()
         {
+            _currentToastCancellation?.Cancel();
             await HideAsync();
         }
 

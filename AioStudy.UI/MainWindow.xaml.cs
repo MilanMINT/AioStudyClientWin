@@ -24,10 +24,9 @@ namespace AioStudy.UI
     public partial class MainWindow : Window
     {
 
-        // ✅ KORRIGIERT: Greift auf das XAML-Element zu
         public ToastNotification GetToastOverlay()
         {
-            return ToastOverlay; // Das ist das XAML-Element!
+            return ToastOverlay;
         }
 
         public MainWindow()
