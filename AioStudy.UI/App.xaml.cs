@@ -61,11 +61,11 @@ namespace AioStudy.UI
             services.AddTransient<ModulesDbService>();
 
             //ViewModels
-            services.AddTransient<SemesterViewModel>();
-            services.AddTransient<DashboardViewModel>();
-            services.AddTransient<ModulesViewModel>();
-            services.AddTransient<MainViewModel>();
-            services.AddTransient<AddSemesterViewModel>();
+            services.AddSingleton<SemesterViewModel>();
+            services.AddSingleton<DashboardViewModel>();
+            services.AddSingleton<ModulesViewModel>();
+            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<AddSemesterViewModel>();
             services.AddTransient<AddModuleViewModel>();
 
             //WPF Services

@@ -26,7 +26,7 @@ namespace AioStudy.Models
         [AllowNull]
         public float? Grade { get; set; } = null;
         [AllowNull]
-        public int? SemesterCredits { get; set; } = null;
+        public int? ModuleCredits { get; set; } = null;
         [AllowNull]
         public string? Color { get; set; } = null;
         [Required]
@@ -40,11 +40,11 @@ namespace AioStudy.Models
             Name = name;
         }
 
-        public Module(string name, Semester? semester, int? semesterCredits, string? color)
+        public Module(string name, Semester? semester, int? moduleCredits, string? color)
         {
             Name = name;
             Semester = semester;
-            SemesterCredits = semesterCredits;
+            ModuleCredits = moduleCredits;
             Color = color;
         }
     }

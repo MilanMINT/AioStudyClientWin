@@ -17,9 +17,16 @@ namespace AioStudy.Core.Data.Services
             _moduleRepository = moduleRepository;
         }
 
-        public async Task<Module> CreateModuleAsync(Module module)
+        public async Task<Module?> CreateModuleAsync(Module module)
         {
-            return await _moduleRepository.CreateAsync(module);
+            try
+            {
+                return await _moduleRepository.CreateAsync(module);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<bool> DeleteModule(int moduleId)

@@ -32,6 +32,14 @@
                 <RowDefinition Height="70"/>
             </Grid.RowDefinitions>
 
+            <TextBlock Grid.Row="0" 
+                       Text="Add Module" 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center" 
+                       FontSize="24" 
+                       FontWeight="Bold" 
+                       Foreground="#E6E5E5"/>
+
             <Border Grid.Row="1" 
                 Background="#3A3D45" 
                 Height="1" 
@@ -51,7 +59,7 @@
             <StackPanel Grid.Row="2" Margin="30">
                 <!-- Module Name Input -->
                 <StackPanel>
-                    <Label Content="Modulename"
+                    <Label Content="Modulename*"
                        Foreground="#E6E5E5"
                        FontSize="14"
                        FontWeight="Bold"/>
@@ -77,7 +85,7 @@
                            Foreground="#E6E5E5" 
                            FontSize="14"/>
                         <DatePicker Style="{StaticResource GradientDatePicker}"
-                                SelectedDate="{Binding IbnBeginn, Mode=TwoWay}"/>
+                                SelectedDate="{Binding ModuleExamDate, Mode=TwoWay}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="2">
@@ -85,7 +93,7 @@
                                FontWeight="Bold" 
                                Foreground="#E6E5E5" 
                                FontSize="14"/>
-                        <xctk:ColorPicker SelectedColor="{Binding SemesterColor, Mode=TwoWay}" 
+                        <xctk:ColorPicker SelectedColor="{Binding ModuleColor, Mode=TwoWay}" 
                                         Style="{StaticResource GradientColorPicker}" Height="40"/>
                     </StackPanel>
                 </Grid>
@@ -105,13 +113,59 @@
                                 Foreground="#E6E5E5"
                                 FontSize="14"
                                 FontWeight="Bold"/>
-                        <xctk:WatermarkTextBox x:Name="SemesterDescTextBox"
+                        <xctk:WatermarkTextBox x:Name="ModuleDescTextBox"
+                                               TextWrapping="Wrap"
+                                               VerticalScrollBarVisibility="Auto"
                                                Style="{StaticResource GradientTextBox}"
                                                Watermark="Semester Name eingeben..."
-                                               Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
-                                               Height="35"/>
+                                               AcceptsReturn="True"
+                                                AcceptsTab="True"
+                                                HorizontalScrollBarVisibility="Disabled"
+                                                VerticalContentAlignment="Top"
+                                               Text="{Binding ModuleDescription, UpdateSourceTrigger=PropertyChanged}"
+                                               Height="40"/>
                     </StackPanel>
                 </Grid>
+
+
+
+                <!-- Creits Semester - Nebeneinander -->
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="15"/>
+                        <ColumnDefinition Width="6*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Start Creits -->
+                    <StackPanel Grid.Column="0">
+                        <Label Content="Credits" 
+                               FontWeight="Bold" 
+                               Foreground="#E6E5E5" 
+                               FontSize="14"/>
+                        <xctk:WatermarkTextBox Style="{StaticResource GradientTextBox}"
+                                               Text="{Binding ModuleCredits, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <Label Content="Semester" 
+                               FontWeight="Bold" 
+                               Foreground="#E6E5E5" 
+                               FontSize="14"/>
+                        <ComboBox SelectedItem="{Binding SelectedSemester, Mode=TwoWay}"
+                                  ItemsSource="{Binding Semesters}"
+                                  MaxDropDownHeight="250"
+                                  Style="{StaticResource GradientComboBox}" 
+                                  Height="40">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" Foreground="White"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+
             </StackPanel>
 
             <DockPanel Grid.Row="4" LastChildFill="False"
@@ -120,6 +174,7 @@
                     Width="80"
                     Height="40"
                     Style="{StaticResource GreenGradientButton}"
+                    Command="{Binding AddModuleCommand}"
                     DockPanel.Dock="Right"
                     Margin="20 0 0 0">
                 </Button>

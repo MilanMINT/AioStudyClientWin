@@ -105,26 +105,26 @@ namespace AioStudy.UI.ViewModels
 
         private async Task AddSampleSemesterAsync()
         {
-            var addWindow = new AddSemesterView();
-            var viewModel = App.ServiceProvider.GetRequiredService<AddSemesterViewModel>();
-            addWindow.DataContext = viewModel;
-            addWindow.Owner = System.Windows.Application.Current.MainWindow;
-            addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
-            addWindow.ShowDialog();
-            //try
-            //{
-            //    var newSemester = await _semesterDbService.CreateSemesterAsync(
-            //        $"SemesterWiSe {DateTime.Now:yyyy-MM}",
-            //        DateTime.Now.ToUniversalTime(),  // Convert to UTC
-            //        DateTime.Now.AddMonths(16).ToUniversalTime()  // Convert to UTC
-            //    );
+            //var addWindow = new AddSemesterView();
+            //var viewModel = App.ServiceProvider.GetRequiredService<AddSemesterViewModel>();
+            //addWindow.DataContext = viewModel;
+            //addWindow.Owner = System.Windows.Application.Current.MainWindow;
+            //addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+            //addWindow.ShowDialog();
+            try
+            {
+                var newSemester = await _semesterDbService.CreateSemesterAsync(
+                    $"SemesterWiSe {DateTime.Now:yyyy-MM}",
+                    DateTime.Now.ToUniversalTime(),  // Convert to UTC
+                    DateTime.Now.AddMonths(16).ToUniversalTime()  // Convert to UTC
+                );
 
-            //    Semesters.Add(newSemester);
-            //}
-            //catch (Exception ex)
-            //{
-            //    System.Diagnostics.Debug.WriteLine($"Fehler beim Erstellen des Semesters: {ex.Message}");
-            //}
+                Semesters.Add(newSemester);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Fehler beim Erstellen des Semesters: {ex.Message}");
+            }
         }
 
         private async Task DeleteSemesterAsync(object parameter)

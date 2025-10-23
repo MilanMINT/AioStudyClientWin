@@ -109,6 +109,8 @@ namespace AioStudy.UI.ViewModels
             addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
             addWindow.ShowDialog();
 
+            //await LoadModulesBySemesterAsync();
+
             //try
             //{
             //    var newModule = new Module
