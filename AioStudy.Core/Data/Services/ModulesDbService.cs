@@ -72,5 +72,6 @@ namespace AioStudy.Core.Data.Services
         {
             return await _moduleRepository.GetAllAsync();
         }
+
     }
 }

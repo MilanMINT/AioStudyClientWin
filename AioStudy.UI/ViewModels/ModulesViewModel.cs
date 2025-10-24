@@ -68,15 +68,21 @@ namespace AioStudy.UI.ViewModels
             try
             {
                 var modules = await _modulesDbService.GetAllModulesAsync();
+                var semesterService = App.ServiceProvider.GetRequiredService<SemesterDbService>();
+                var allSemesters = await semesterService.GetAllSemestersAsync();
+
                 Modules.Clear();
                 foreach (var module in modules)
                 {
+                    if (module.SemesterId.HasValue)
+                    {
+                        module.Semester = allSemesters.FirstOrDefault(s => s.Id == module.SemesterId.Value);
+                    }
                     Modules.Add(module);
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

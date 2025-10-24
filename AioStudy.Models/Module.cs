@@ -24,6 +24,8 @@ namespace AioStudy.Models
         [AllowNull]
         public DateTime? ExamDate { get; set; }
         [AllowNull]
+        public string? ExamStatus { get; set; } = null;
+        [AllowNull]
         public float? Grade { get; set; } = null;
         [AllowNull]
         public int? ModuleCredits { get; set; } = null;
@@ -32,7 +34,7 @@ namespace AioStudy.Models
         [Required]
         public DateTime Created { get; set; } = DateTime.Now;
         [NotMapped]
-        public string CreatedString { get { return Created.ToString("dd.MM.yyyy HH:mm"); } }
+        public string CreatedString { get { return Created.ToString("dd.MM.yyyy"); } }
 
         public Module() { }
         public Module(string name)

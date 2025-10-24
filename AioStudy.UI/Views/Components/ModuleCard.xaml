@@ -6,218 +6,295 @@
              xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
              xmlns:local="clr-namespace:AioStudy.UI.Views.Components"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="380">
-    
-    
-    <UserControl.Resources>
-        <!-- Status Badge Style -->
-        <Style x:Key="StatusBadge" TargetType="Border">
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-        </Style>
-    </UserControl.Resources>
+             d:DesignHeight="250" d:DesignWidth="450"
+             Width="450" Height="250"
+             Background="#222324">
 
-    <Border Width="380" 
-        Height="200"
-        Background="#2A2D35"
-        CornerRadius="12"
-        Margin="15"
-        Padding="20"
-        UseLayoutRounding="True"
-        SnapsToDevicePixels="True"
-        BorderThickness="2">
 
-        <!-- Dynamischer BorderBrush basierend auf Module.Color -->
+    <Border Background="#1F2024"
+            x:Name="CardBorder"
+            BorderThickness="2"
+            CornerRadius="8"
+            RenderTransformOrigin="0.5,0.5">
+
+        <Border.Effect>
+            <DropShadowEffect x:Name="CardShadow"
+                      Color="#000000"
+                      Direction="270"
+                      ShadowDepth="2"
+                      BlurRadius="4"
+                      Opacity="0.2"/>
+        </Border.Effect>
+
+        <!-- Transform für Scaling hinzufügen -->
+        <Border.RenderTransform>
+            <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1"/>
+        </Border.RenderTransform>
+
+
         <Border.BorderBrush>
             <LinearGradientBrush>
-                <GradientStop Color="#608BC1" Offset="0.0"/>
+                <GradientStop Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#608BC1}" Offset="0.0"/>
                 <GradientStop Color="#133E87" Offset="1.0"/>
-                <!-- Bindet an Module.Color, falls null wird Standard-Hellblau verwendet -->
-                <GradientStop Color="{Binding ModuleColor, TargetNullValue=#a5bacc, FallbackValue=#a5bacc}" Offset="0.5"/>
+                <GradientStop Color="#a5bacc" Offset="0.5"/>
             </LinearGradientBrush>
         </Border.BorderBrush>
 
-        <!-- Shadow Effect -->
-        <Border.Effect>
-            <DropShadowEffect Color="black"
-                          Direction="270"
-                          ShadowDepth="4"
-                          BlurRadius="7"
-                          Opacity="0.6"/>
-        </Border.Effect>
+        <Border.Triggers>
+            <!-- MouseEnter: Vergrößern + Farbe ändern -->
+            <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                    <Storyboard>
 
-        <!-- Hover Trigger -->
-        <Border.Style>
-            <Style TargetType="Border">
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background">
-                            <Setter.Value>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#353842" Offset="0.0"/>
-                                    <GradientStop Color="#2A2D35" Offset="1.0"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="BorderBrush">
-                            <Setter.Value>
-                                <LinearGradientBrush>
-                                    <GradientStop Color="#7BA3D3" Offset="0.0"/>
-                                    <GradientStop Color="#1E4A99" Offset="1.0"/>
-                                    <GradientStop Color="#B5C7DA" Offset="0.7"/>
-                                </LinearGradientBrush>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Effect">
-                            <Setter.Value>
-                                <DropShadowEffect Color="black"
-                                              Direction="270"
-                                              ShadowDepth="6"
-                                              BlurRadius="10"
-                                              Opacity="0.7"/>
-                            </Setter.Value>
-                        </Setter>
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Border.Style>
+                        <!-- DropShadow Animation -->
+                        <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                           Storyboard.TargetProperty="ShadowDepth"
+                                           To="5" 
+                                           Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut"/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                        Storyboard.TargetProperty="BlurRadius"
+                                        To="16" 
+                                        Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut"/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="0.5" 
+                                       Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut"/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <!-- Delete Button einblenden -->
+                        <DoubleAnimation Storyboard.TargetName="DeleteButton"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="1.0" 
+                                       Duration="0:0:0.1"/>
+
+                        <!-- Edit Button einblenden -->
+                        <DoubleAnimation Storyboard.TargetName="EditButton"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="1.0" 
+                                        Duration="0:0:0.1"/>
+                        
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+
+            <!-- MouseLeave: Zurück zur normalen Größe + Farbe -->
+            <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                    <Storyboard>
+
+                        <!-- DropShadow zurück -->
+                        <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                       Storyboard.TargetProperty="ShadowDepth"
+                                       To="2" 
+                                       Duration="0:0:0.2">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut"/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                        Storyboard.TargetProperty="BlurRadius"
+                                        To="4" 
+                                        Duration="0:0:0.2">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut"/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation Storyboard.TargetName="CardShadow"
+                                           Storyboard.TargetProperty="Opacity"
+                                           To="0.2" 
+                                           Duration="0:0:0.2">
+                            <DoubleAnimation.EasingFunction>
+                                <QuadraticEase EasingMode="EaseOut"/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <!-- Delete Button ausblenden -->
+                        <DoubleAnimation Storyboard.TargetName="DeleteButton"
+                                           Storyboard.TargetProperty="Opacity"
+                                           To="0" 
+                                           Duration="0:0:0.2"/>
+
+                        <!-- Edit Button ausblenden -->
+                        <DoubleAnimation Storyboard.TargetName="EditButton"
+                                        Storyboard.TargetProperty="Opacity"
+                                        To="0" 
+                                        Duration="0:0:0.1"/>
+                        
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Border.Triggers>
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="1"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="23"/>
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Header mit Titel und Actions -->
-            <Grid Grid.Row="0" Margin="0,0,0,5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <DockPanel LastChildFill="False" Grid.ColumnSpan="2">
+                <!-- ECTS Badge -->
+                <Border Grid.Column="1"
+                        DockPanel.Dock="Right"
+                        CornerRadius="12"
+                        Padding="7,3"
+                        Margin="5,0,15,0"
+                        Width="auto"
+                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#4A5568" Offset="0"/>
+                            <GradientStop Color="#2D3748" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
 
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="{Binding ModuleName}" 
-                           FontSize="20" 
-                           FontWeight="Bold" 
-                           Foreground="White"
-                           TextTrimming="CharacterEllipsis"
-                           ToolTip="{Binding ModuleName}"/>
-                </StackPanel>
-
-                <!-- Delete Button -->
-                <Button Grid.Column="1"
-                    Command="{Binding DeleteCommand}"
-                    Style="{StaticResource NoHoverButtonStyle}"
-                    Width="22"
-                    Height="22"
-                    ToolTip="Delete Module">
-                    <Border Background="#FF4757"
-                        CornerRadius="16"
-                        Width="22"
-                        Height="22">
-                        <MaIc:MaterialIcon Kind="DeleteOutline"
-                                       Foreground="White"
-                                       Width="16"
-                                       Height="16"/>
-                        <Border.Style>
-                            <Style TargetType="Border">
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF3742"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Border.Style>
-                    </Border>
-                </Button>
-            </Grid>
-
-            <!-- Module Stats -->
-            <Grid Grid.Row="1" Margin="0,0,0,15">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- Credits -->
-                <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                    <TextBlock Text="Credits" 
-                           FontSize="11" 
-                           Foreground="#8A8D95" 
-                           Margin="0,0,0,2"/>
-                    <TextBlock FontSize="16" 
-                           FontWeight="Bold" 
-                           Foreground="#4A90E2"
-                           Text="{Binding CreditsDisplay}"/>
-                </StackPanel>
-
-                <!-- Grade -->
-                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                    <TextBlock Text="Grade" 
-                           FontSize="11" 
-                           Foreground="#8A8D95" 
-                           Margin="0,0,0,2"/>
-                    <TextBlock FontSize="16" 
-                           FontWeight="Bold"
-                           Text="{Binding GradeDisplay}"
-                           Foreground="{Binding GradeColor}"/>
-                </StackPanel>
-
-                <!-- Study Time -->
-                <StackPanel Grid.Column="2" HorizontalAlignment="Right">
-                    <TextBlock Text="Study Time" 
-                           FontSize="11" 
-                           Foreground="#8A8D95" 
-                           Margin="0,0,0,2"/>
-                    <TextBlock FontSize="16" 
-                           FontWeight="Bold" 
-                           Foreground="#FF8A00"
-                           Text="{Binding StudyTimeDisplay}"/>
-                </StackPanel>
-            </Grid>
-
-            <!-- Exam Date Info -->
-            <StackPanel Grid.Row="2" 
-                    VerticalAlignment="Center"
-                    Margin="0,10">
-                <TextBlock Text="Exam Date" 
-                       FontSize="11" 
-                       Foreground="#8A8D95" 
-                       Margin="0,0,0,4"/>
-
-                <Border Background="{Binding ExamDateBadgeColor}"
-                    Style="{StaticResource StatusBadge}">
                     <StackPanel Orientation="Horizontal">
-                        <MaIc:MaterialIcon Kind="Calendar"
-                                       Width="14"
-                                       Height="14"
-                                       Foreground="White"
-                                       Margin="0,0,6,0"/>
-                        <TextBlock Foreground="White" 
-                               FontSize="12"
-                               FontWeight="Medium"
-                               Text="{Binding ExamDateDisplay}"/>
+                        <TextBlock Text="{Binding Semester.Name, FallbackValue='WiSe25/26'}"
+                                    FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Foreground="#A0AEC0"
+                                    TextAlignment="Center"/>
                     </StackPanel>
                 </Border>
+                <TextBlock Text="{Binding Name, FallbackValue='d32d23 23d 2d23d2 3d2d23d23dd23d2d d2d23d2'}"
+                           FontSize="23"
+                           FontWeight="Bold"
+                           Foreground="#E0E0E0"
+                           ToolTip="{Binding Name}"
+                           Margin="15 0 0 0"
+                           VerticalAlignment="Center"
+                           Grid.Row="0" Grid.Column="0"
+                           TextTrimming="CharacterEllipsis"/>
+            </DockPanel>
+            
+
+            <!-- Separator -->
+            <Border Grid.Row="1" Grid.ColumnSpan="2" 
+                    Background="#3A3D45" Height="1"
+                    Margin="15 0 15 0"/>
+
+
+            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ECTS Badge -->
+                <Border Grid.Column="1"
+                        DockPanel.Dock="Right"
+                        CornerRadius="12"
+                        Padding="7,3"
+                        Margin="5,0,15,0"
+                        Width="auto"
+                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#4A5568" Offset="0"/>
+                            <GradientStop Color="#2D3748" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Credits:"
+                                    FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Foreground="#A0AEC0"
+                                    Margin="0 0 4 0"
+                                    TextAlignment="Center"/>
+                        <TextBlock Text="{Binding ModuleCredits, FallbackValue=5}"
+                                    FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Foreground="#A0AEC0"
+                                    TextAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            
+
+            <StackPanel Orientation="Horizontal" Grid.Row="4" 
+                        VerticalAlignment="Center" Margin="9 0 0 0">
+                <MaIc:MaterialIcon Kind="CreateOutline" 
+                                   Width="12" Height="12" 
+                                   VerticalAlignment="Center" 
+                                   HorizontalAlignment="Center"
+                                   Foreground="#606069"
+                                   Margin="0 0 2 0"/>
+                <TextBlock Text="{Binding CreatedString, FallbackValue=Test, StringFormat='dd.MM.yyyy'}"
+                           Foreground="#606069"
+                           Margin="0 0 0 2"
+                           TextAlignment="Center"
+                           FontSize="11"/>
             </StackPanel>
 
-            <!-- Footer mit Created Date -->
-            <Grid Grid.Row="3" 
-              Margin="0,15,0,0"
-              Opacity="0.7">
-                <TextBlock Text="{Binding CreatedDisplay}" 
-                       Foreground="#6B7280" 
-                       FontSize="10"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Bottom"/>
-            </Grid>
+            <DockPanel Grid.Row="3" Grid.RowSpan="2" LastChildFill="False" Grid.ColumnSpan="2">
+                <Button Style="{StaticResource RedGradientButtonThinBorder}"
+                        DockPanel.Dock="Right"
+                        Grid.Row="3" Grid.Column="1" Grid.RowSpan="2"
+                        x:Name="DeleteButton"
+                        Command="{Binding DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        CommandParameter="{Binding Module, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Width="26"
+                        Height="26"
+                        Margin="10 0 15 0"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Opacity="1"
+                        UseLayoutRounding="True"
+                        SnapsToDevicePixels="True">
+                    <MaIc:MaterialIcon Kind="DeleteOutline" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       UseLayoutRounding="True"
+                                       Foreground="#8F7979"
+                                       SnapsToDevicePixels="True"
+                                       Margin="0 0 0 0"/>
+                </Button>
+
+                <Button Style="{StaticResource GrayGradientButton}"
+                        Grid.Row="3" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                        x:Name="EditButton"
+                        DockPanel.Dock="Right"
+                        Command="{Binding EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        CommandParameter="{Binding Module, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        Width="26"
+                        Height="26"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Opacity="1"
+                        UseLayoutRounding="True"
+                        SnapsToDevicePixels="True">
+                    <MaIc:MaterialIcon Kind="EditOutline" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                       UseLayoutRounding="True"
+                                       Foreground="#787777"
+                                       SnapsToDevicePixels="True"
+                                       Margin="0 0 0 0"/>
+                </Button>
+            </DockPanel>
+
         </Grid>
     </Border>
-
-
+    
+    
 </UserControl>

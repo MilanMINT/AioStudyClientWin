@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+             xmlns:components="clr-namespace:AioStudy.UI.Views.Components"
              xmlns:local="clr-namespace:AioStudy.UI.Views"
              mc:Ignorable="d" 
              d:DesignHeight="750" d:DesignWidth="1200"
@@ -134,7 +135,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="30,15">
+        <Grid Grid.Row="0" Margin="30 0 30 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -159,9 +160,9 @@
 
                 <!-- Refresh Button -->
                 <Button Style="{StaticResource GradientButton}"
-                        Background="#353842"
                         Foreground="White"
                         Margin="0,0,15,0"
+                        Width="45"
                         ToolTip="Refresh Module List">
                     <MaIc:MaterialIcon Kind="Refresh"
                                        Width="22"
@@ -171,6 +172,7 @@
                 <!-- Add Module Button -->
                 <Button Command="{Binding CreateModuleCommand}"
                         Style="{StaticResource GradientButton}"
+                        Padding="10"
                         ToolTip="Add New Module">
                     <StackPanel Orientation="Horizontal">
                         <MaIc:MaterialIcon Kind="Plus"
@@ -206,210 +208,9 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="380" 
-                                Height="200"
-                                Background="#2A2D35"
-                                CornerRadius="12"
-                                Margin="15"
-                                Padding="20"
-                                UseLayoutRounding="True"
-                                SnapsToDevicePixels="True"
-                                BorderThickness="2"
-                                >
-
-                            <!-- Dynamischer BorderBrush basierend auf Module.Color -->
-                            <Border.BorderBrush>
-                                <LinearGradientBrush>
-                                    <GradientStop Color="#608BC1" Offset="0.0"/>
-                                    <GradientStop Color="#133E87" Offset="1.0"/>
-                                    <!-- Bindet an Module.Color, falls null wird Standard-Hellblau verwendet -->
-                                    <GradientStop Color="{Binding Color, TargetNullValue=#a5bacc, FallbackValue=#a5bacc}" Offset="0.5"/>
-                                </LinearGradientBrush>
-                            </Border.BorderBrush>
-
-                            <!-- Shadow Effect -->
-                            <Border.Effect>
-                                <DropShadowEffect Color="black"
-                                      Direction="270"
-                                      ShadowDepth="4"
-                                      BlurRadius="7"
-                                      Opacity="0.6"/>
-                            </Border.Effect>
-
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                    <RowDefinition Height="auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- Header mit Titel und Actions -->
-                                <Grid Grid.Row="0" Margin="0,0,0,5">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="{Binding Name}" 
-                                                   FontSize="20" 
-                                                   FontWeight="Bold" 
-                                                   Foreground="White"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   ToolTip="{Binding Name}"/>
-                                    </StackPanel>
-
-                                    <!-- Delete Button -->
-                                    <Button Grid.Column="1"
-                                            Command="{Binding DataContext.DeleteModuleCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
-                                            CommandParameter="{Binding}"
-                                            Style="{StaticResource NoHoverButtonStyle}"
-                                            Width="22"
-                                            Height="22"
-                                            ToolTip="Delete Module">
-                                        <Border Background="#FF4757"
-                                                CornerRadius="16"
-                                                Width="22"
-                                                Height="22">
-                                            <MaIc:MaterialIcon Kind="DeleteOutline"
-                                                   Foreground="White"
-                                                   Width="16"
-                                                   Height="16"/>
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="#FF3742"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                        </Border>
-                                    </Button>
-                                </Grid>
-
-                                <!-- Module Stats -->
-                                <Grid Grid.Row="1" Margin="0,0,0,15">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Credits -->
-                                    <StackPanel Grid.Column="0" HorizontalAlignment="Left">
-                                        <TextBlock Text="Credits" 
-                                                   FontSize="11" 
-                                                   Foreground="#8A8D95" 
-                                                   Margin="0,0,0,2"/>
-                                        <TextBlock FontSize="16" 
-                                                   FontWeight="Bold" 
-                                                   Foreground="#4A90E2">
-                                            <TextBlock.Text>
-                                                <Binding Path="ModuleCredits" 
-                                                         StringFormat="{}{0} CP" 
-                                                         TargetNullValue="- CP"/>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </StackPanel>
-
-                                    <!-- Grade -->
-                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                        <TextBlock Text="Grade" 
-                                                   FontSize="11" 
-                                                   Foreground="#8A8D95" 
-                                                   Margin="0,0,0,2"/>
-                                        <TextBlock FontSize="16" 
-                                                   FontWeight="Bold"
-                                                   Foreground="#51CF66">
-                                            <TextBlock.Text>
-                                                <Binding Path="Grade" 
-                                                         StringFormat="{}{0:F1}" 
-                                                         TargetNullValue="-"/>
-                                            </TextBlock.Text>
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="#51CF66"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Grade}" Value="{x:Null}">
-                                                            <Setter Property="Foreground" Value="#8A8D95"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </StackPanel>
-
-                                    <!-- Study Time -->
-                                    <StackPanel Grid.Column="2" HorizontalAlignment="Right">
-                                        <TextBlock Text="Study Time" 
-                                                   FontSize="11" 
-                                                   Foreground="#8A8D95" 
-                                                   Margin="0,0,0,2"/>
-                                        <TextBlock FontSize="16" 
-                                                   FontWeight="Bold" 
-                                                   Foreground="#FF8A00">
-                                            <TextBlock.Text>
-                                                <Binding Path="LearnedMinutes" 
-                                                        StringFormat="{}{0}min"/>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </Grid>
-
-                                <!-- Exam Date Info -->
-                                <StackPanel Grid.Row="2" 
-                                            VerticalAlignment="Center"
-                                            Margin="0,10">
-                                    <TextBlock Text="Exam Date" 
-                                               FontSize="11" 
-                                               Foreground="#8A8D95" 
-                                               Margin="0,0,0,4"/>
-
-                                    <Border Background="#FF8A00">
-                                        <Border.Style>
-                                            <Style TargetType="Border" BasedOn="{StaticResource StatusBadge}">
-                                                <Setter Property="Background" Value="#FF8A00"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding ExamDate}" Value="{x:Null}">
-                                                        <Setter Property="Background" Value="#4A4D55"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-
-                                        <StackPanel Orientation="Horizontal">
-                                            <MaIc:MaterialIcon Kind="Calendar"
-                                                   Width="14"
-                                                   Height="14"
-                                                   Foreground="White"
-                                                   Margin="0,0,6,0"/>
-                                            <TextBlock Foreground="White" 
-                                                       FontSize="12"
-                                                       FontWeight="Medium">
-                                                <TextBlock.Text>
-                                                    <Binding Path="ExamDate" 
-                                                 StringFormat="{}{0:dd.MM.yyyy}" 
-                                                 TargetNullValue="Not scheduled"/>
-                                                </TextBlock.Text>
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </Border>
-                                </StackPanel>
-
-                                <!-- Footer mit Created Date -->
-                                <Grid Grid.Row="3" 
-                                      Margin="0,15,0,0"
-                                      Opacity="0.7">
-                                    <TextBlock Text="{Binding CreatedString, StringFormat='Created: {0}'}" 
-                                               Foreground="#6B7280" 
-                                               FontSize="10"
-                                               HorizontalAlignment="Left"
-                                               VerticalAlignment="Bottom"/>
-                                </Grid>
-                            </Grid>
-                        </Border>
+                        <components:ModuleCard Module="{Binding}"
+                                               Margin="10"
+                                               DeleteCommand="{Binding DataContext.DeleteModuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

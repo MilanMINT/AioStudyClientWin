@@ -218,7 +218,6 @@
                 <Setter Property="FontWeight" Value="Medium"/>
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="Height" Value="40"/>
-                <Setter Property="Padding" Value="20,8"/>
                 <Setter Property="UseLayoutRounding" Value="True"/>
                 <Setter Property="SnapsToDevicePixels" Value="True"/>
                 <Setter Property="Background" Value="#212226"/>
@@ -310,6 +309,21 @@
             <!-- Rote Variante -->
             <Style x:Key="RedGradientButton" TargetType="Button" BasedOn="{StaticResource GradientButton}">
                 <Setter Property="Background" Value="#2D1B1B"/>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#FF6B6B" Offset="0.0"/>
+                            <GradientStop Color="#EE5A52" Offset="1.0"/>
+                            <GradientStop Color="#FF8E85" Offset="0.7"/>
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Rote Variante Smallborder -->
+            <Style x:Key="RedGradientButtonThinBorder" TargetType="Button" BasedOn="{StaticResource GradientButton}">
+                <Setter Property="Background" Value="#2D1B1B"/>
+                <Setter Property="BorderThickness" Value="1.5"/>
                 <Setter Property="BorderBrush">
                     <Setter.Value>
                         <LinearGradientBrush>
