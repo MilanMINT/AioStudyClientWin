@@ -3,12 +3,14 @@ using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.ViewModels.Forms;
 using AioStudy.UI.Views.Forms;
+using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -53,7 +55,7 @@ namespace AioStudy.UI.ViewModels
         {
             _modulesDbService = modulesDbService;
             Modules = new ObservableCollection<Module>();
-            DeleteModuleCommand = new RelayCommand(async param => await DeleteModuleAsync(param));
+            DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithConfirmation(parameter)); 
             CreateModuleCommand = new RelayCommand(async _ => await CreateModule());
             _ = LoadModulesBySemesterAsync();
         }
@@ -87,6 +89,21 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
+        private async Task DeleteModuleWithConfirmation(object parameter)
+        {
+            if (parameter is Module module)
+            {
+                bool confirmed = ConfirmModalService.ShowDeleteConfirmation(module.Name);
+
+                if (confirmed)
+                {
+                    await DeleteModuleAsync(module);
+                    await ToastService.ShowSuccessAsync("Module Deleted!", $"The module '{module.Name}' has been successfully deleted.");
+                }
+            }
+        }
+
+
         private async Task DeleteModuleAsync(object parameter)
         {
             if (parameter is Module module)
@@ -114,27 +131,6 @@ namespace AioStudy.UI.ViewModels
             addWindow.Owner = System.Windows.Application.Current.MainWindow;
             addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
             addWindow.ShowDialog();
-
-            //await LoadModulesBySemesterAsync();
-
-            //try
-            //{
-            //    var newModule = new Module
-            //    {
-            //        Name = "Neues Modul",
-            //        SemesterId = null,
-            //        SemesterCredits = 4,
-            //        Color = "#FF5733"
-
-            //    };
-            //    await _modulesDbService.CreateModuleAsync(newModule);
-            //    Modules.Add(newModule);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Fehler beim Erstellen des Moduls: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-            //    throw;
-            //}
         }
     }
 }
