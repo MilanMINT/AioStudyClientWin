@@ -48,6 +48,15 @@ namespace AioStudy.UI.Views.Components
         public static readonly DependencyProperty DeleteCommandProperty =
             DependencyProperty.Register("DeleteCommand", typeof(ICommand), typeof(ModuleCard), new PropertyMetadata(null));
 
+        public ICommand EditCommand
+        {
+            get { return (ICommand)GetValue(EditCommandProperty); }
+            set { SetValue(EditCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty EditCommandProperty =
+            DependencyProperty.Register("EditCommand", typeof(ICommand), typeof(ModuleCard), new PropertyMetadata(null));
+
 
     }
 }

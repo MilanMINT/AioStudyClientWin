@@ -85,7 +85,7 @@
                                         Storyboard.TargetProperty="Opacity"
                                         To="1.0" 
                                         Duration="0:0:0.1"/>
-                        
+
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
@@ -134,7 +134,7 @@
                                         Storyboard.TargetProperty="Opacity"
                                         To="0" 
                                         Duration="0:0:0.1"/>
-                        
+
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
@@ -187,7 +187,7 @@
                            Grid.Row="0" Grid.Column="0"
                            TextTrimming="CharacterEllipsis"/>
             </DockPanel>
-            
+
 
             <!-- Separator -->
             <Border Grid.Row="1" Grid.ColumnSpan="2" 
@@ -195,45 +195,126 @@
                     Margin="15 0 15 0"/>
 
 
-            <Grid Grid.Row="2" Grid.ColumnSpan="2">
+            <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,10,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <!-- ECTS Badge -->
-                <Border Grid.Column="1"
-                        DockPanel.Dock="Right"
-                        CornerRadius="12"
-                        Padding="7,3"
-                        Margin="5,0,15,0"
-                        Width="auto"
-                        VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Color="#4A5568" Offset="0"/>
-                            <GradientStop Color="#2D3748" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
+                <!-- Zeile 1 -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Grid.Row="0"
+                            Margin="0,10,0,10">
 
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Credits:"
-                                    FontSize="15"
-                                    FontWeight="SemiBold"
-                                    Foreground="#A0AEC0"
-                                    Margin="0 0 4 0"
-                                    TextAlignment="Center"/>
-                        <TextBlock Text="{Binding ModuleCredits, FallbackValue=5}"
-                                    FontSize="15"
-                                    FontWeight="SemiBold"
-                                    Foreground="#A0AEC0"
-                                    TextAlignment="Center"/>
-                    </StackPanel>
-                </Border>
+                    <!-- Examdate -->
+                    <Border CornerRadius="10"
+                            Padding="12,6"
+                            Margin="0 0 10 0"
+                            Background="#2C3448"
+                            BorderBrush="#3C4F7A"
+                            BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Examdate: "
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#AFC4FF"/>
+                            <TextBlock Text="{Binding ExamDateString, FallbackValue='Open'}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#E5E7EB"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Studytime -->
+                    <Border CornerRadius="10"
+                            Padding="12,6"
+                            Background="#322C4A"
+                            BorderBrush="#5D4E91"
+                            BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Studytime: "
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#D3BFFF"/>
+                            <TextBlock Text="{Binding LearnedMinutes, FallbackValue=0, StringFormat=F1, TargetNullValue='N/A'}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#F4EFFF"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+                <!-- Zeile 2 -->
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Grid.Row="1"
+                            Margin="0,10,0,10">
+
+                    <!-- Credits -->
+                    <Border CornerRadius="10"
+                            Padding="12,6"
+                            Background="#2F3338"
+                            BorderBrush="#51565C"
+                            Margin="0 0 10 0"
+                            BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Credits: "
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#B0B3B8"/>
+                            <TextBlock Text="{Binding ModuleCredits, FallbackValue=6}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#E0E0E0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Status -->
+                    <Border CornerRadius="10"
+                            Padding="12,6"
+                            Background="#3C3522"
+                            BorderBrush="#B08F2E"
+                            Margin="0 0 10 0"
+                            BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Status: "
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#F6E05E"/>
+                            <TextBlock Text="{Binding ExamStatus, FallbackValue='Pending', TargetNullValue='Open'}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#FFF8C1"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Grade -->
+                    <Border CornerRadius="10"
+                            Padding="12,6"
+                            Background="#382B4A"
+                            BorderBrush="#7E57C2"
+                            BorderThickness="1">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Grade: "
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#D1B3FF"/>
+                            <TextBlock Text="{Binding Grade, FallbackValue=2.3, StringFormat=F1, TargetNullValue='N/A'}"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="#F3EFFF"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
             </Grid>
-            
+
+
+
 
             <StackPanel Orientation="Horizontal" Grid.Row="4" 
                         VerticalAlignment="Center" Margin="9 0 0 0">
@@ -285,7 +366,7 @@
                         Opacity="1"
                         UseLayoutRounding="True"
                         SnapsToDevicePixels="True">
-                    <MaIc:MaterialIcon Kind="EditOutline" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    <MaIc:MaterialIcon Kind="EyeOutline" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"
                                        UseLayoutRounding="True"
                                        Foreground="#787777"
                                        SnapsToDevicePixels="True"
@@ -295,6 +376,6 @@
 
         </Grid>
     </Border>
-    
-    
+
+
 </UserControl>

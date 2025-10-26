@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AioStudy.UI"
         xmlns:vm="clr-namespace:AioStudy.UI.ViewModels"
+        xmlns:vm1="clr-namespace:AioStudy.UI.ViewModels.Overview"
         xmlns:views="clr-namespace:AioStudy.UI.Views"
+        xmlns:views1="clr-namespace:AioStudy.UI.Views.Overviews"
         xmlns:controls="clr-namespace:AioStudy.UI.Views.Controls"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
         mc:Ignorable="d"
@@ -36,6 +38,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ModulesViewModel}">
             <views:ModulesView/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm1:ModuleOverViewViewModel}">
+            <views1:ModuleOverViewView/>
         </DataTemplate>
     </Window.Resources>
     

@@ -129,13 +129,29 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="80"/>
             <RowDefinition Height="1"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <DockPanel Grid.Row="0" Margin="30 0 30 0" LastChildFill="False">
+            <Button Height="25" BorderThickness="0" Background="Transparent" Margin="0 0 5 0">
+                <MaIc:MaterialIcon Kind="ArrowBack"
+                                   Width="24"
+                                   Height="24"
+                                   Foreground="White"/>
+            </Button>
+            <Button Height="25" BorderThickness="0" Background="Transparent">
+                <MaIc:MaterialIcon Kind="ArrowForward"
+                       Width="24"
+                       Height="24"
+                       Foreground="White"/>
+            </Button>
+        </DockPanel>
+
         <!-- Header -->
-        <Grid Grid.Row="0" Margin="30 0 30 0">
+        <Grid Grid.Row="1" Margin="30 0 30 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -188,10 +204,10 @@
         </Grid>
 
         <!-- Separator -->
-        <Border Grid.Row="1" Background="#3A3D45" Height="1" Margin="30,0"/>
+        <Border Grid.Row="2" Background="#3A3D45" Height="1" Margin="30,0"/>
 
         <!-- Module Cards -->
-        <ScrollViewer Grid.Row="2" 
+        <ScrollViewer Grid.Row="3" 
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Disabled"
                       Margin="15,20" Panel.ZIndex="99999">
@@ -210,7 +226,8 @@
                     <DataTemplate>
                         <components:ModuleCard Module="{Binding}"
                                                Margin="10"
-                                               DeleteCommand="{Binding DataContext.DeleteModuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                                               DeleteCommand="{Binding DataContext.DeleteModuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               EditCommand="{Binding DataContext.EditModuleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

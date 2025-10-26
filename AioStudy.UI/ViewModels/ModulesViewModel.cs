@@ -2,6 +2,7 @@
 using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.ViewModels.Forms;
+using AioStudy.UI.ViewModels.Overview;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +27,7 @@ namespace AioStudy.UI.ViewModels
 
         public RelayCommand DeleteModuleCommand { get; }
         public RelayCommand CreateModuleCommand { get; }
+        public RelayCommand EditModuleCommand { get; }
 
         private string _semesterName;
 
@@ -57,7 +59,18 @@ namespace AioStudy.UI.ViewModels
             Modules = new ObservableCollection<Module>();
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithConfirmation(parameter)); 
             CreateModuleCommand = new RelayCommand(async _ => await CreateModule());
+            EditModuleCommand = new RelayCommand(async parameter => await OpenModuleOverview(parameter));
             _ = LoadModulesBySemesterAsync();
+        }
+
+        private async Task OpenModuleOverview(object? parameter)
+        {
+            if (parameter is Module module)
+            {
+                var editWindow = new AddModuleView();
+                var viewmodel = new ModuleOverViewViewModel(module, this, _mainViewModel, DeleteModuleCommand);
+                _mainViewModel.CurrentViewModel = viewmodel;
+            }
         }
 
         public void SetMainViewModel(MainViewModel mainViewModel)
@@ -102,6 +115,8 @@ namespace AioStudy.UI.ViewModels
                 }
             }
         }
+
+
 
 
         private async Task DeleteModuleAsync(object parameter)

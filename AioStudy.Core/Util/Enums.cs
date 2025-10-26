@@ -13,5 +13,12 @@ namespace AioStudy.Core.Util
             Light,
             Dark
         }
+
+        public enum ModuleStatus
+        {
+            Open, //Nicht sichtbar
+            BE, //Sichtbar
+            NB, // auto 5,0
+        }
     }
 }

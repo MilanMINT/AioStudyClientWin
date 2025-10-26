@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialIcons="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:converters="clr-namespace:AioStudy.UI.Converter"
              xmlns:local="clr-namespace:AioStudy.UI"
              StartupUri="MainWindow.xaml">
 
@@ -12,6 +13,16 @@
                 <ResourceDictionary Source="Themes/DarkTheme.xaml"/>
                 <ResourceDictionary Source="Themes/LightTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+
+            <!-- Converter -->
+            <converters:StringVisibilityConverter x:Key="StringToVisibilityConverter"/>
+            <converters:StringVisibilityConverter x:Key="StringToVisibilityHiddenConverter" UseHidden="True"/>
+            <converters:StringVisibilityConverter x:Key="InvertedStringToVisibilityConverter" IsInverted="True"/>
+
+            <converters:StringToEnableConverter x:Key="StringToEnabledConverter"/>
+            <converters:StringToEnableConverter x:Key="InvertedStringToEnabledConverter" IsInverted="True"/>
+
 
             <Style x:Key="InterFont">
                 <Setter Property="TextElement.FontFamily" Value="/Fonts/#Inter"/>

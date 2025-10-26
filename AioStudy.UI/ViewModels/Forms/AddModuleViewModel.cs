@@ -1,4 +1,5 @@
 ﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Util;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.Views.Forms;
@@ -28,11 +29,48 @@ namespace AioStudy.UI.ViewModels.Forms
         private string _moduleDescription = string.Empty;
         private Semester? _selectedSemester;
         private ObservableCollection<Semester> _semesters = new();
+        private ObservableCollection<string> _exameStatusOptions = new();
+        private List<float> _gradesFloatListToChoose = [0.7f, 1.0f, 1.3f, 1.7f, 2.0f, 2.3f, 2.7f, 3.0f, 3.3f, 3.7f, 4.0f];
+        private List<string> _gradesStringListToChoose = ["0,7", "1,0", "1,3", "1,7", "2,0", "2,3", "2,7", "3,0", "3,3", "3,7", "4,0"];
+        private string _selectedExamStatusOption = string.Empty;
+        private string _moduleGrade;
+        private string _selectedGradesStringListToChoose;
 
         public RelayCommand CancelAddModuleCommand { get; }
         public RelayCommand AddModuleCommand { get; }
 
+        public string SelectedGradesStringListToChoose
+        {
+            get => _selectedGradesStringListToChoose;
+            set
+            {
+                _selectedGradesStringListToChoose = value;
+                OnPropertyChanged(nameof(SelectedGradesStringListToChoose));
+            }
+        }
+
+        public List<string> GradesStringListToChoose
+        {
+            get => _gradesStringListToChoose;
+            set
+            {
+                _gradesStringListToChoose = value;
+                OnPropertyChanged(nameof(GradesStringListToChoose));
+            }
+        }
+
+
         // Properties für Binding
+        public string ModuleGrade
+        {
+            get => _moduleGrade;
+            set
+            {
+                _moduleGrade = value;
+                OnPropertyChanged(nameof(ModuleGrade));
+            }
+        }
+
         public string ModuleCredits
         {
             get => _moduleCredits;
@@ -103,6 +141,37 @@ namespace AioStudy.UI.ViewModels.Forms
             }
         }
 
+        public ObservableCollection<string> ExamStatusOptions
+        {
+            get => _exameStatusOptions;
+            set
+            {
+                _exameStatusOptions = value;
+                OnPropertyChanged(nameof(ExamStatusOptions));
+            }
+        }
+
+        public string SelectedExamStatusOption
+        {
+            get => _selectedExamStatusOption;
+            set
+            {
+                _selectedExamStatusOption = value;
+
+                if (_selectedExamStatusOption == Enums.ModuleStatus.NB.ToString())
+                {
+                    ModuleGrade = "5,0";
+                }
+                else if (_selectedExamStatusOption == Enums.ModuleStatus.Open.ToString())
+                {
+                    ModuleGrade = string.Empty;
+                }
+
+                OnPropertyChanged(nameof(ModuleGrade));
+                OnPropertyChanged(nameof(SelectedExamStatusOption));
+            }
+        }
+
         public AddModuleViewModel(ModulesViewModel modulesViewModel)
         {
             _modulesViewModel = modulesViewModel;
@@ -112,8 +181,18 @@ namespace AioStudy.UI.ViewModels.Forms
 
             // Semester laden
             _ = LoadSemestersAsync();
+
+            LoadExameOptions();
+            SelectedExamStatusOption = ExamStatusOptions.FirstOrDefault();
         }
 
+        private void LoadExameOptions()
+        {
+            foreach (string status in Enum.GetNames(typeof(Enums.ModuleStatus)))
+            {
+                ExamStatusOptions.Add(status);
+            }
+        }
 
 
         private async Task LoadSemestersAsync()
@@ -150,6 +229,26 @@ namespace AioStudy.UI.ViewModels.Forms
                     return;
                 }
 
+                float? gradeValue = null;
+
+                if (SelectedExamStatusOption.ToString() == Enums.ModuleStatus.Open.ToString())
+                {
+                    gradeValue = null;
+                }
+                else if (SelectedExamStatusOption.ToString() == Enums.ModuleStatus.NB.ToString())
+                {
+                    gradeValue = 5.0f;
+                }
+                else
+                {
+                    if (string.IsNullOrWhiteSpace(SelectedGradesStringListToChoose))
+                    {
+                        await ToastService.ShowWarningAsync("Typo Error", "Please select a Grade");
+                        return;
+                    }
+                    gradeValue = _gradesFloatListToChoose[GradesStringListToChoose.IndexOf(SelectedGradesStringListToChoose)];
+                }
+
                 string? colorString = null;
                 if (ModuleColor.HasValue)
                 {
@@ -161,9 +260,11 @@ namespace AioStudy.UI.ViewModels.Forms
                     ExamDate = ModuleExamDate,
                     Color = colorString,
                     SemesterId = SelectedSemester?.Id,
-                    ModuleCredits = int.TryParse(ModuleCredits, out int credits) ? credits : null
+                    ModuleCredits = int.TryParse(ModuleCredits, out int credits) ? credits : null,
+                    ExamStatus = SelectedExamStatusOption,
+                    Grade = gradeValue
                 };
-                
+
                 var res = await _modulesDbService.CreateModuleAsync(newModule);
 
                 if (res is not null)
@@ -171,7 +272,7 @@ namespace AioStudy.UI.ViewModels.Forms
                     await ToastService.ShowSuccessAsync("Success", $"Module with Name: '{ModuleName}' successfully created!");
                     _modulesViewModel.Modules.Add(res);
                     await _modulesViewModel.LoadModulesBySemesterAsync();
-                    
+
                     Application.Current.Windows.OfType<AddModuleView>().FirstOrDefault()?.Close();
                 }
                 else
