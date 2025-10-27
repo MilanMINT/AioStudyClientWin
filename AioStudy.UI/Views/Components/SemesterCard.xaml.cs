@@ -55,9 +55,17 @@ namespace AioStudy.UI.Views.Components
         public static readonly DependencyProperty OpenSemesterOverviewCommandProperty =
             DependencyProperty.Register("OpenSemesterOverviewCommand", typeof(ICommand), typeof(SemesterCard), new PropertyMetadata(null));
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
 
+
+        public string ModulesSemesterCountString
+        {
+            get { return (string)GetValue(ModulesSemesterCountStringProperty); }
+            set { SetValue(ModulesSemesterCountStringProperty, value); }
         }
+
+        public static readonly DependencyProperty ModulesSemesterCountStringProperty =
+            DependencyProperty.Register("ModulesSemesterCountString", typeof(string), typeof(SemesterCard), new PropertyMetadata(null));
+
+
     }
 }

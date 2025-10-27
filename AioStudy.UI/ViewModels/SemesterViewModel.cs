@@ -8,6 +8,7 @@ using System.Windows.Input;
 using AioStudy.UI.Commands;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.ViewModels.Forms;
+using System.Windows.Media.Animation;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -88,10 +89,20 @@ namespace AioStudy.UI.ViewModels
                 var semesters = await _semesterDbService.GetAllSemestersAsync();
                 
                 Semesters.Clear();
+                var fillTasks = new List<Task>();
                 foreach (var semester in semesters)
                 {
                     Semesters.Add(semester);
+
+                    fillTasks.Add(Task.Run(async () =>
+                    {
+                        var modulesCount = await _semesterDbService.GetModulesCountForSemester(semester);
+                        semester.ModulesCount = modulesCount;
+                    }));
                 }
+
+                await Task.WhenAll(fillTasks);
+                OnPropertyChanged(nameof(Semesters));
             }
             catch (Exception ex)
             {

@@ -11,10 +11,12 @@ namespace AioStudy.Core.Data.Services
     public class SemesterDbService
     {
         private readonly IRepository<Semester> _semesterRepository;
+        private readonly IRepository<Module> _moduleRepository;
 
-        public SemesterDbService(IRepository<Semester> semesterRepository)
+        public SemesterDbService(IRepository<Semester> semesterRepository, IRepository<Module> moduleRepository)
         {
             _semesterRepository = semesterRepository;
+            _moduleRepository = moduleRepository;
         }
 
         public async Task<Semester> CreateSemesterAsync(string name, DateTime startDate, DateTime endDate)
@@ -67,6 +69,18 @@ namespace AioStudy.Core.Data.Services
         public async Task<IEnumerable<Semester>> GetAllSemestersAsync()
         {
             return await _semesterRepository.GetAllAsync();
+        }
+
+        public async Task<List<Module>> GetModulesForSemester(Semester semester)
+        {
+            var modules = await _moduleRepository.GetAllAsync();
+            return modules.Where(m => m.SemesterId == semester.Id).ToList();
+        }
+
+        public async Task<int> GetModulesCountForSemester(Semester semester)
+        {
+            var modules = await _moduleRepository.GetAllAsync();
+            return modules.Count(m => m.SemesterId == semester.Id);
         }
     }
 }

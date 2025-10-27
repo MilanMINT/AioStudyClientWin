@@ -9,7 +9,6 @@
     Height="150"
     d:DesignHeight="150"
     d:DesignWidth="500"
-    Loaded="UserControl_Loaded"
     mc:Ignorable="d">
 
     <Border
@@ -208,7 +207,7 @@
                         FontSize="12"
                         FontWeight="Medium"
                         Foreground="White"
-                        Text="0 Module"
+                        Text="{Binding Converter={StaticResource ModuleCountConverter}}"
                         UseLayoutRounding="True" />
                 </StackPanel>
             </Border>

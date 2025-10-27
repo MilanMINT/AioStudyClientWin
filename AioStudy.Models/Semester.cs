@@ -29,6 +29,10 @@ namespace AioStudy.Models
         public string StartDateString { get { return StartDate.ToString("dd.MM.yyyy"); } }
         [NotMapped]
         public string EndDateString { get { return EndDate.ToString("dd.MM.yyyy"); } }
+        [NotMapped]
+        public int ModulesCount { get; set; }
+        [NotMapped]
+        public string ModulesCountString => $"{ModulesCount} Module(s)";
 
 
         public Semester() { }
