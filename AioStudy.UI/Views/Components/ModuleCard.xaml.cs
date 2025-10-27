@@ -26,8 +26,6 @@ namespace AioStudy.UI.Views.Components
             InitializeComponent();
         }
 
-
-
         public Module Module
         {
             get { return (Module)GetValue(ModuleProperty); }
@@ -48,15 +46,13 @@ namespace AioStudy.UI.Views.Components
         public static readonly DependencyProperty DeleteCommandProperty =
             DependencyProperty.Register("DeleteCommand", typeof(ICommand), typeof(ModuleCard), new PropertyMetadata(null));
 
-        public ICommand EditCommand
+        public ICommand OpenModuleOverviewCommand
         {
-            get { return (ICommand)GetValue(EditCommandProperty); }
-            set { SetValue(EditCommandProperty, value); }
+            get { return (ICommand)GetValue(OpenModuleOverviewCommandProperty); }
+            set { SetValue(OpenModuleOverviewCommandProperty, value); }
         }
 
-        public static readonly DependencyProperty EditCommandProperty =
-            DependencyProperty.Register("EditCommand", typeof(ICommand), typeof(ModuleCard), new PropertyMetadata(null));
-
-
+        public static readonly DependencyProperty OpenModuleOverviewCommandProperty =
+            DependencyProperty.Register("OpenModuleOverviewCommand", typeof(ICommand), typeof(ModuleCard), new PropertyMetadata(null));
     }
 }

@@ -19,6 +19,30 @@ namespace AioStudy.UI.ViewModels.Components
             {
                 _module = value;
                 OnPropertyChanged(nameof(Module));
+                OnPropertyChanged(nameof(LearnedMinutesString));
+            }
+        }
+
+        public string LearnedMinutesString
+        {
+            get
+            {
+                int totalMinutes = _module?.LearnedMinutes ?? 0;
+                var ts = TimeSpan.FromMinutes(totalMinutes);
+                int hours = (int)ts.TotalHours;
+                int minutes = ts.Minutes;
+                return $"{hours}h {minutes}m";
+            }
+            set
+            {
+                if (_module != null)
+                {
+                    if (TimeSpan.TryParse(value, out var ts))
+                    {
+                        _module.LearnedMinutes = (int)ts.TotalMinutes;
+                    }
+                    OnPropertyChanged(nameof(LearnedMinutesString));
+                }
             }
         }
 

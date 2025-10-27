@@ -25,6 +25,7 @@
             <converters:StringToEnableConverter x:Key="InvertedStringToEnabledConverter" IsInverted="True" />
             <converters:ProgressToWidthConverter x:Key="ProgressToWidthConverter" />
             <converters:ProgressToPercentConverter x:Key="ProgressToPercentConverter" />
+            <converters:MinutesToStringConverter x:Key="MinutesToStringConverter" />
 
 
             <Style x:Key="InterFont">

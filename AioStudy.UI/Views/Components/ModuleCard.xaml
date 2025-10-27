@@ -160,6 +160,7 @@
                 <RowDefinition Height="60" />
                 <RowDefinition Height="1" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="1" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="23" />
             </Grid.RowDefinitions>
@@ -212,6 +213,14 @@
             <!--  Separator  -->
             <Border
                 Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Height="1"
+                Margin="15,0,15,0"
+                Background="#3A3D45" />
+
+            <!--  Separator  -->
+            <Border
+                Grid.Row="3"
                 Grid.ColumnSpan="2"
                 Height="1"
                 Margin="15,0,15,0"
@@ -274,7 +283,7 @@
                                 FontSize="14"
                                 FontWeight="SemiBold"
                                 Foreground="#F4EFFF"
-                                Text="{Binding LearnedMinutes, FallbackValue=0, StringFormat=F1, TargetNullValue='N/A'}" />
+                                Text="{Binding Module.LearnedMinutes, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource MinutesToStringConverter}, TargetNullValue='N/A'}" />
                         </StackPanel>
                     </Border>
 
@@ -360,7 +369,7 @@
 
 
             <StackPanel
-                Grid.Row="4"
+                Grid.Row="5"
                 Margin="9,0,0,0"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
@@ -381,20 +390,21 @@
             </StackPanel>
 
             <DockPanel
-                Grid.Row="3"
+                Grid.Row="4"
                 Grid.RowSpan="2"
                 Grid.ColumnSpan="2"
                 LastChildFill="False">
                 <Button
                     x:Name="DeleteButton"
-                    Grid.Row="3"
-                    Grid.RowSpan="2"
+                    Grid.Row="5"
+                    Grid.RowSpan="3"
                     Grid.Column="1"
                     Width="26"
                     Height="26"
                     Margin="10,0,15,0"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
+                    Panel.ZIndex="9999"
                     Command="{Binding DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Module, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     DockPanel.Dock="Right"
@@ -417,14 +427,15 @@
                 <Button
                     x:Name="EditButton"
                     Grid.Row="3"
-                    Grid.RowSpan="2"
+                    Grid.RowSpan="3"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Width="26"
                     Height="26"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Command="{Binding EditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Panel.ZIndex="9999"
+                    Command="{Binding OpenModuleOverviewCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Module, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     DockPanel.Dock="Right"
                     Opacity="1"
@@ -443,9 +454,6 @@
                         UseLayoutRounding="True" />
                 </Button>
             </DockPanel>
-
         </Grid>
     </Border>
-
-
 </UserControl>

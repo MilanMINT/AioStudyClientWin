@@ -27,7 +27,8 @@ namespace AioStudy.UI.ViewModels
 
         public RelayCommand DeleteModuleCommand { get; }
         public RelayCommand CreateModuleCommand { get; }
-        public RelayCommand EditModuleCommand { get; }
+        public RelayCommand OpenModuleOverviewCommand { get; }
+        public RelayCommand RefreshModulesCommand { get; }
 
         private string _semesterName;
 
@@ -59,7 +60,8 @@ namespace AioStudy.UI.ViewModels
             Modules = new ObservableCollection<Module>();
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithConfirmation(parameter)); 
             CreateModuleCommand = new RelayCommand(async _ => await CreateModule());
-            EditModuleCommand = new RelayCommand(async parameter => await OpenModuleOverview(parameter));
+            OpenModuleOverviewCommand = new RelayCommand(async parameter => await OpenModuleOverview(parameter));
+            RefreshModulesCommand = new RelayCommand(async _ => await LoadModulesBySemesterAsync());
             _ = LoadModulesBySemesterAsync();
         }
 

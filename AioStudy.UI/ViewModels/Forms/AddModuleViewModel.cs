@@ -60,7 +60,6 @@ namespace AioStudy.UI.ViewModels.Forms
         }
 
 
-        // Properties für Binding
         public string ModuleGrade
         {
             get => _moduleGrade;
@@ -248,6 +247,12 @@ namespace AioStudy.UI.ViewModels.Forms
                         return;
                     }
                     gradeValue = _gradesFloatListToChoose[GradesStringListToChoose.IndexOf(SelectedGradesStringListToChoose)];
+                }
+
+                if (!string.IsNullOrWhiteSpace(ModuleCredits) && !int.TryParse(ModuleCredits, out _))
+                {
+                    await ToastService.ShowWarningAsync("Typo Error", "Please enter valid Module Credits");
+                    return;
                 }
 
                 string? colorString = null;
