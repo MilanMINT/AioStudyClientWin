@@ -1,31 +1,34 @@
-﻿<UserControl x:Class="AioStudy.UI.Views.SemesterView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
-             xmlns:local="clr-namespace:AioStudy.UI.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="750" d:DesignWidth="1200"
-             Background="#212226">
-    
+﻿<UserControl
+    x:Class="AioStudy.UI.Views.SemesterView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AioStudy.UI.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="750"
+    d:DesignWidth="1200"
+    Background="#212226"
+    mc:Ignorable="d">
+
     <UserControl.Resources>
-        <!-- Lokale Scrollbar Styles -->
+        <!--  Lokale Scrollbar Styles  -->
         <Style x:Key="LocalScrollBarThumb" TargetType="Thumb">
-            <Setter Property="Background" Value="#4A4D55"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#4A4D55" />
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
-                        <Border Background="#4A4D55" 
-                                CornerRadius="3" 
-                                Opacity="0.6"/>
+                        <Border
+                            Background="#4A4D55"
+                            CornerRadius="3"
+                            Opacity="0.6" />
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.8"/>
+                                <Setter Property="Opacity" Value="0.8" />
                             </Trigger>
                             <Trigger Property="IsDragging" Value="True">
-                                <Setter Property="Opacity" Value="1"/>
+                                <Setter Property="Opacity" Value="1" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -34,25 +37,27 @@
         </Style>
 
         <Style x:Key="LocalScrollBar" TargetType="ScrollBar">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Width" Value="6"/>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Width" Value="6" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
-                        <Grid Background="Transparent" Width="6">
+                        <Grid Width="6" Background="Transparent">
                             <Track Name="PART_Track" IsDirectionReversed="true">
                                 <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.PageUpCommand" 
-                                                Opacity="0" 
-                                                Background="Transparent"/>
+                                    <RepeatButton
+                                        Background="Transparent"
+                                        Command="ScrollBar.PageUpCommand"
+                                        Opacity="0" />
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Style="{StaticResource LocalScrollBarThumb}"/>
+                                    <Thumb Style="{StaticResource LocalScrollBarThumb}" />
                                 </Track.Thumb>
                                 <Track.IncreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.PageDownCommand" 
-                                                Opacity="0" 
-                                                Background="Transparent"/>
+                                    <RepeatButton
+                                        Background="Transparent"
+                                        Command="ScrollBar.PageDownCommand"
+                                        Opacity="0" />
                                 </Track.IncreaseRepeatButton>
                             </Track>
                         </Grid>
@@ -61,108 +66,122 @@
             </Setter>
         </Style>
 
-        <!-- Moderner Button Style für Header-Buttons -->
-        
+        <!--  Moderner Button Style für Header-Buttons  -->
+
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="0.5"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="70" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="0.5" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Verbesserter Header -->
+        <!--  Verbesserter Header  -->
         <Grid Grid.Row="0" Margin="20,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            
-            <!-- Titel Sektion -->
-            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBlock Text="Semester Verwaltung"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="#E6E5E5"
-                           Margin="0,0,0,2"/>
-                <TextBlock Text="Verwalten Sie Ihre Semester und Module"
-                           FontSize="13"
-                           Foreground="#B0B3BA"/>
-            </StackPanel>
-            
-            <!-- Button Bereich -->
-            <StackPanel Grid.Column="1" 
-                       Orientation="Horizontal" 
-                       VerticalAlignment="Center">
 
-                <!-- Aktualisieren Button -->
-                <Button Style="{StaticResource GradientButton}"
-                        Command="{Binding LoadSemestersCommand}"
-                        Foreground="White"
-                        VerticalContentAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Margin="0 0 10 0"
-                        Width="70"
-                        ToolTip="Semester-Liste aktualisieren">
-                        <MaIc:MaterialIcon Kind="Refresh"
-                                        Foreground="#E6E5E5"
-                                        Width="20"
-                                        Height="20"/>
+            <!--  Titel Sektion  -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock
+                    Margin="0,0,0,2"
+                    FontSize="28"
+                    FontWeight="Bold"
+                    Foreground="#E6E5E5"
+                    Text="Semester Verwaltung" />
+                <TextBlock
+                    FontSize="13"
+                    Foreground="#B0B3BA"
+                    Text="Verwalten Sie Ihre Semester und Module" />
+            </StackPanel>
+
+            <!--  Button Bereich  -->
+            <StackPanel
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+
+                <!--  Aktualisieren Button  -->
+                <Button
+                    Width="70"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding LoadSemestersCommand}"
+                    Foreground="White"
+                    Style="{StaticResource GradientButton}"
+                    ToolTip="Semester-Liste aktualisieren">
+                    <MaIc:MaterialIcon
+                        Width="20"
+                        Height="20"
+                        Foreground="#E6E5E5"
+                        Kind="Refresh" />
                 </Button>
 
-                <!-- Semester hinzufügen Button -->
-                <Button Command="{Binding AddSemesterCommand}"
-                        Style="{StaticResource GradientButton}"
-                        Foreground="White"
-                        Padding="28,8"
-                        ToolTip="Neues Semester hinzufügen">
-                        <TextBlock Text="Hinzufügen" 
-                                   Foreground="#E6E5E5"
-                                   FontSize="14"
-                                   FontWeight="Bold"/>
+                <!--  Semester hinzufügen Button  -->
+                <Button
+                    Padding="28,8"
+                    Command="{Binding AddSemesterCommand}"
+                    Foreground="White"
+                    Style="{StaticResource GradientButton}"
+                    ToolTip="Neues Semester hinzufügen">
+                    <TextBlock
+                        FontSize="14"
+                        FontWeight="Bold"
+                        Foreground="#E6E5E5"
+                        Text="Hinzufügen" />
                 </Button>
             </StackPanel>
         </Grid>
 
-        <!-- Separator -->
-        <Border Grid.Row="2" Background="#3A3D45" Height="1" Margin="20,0"/>
+        <!--  Separator  -->
+        <Border
+            Grid.Row="2"
+            Height="1"
+            Margin="20,0"
+            Background="#3A3D45" />
 
-        <!-- Semester List mit ScrollViewer -->
-        <ScrollViewer Grid.Row="3" 
-                      Margin="15"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
+        <!--  Semester List mit ScrollViewer  -->
+        <ScrollViewer
+            Grid.Row="3"
+            Margin="15"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
             <ScrollViewer.Resources>
-                <Style TargetType="ScrollBar" BasedOn="{StaticResource LocalScrollBar}"/>
+                <Style BasedOn="{StaticResource LocalScrollBar}" TargetType="ScrollBar" />
             </ScrollViewer.Resources>
 
             <ItemsControl ItemsSource="{Binding Semesters}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Background="#2A2D35" 
-                                CornerRadius="8" 
-                                Margin="0,8" 
-                                Padding="20"
-                                BorderBrush="#3A3D45"
-                                BorderThickness="1"
-                                UseLayoutRounding="True"
-                                SnapsToDevicePixels="True">
+                        <Border
+                            Margin="0,8"
+                            Padding="20"
+                            Background="#2A2D35"
+                            BorderBrush="#3A3D45"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            SnapsToDevicePixels="True"
+                            UseLayoutRounding="True">
                             <Border.Style>
                                 <Style TargetType="Border">
                                     <Style.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#353842"/>
-                                            <Setter Property="BorderBrush" Value="#4A4D55"/>
+                                            <Setter Property="Background" Value="#353842" />
+                                            <Setter Property="BorderBrush" Value="#4A4D55" />
                                             <Setter Property="Effect">
                                                 <Setter.Value>
-                                                    <DropShadowEffect Color="#000000" 
-                                                                        BlurRadius="20" 
-                                                                        ShadowDepth="3" 
-                                                                        Opacity="0.4"/>
+                                                    <DropShadowEffect
+                                                        BlurRadius="20"
+                                                        Opacity="0.4"
+                                                        ShadowDepth="3"
+                                                        Color="#000000" />
                                                 </Setter.Value>
                                             </Setter>
                                         </Trigger>
@@ -172,117 +191,123 @@
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Semester Info -->
-                                <StackPanel Grid.Column="0" 
-                                          VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Name}" 
-                                               FontSize="20" 
-                                               FontWeight="SemiBold" 
-                                               Foreground="White"
-                                               Margin="0,0,0,4"
-                                               UseLayoutRounding="True"/>
-                                    
-                                    <TextBlock Foreground="#B0B3BA" 
-                                               FontSize="13"
-                                               Margin="0,0,0,6"
-                                               UseLayoutRounding="True">
+                                <!--  Semester Info  -->
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock
+                                        Margin="0,0,0,4"
+                                        FontSize="20"
+                                        FontWeight="SemiBold"
+                                        Foreground="White"
+                                        Text="{Binding Name}"
+                                        UseLayoutRounding="True" />
+
+                                    <TextBlock
+                                        Margin="0,0,0,6"
+                                        FontSize="13"
+                                        Foreground="#B0B3BA"
+                                        UseLayoutRounding="True">
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="📅 {0} - {1}">
-                                                <Binding Path="StartDateString"/>
-                                                <Binding Path="EndDateString"/>
+                                                <Binding Path="StartDateString" />
+                                                <Binding Path="EndDateString" />
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
 
-                                    <TextBlock Text="{Binding CreatedString, StringFormat='🕒 Erstellt: {0}'}" 
-                                               Foreground="#8A8D95" 
-                                               FontSize="11"
-                                               UseLayoutRounding="True"/>
+                                    <TextBlock
+                                        FontSize="11"
+                                        Foreground="#8A8D95"
+                                        Text="{Binding CreatedString, StringFormat='🕒 Erstellt: {0}'}"
+                                        UseLayoutRounding="True" />
                                 </StackPanel>
 
-                                <Button Grid.Column="1"
-                                        Command="{Binding DataContext.OpenSpecificModulesViewCMD, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
-                                        CommandParameter="{Binding}"
-                                        Style="{StaticResource NoHoverButtonStyle}"
-                                        Width="35"
-                                        Height="35">
-                                    <MaIc:MaterialIcon Kind="OpenInNew"
-                                                       Foreground="White"/>
+                                <Button
+                                    Grid.Column="1"
+                                    Width="35"
+                                    Height="35"
+                                    Command="{Binding DataContext.OpenSpecificModulesViewCMD, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
+                                    CommandParameter="{Binding}"
+                                    Style="{StaticResource NoHoverButtonStyle}">
+                                    <MaIc:MaterialIcon Foreground="White" Kind="OpenInNew" />
 
                                 </Button>
 
-                                <!-- Module Count with better styling -->
-                                <Border Grid.Column="2" 
-                                        Background="#4A90E2" 
-                                        CornerRadius="12" 
-                                        Padding="12,6" 
-                                        Margin="20,0"
-                                        VerticalAlignment="Center"
-                                        UseLayoutRounding="True"
-                                        SnapsToDevicePixels="True">
+                                <!--  Module Count with better styling  -->
+                                <Border
+                                    Grid.Column="2"
+                                    Margin="20,0"
+                                    Padding="12,6"
+                                    VerticalAlignment="Center"
+                                    Background="#4A90E2"
+                                    CornerRadius="12"
+                                    SnapsToDevicePixels="True"
+                                    UseLayoutRounding="True">
                                     <StackPanel Orientation="Horizontal">
-                                        <MaIc:MaterialIcon Kind="BookOpenPageVariant"
-                                                         Foreground="White" 
-                                                         Width="16" 
-                                                         Height="16"
-                                                         Margin="0,0,6,0"/>
-                                        <TextBlock Text="0 Module" 
-                                                   Foreground="White" 
-                                                   FontSize="12"
-                                                   FontWeight="Medium"
-                                                   UseLayoutRounding="True"/>
+                                        <MaIc:MaterialIcon
+                                            Width="16"
+                                            Height="16"
+                                            Margin="0,0,6,0"
+                                            Foreground="White"
+                                            Kind="BookOpenPageVariant" />
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="Medium"
+                                            Foreground="White"
+                                            Text="0 Module"
+                                            UseLayoutRounding="True" />
                                     </StackPanel>
                                 </Border>
 
-                                <!-- Delete Button with improved design -->
-                                <Border Grid.Column="3" 
-                                        VerticalAlignment="Center">
-                                    <Button Command="{Binding DataContext.DeleteSemesterCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
-                                            CommandParameter="{Binding}"
-                                            Background="#FF4757"
-                                            Width="38"
-                                            Height="38"
-                                            Cursor="Hand"
-                                            ToolTip="Semester löschen"
-                                            BorderThickness="0"
-                                            UseLayoutRounding="True">
+                                <!--  Delete Button with improved design  -->
+                                <Border Grid.Column="3" VerticalAlignment="Center">
+                                    <Button
+                                        Width="38"
+                                        Height="38"
+                                        Background="#FF4757"
+                                        BorderThickness="0"
+                                        Command="{Binding DataContext.DeleteSemesterCommand, RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
+                                        CommandParameter="{Binding}"
+                                        Cursor="Hand"
+                                        ToolTip="Semester löschen"
+                                        UseLayoutRounding="True">
                                         <Button.Style>
                                             <Style TargetType="Button">
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="Button">
-                                                            <Border Background="{TemplateBinding Background}"
-                                                                    CornerRadius="19"
-                                                                    BorderThickness="0"
-                                                                    UseLayoutRounding="True"
-                                                                    SnapsToDevicePixels="True">
-                                                                <ContentPresenter HorizontalAlignment="Center" 
-                                                                                VerticalAlignment="Center"/>
+                                                            <Border
+                                                                Background="{TemplateBinding Background}"
+                                                                BorderThickness="0"
+                                                                CornerRadius="19"
+                                                                SnapsToDevicePixels="True"
+                                                                UseLayoutRounding="True">
+                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                                             </Border>
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#FF3742"/>
+                                                        <Setter Property="Background" Value="#FF3742" />
                                                     </Trigger>
                                                     <Trigger Property="IsPressed" Value="True">
-                                                        <Setter Property="Background" Value="#E73C47"/>
+                                                        <Setter Property="Background" Value="#E73C47" />
                                                     </Trigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Button.Style>
 
-                                        <MaIc:MaterialIcon Kind="DeleteOutline"
-                                                         Foreground="White"
-                                                         Width="18"
-                                                         Height="18"/>
+                                        <MaIc:MaterialIcon
+                                            Width="18"
+                                            Height="18"
+                                            Foreground="White"
+                                            Kind="DeleteOutline" />
                                     </Button>
                                 </Border>
                             </Grid>

@@ -214,9 +214,10 @@ namespace AioStudy.UI.ViewModels.Forms
             }
         }
 
-        private void CancelAddModule(object? obj)
+        private async void CancelAddModule(object? obj)
         {
             Application.Current.Windows.OfType<AddModuleView>().FirstOrDefault()?.Close();
+            await ToastService.ShowInfoAsync("Info", "Cancelled adding module");
         }
 
         private async void AddModule(object? obj)

@@ -1,43 +1,73 @@
-﻿<UserControl x:Class="AioStudy.UI.Views.Overviews.ModuleOverViewView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
-             xmlns:local="clr-namespace:AioStudy.UI.Views.Overviews"
-             mc:Ignorable="d" 
-             d:DesignHeight="1800" d:DesignWidth="1200"
-             Background="#212226">
+﻿<UserControl
+    x:Class="AioStudy.UI.Views.Overviews.ModuleOverViewView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AioStudy.UI.Views.Overviews"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="1800"
+    d:DesignWidth="1200"
+    Background="#212226"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
-        <!-- Card Style -->
+        <!--  Card Style  -->
         <Style x:Key="InfoCard" TargetType="Border">
-            <Setter Property="Background" Value="#1F2024"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="20"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#3A3D45"/>
+            <Setter Property="Background" Value="#1F2024" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#3A3D45" />
             <Setter Property="Effect">
                 <Setter.Value>
-                    <DropShadowEffect Color="#000000" Direction="270" ShadowDepth="2" BlurRadius="8" Opacity="0.2"/>
+                    <DropShadowEffect
+                        BlurRadius="8"
+                        Direction="270"
+                        Opacity="0.2"
+                        ShadowDepth="2"
+                        Color="#000000" />
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#2B3651" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <!--  stronger shadow on hover  -->
+                            <DropShadowEffect
+                                BlurRadius="18"
+                                Opacity="0.32"
+                                ShadowDepth="6"
+                                Color="#000000" />
+                        </Setter.Value>
+                    </Setter>
+                    <!--  slight elevation  -->
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <TranslateTransform Y="-2" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
-        <!-- Scrollbar Styles -->
+        <!--  Scrollbar Styles  -->
         <Style x:Key="LocalScrollBarThumb" TargetType="Thumb">
-            <Setter Property="Background" Value="#4A4D55"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="#4A4D55" />
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Thumb">
-                        <Border Background="#4A4D55" 
-                        CornerRadius="3" 
-                        Opacity="0.6"/>
+                        <Border
+                            Background="#4A4D55"
+                            CornerRadius="3"
+                            Opacity="0.6" />
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.8"/>
+                                <Setter Property="Opacity" Value="0.8" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -46,25 +76,27 @@
         </Style>
 
         <Style x:Key="LocalScrollBar" TargetType="ScrollBar">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Width" Value="8" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ScrollBar">
-                        <Grid Background="Transparent" Width="8">
+                        <Grid Width="8" Background="Transparent">
                             <Track Name="PART_Track" IsDirectionReversed="true">
                                 <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.PageUpCommand" 
-                                          Opacity="0" 
-                                          Background="Transparent"/>
+                                    <RepeatButton
+                                        Background="Transparent"
+                                        Command="ScrollBar.PageUpCommand"
+                                        Opacity="0" />
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Style="{StaticResource LocalScrollBarThumb}"/>
+                                    <Thumb Style="{StaticResource LocalScrollBarThumb}" />
                                 </Track.Thumb>
                                 <Track.IncreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.PageDownCommand" 
-                                          Opacity="0" 
-                                          Background="Transparent"/>
+                                    <RepeatButton
+                                        Background="Transparent"
+                                        Command="ScrollBar.PageDownCommand"
+                                        Opacity="0" />
                                 </Track.IncreaseRepeatButton>
                             </Track>
                         </Grid>
@@ -73,401 +105,558 @@
             </Setter>
         </Style>
 
-        <!-- Metric Card Style -->
+        <!--  Metric Card Style  -->
         <Style x:Key="MetricCard" TargetType="Border">
-            <Setter Property="Background" Value="#1F2024"/>
-            <Setter Property="CornerRadius" Value="8"/>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#3A3D45"/>
+            <Setter Property="Background" Value="#1F2024" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="15" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#3A3D45" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <!--  subtle default shadow  -->
+                    <DropShadowEffect
+                        BlurRadius="6"
+                        Opacity="0.06"
+                        ShadowDepth="1"
+                        Color="#000000" />
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#2B3651" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <!--  stronger shadow on hover  -->
+                            <DropShadowEffect
+                                BlurRadius="18"
+                                Opacity="0.32"
+                                ShadowDepth="6"
+                                Color="#000000" />
+                        </Setter.Value>
+                    </Setter>
+                    <!--  slight elevation  -->
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <TranslateTransform Y="-2" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
-        <!-- Header Text Style -->
+        <!--  Header Text Style  -->
         <Style x:Key="HeaderText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#E0E0E0"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#E0E0E0" />
+            <Setter Property="Margin" Value="0,0,0,15" />
         </Style>
 
-        <!-- Label Style -->
+        <!--  Label Style  -->
         <Style x:Key="LabelText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Foreground" Value="#A0AEC0"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="#A0AEC0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,4" />
         </Style>
 
-        <!-- Value Style -->
+        <!--  Value Style  -->
         <Style x:Key="ValueText" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Foreground" Value="#E0E0E0"/>
-            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="Foreground" Value="#E0E0E0" />
+            <Setter Property="FontWeight" Value="Medium" />
         </Style>
 
-        <!-- Status Badge Styles -->
+        <!--  Status Badge Styles  -->
         <Style x:Key="StatusBadgeBase" TargetType="Border">
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <ScrollViewer.Resources>
-            <Style TargetType="ScrollBar" BasedOn="{StaticResource LocalScrollBar}"/>
+            <Style BasedOn="{StaticResource LocalScrollBar}" TargetType="ScrollBar" />
         </ScrollViewer.Resources>
         <Grid Margin="30">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <!-- Header -->
-                <RowDefinition Height="Auto"/>
-                <!-- Quick Metrics -->
-                <RowDefinition Height="Auto"/>
-                <!-- Main Content -->
-                <RowDefinition Height="*"/>
-                <!-- Additional Content -->
+                <RowDefinition Height="Auto" />
+                <!--  Header  -->
+                <RowDefinition Height="Auto" />
+                <!--  Quick Metrics  -->
+                <RowDefinition Height="Auto" />
+                <!--  Main Content  -->
+                <RowDefinition Height="*" />
+                <!--  Additional Content  -->
             </Grid.RowDefinitions>
 
-            <!-- HEADER SECTION -->
+            <!--  HEADER SECTION  -->
             <Grid Grid.Row="0" Margin="0,0,0,30">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Module Title and Info -->
+                <!--  Module Title and Info  -->
                 <StackPanel Grid.Column="0">
-                    <!-- Back Button -->
-                    <Button Style="{StaticResource GrayGradientButton}"
-                            HorizontalAlignment="Left"
-                            Command="{Binding BackCommand}"
-                            Padding="8,6"
-                            Margin="0,0,0,15"
-                            ToolTip="Back to Modules">
+                    <!--  Back Button  -->
+                    <Button
+                        Margin="0,0,0,15"
+                        Padding="8,6"
+                        HorizontalAlignment="Left"
+                        Command="{Binding BackCommand}"
+                        Style="{StaticResource GrayGradientButton}"
+                        ToolTip="Back to Modules">
                         <StackPanel Orientation="Horizontal">
-                            <MaIc:MaterialIcon Kind="ArrowLeft" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Back to Modules" FontSize="12"/>
+                            <MaIc:MaterialIcon
+                                Width="16"
+                                Height="16"
+                                Margin="0,0,6,0"
+                                Kind="ArrowLeft" />
+                            <TextBlock FontSize="12" Text="Back to Modules" />
                         </StackPanel>
                     </Button>
 
-                    <!-- Module Name -->
-                    <TextBlock Text="{Binding ModuleName, FallbackValue='Advanced Programming and Data Structures'}"
-                               FontSize="36"
-                               FontWeight="Bold"
-                               Foreground="White"
-                               Margin="0,0,0,8"/>
+                    <!--  Module Name  -->
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="36"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="{Binding ModuleName, FallbackValue='Advanced Programming and Data Structures'}" />
 
-                    <!-- Module Subtitle -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <MaIc:MaterialIcon Kind="BookOpenPageVariant" 
-                                           Width="16" Height="16" 
-                                           Foreground="#A0AEC0"
-                                           VerticalAlignment="Center"
-                                           Margin="0,0,6,0"/>
-                        <TextBlock Text="Module Overview" 
-                                   FontSize="14" 
-                                   Foreground="#A0AEC0"
-                                   VerticalAlignment="Center"/>
+                    <!--  Module Subtitle  -->
+                    <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,6,0"
+                            VerticalAlignment="Center"
+                            Foreground="#A0AEC0"
+                            Kind="BookOpenPageVariant" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            Foreground="#A0AEC0"
+                            Text="Module Overview" />
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Action Buttons -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
-                    <Button Style="{StaticResource GrayGradientButton}"
-                            Padding="10,8"
-                            Margin="0,0,10,0"
-                            ToolTip="Edit Module">
+                <!--  Action Buttons  -->
+                <StackPanel
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal">
+                    <Button
+                        Margin="0,0,10,0"
+                        Padding="10,8"
+                        Style="{StaticResource GrayGradientButton}"
+                        ToolTip="Edit Module">
                         <StackPanel Orientation="Horizontal">
-                            <MaIc:MaterialIcon Kind="EditOutline" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Edit" FontSize="12"/>
+                            <MaIc:MaterialIcon
+                                Width="16"
+                                Height="16"
+                                Margin="0,0,6,0"
+                                Kind="EditOutline" />
+                            <TextBlock FontSize="12" Text="Edit" />
                         </StackPanel>
                     </Button>
 
-                    <Button Style="{StaticResource RedGradientButtonThinBorder}"
-                            Padding="10,8"
-                            Command="{Binding DeleteModuleCommand}"
-                            CommandParameter="{Binding Module}"
-                            ToolTip="Delete Module">
+                    <Button
+                        Padding="10,8"
+                        Command="{Binding DeleteModuleCommand}"
+                        CommandParameter="{Binding Module}"
+                        Style="{StaticResource RedGradientButtonThinBorder}"
+                        ToolTip="Delete Module">
                         <StackPanel Orientation="Horizontal">
-                            <MaIc:MaterialIcon Kind="DeleteOutline" Width="16" Height="16" Margin="0,0,6,0"/>
-                            <TextBlock Text="Delete" FontSize="12"/>
+                            <MaIc:MaterialIcon
+                                Width="16"
+                                Height="16"
+                                Margin="0,0,6,0"
+                                Kind="DeleteOutline" />
+                            <TextBlock FontSize="12" Text="Delete" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
 
-            <!-- QUICK METRICS -->
+            <!--  QUICK METRICS  -->
             <Grid Grid.Row="1" Margin="0,0,0,30">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Credits Card -->
+                <!--  Credits Card  -->
                 <Border Grid.Column="0" Style="{StaticResource MetricCard}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                            <MaIc:MaterialIcon Kind="Star" Width="20" Height="20" Foreground="#F6E05E" Margin="0,0,8,0"/>
-                            <TextBlock Text="Credits" Style="{StaticResource LabelText}"/>
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <MaIc:MaterialIcon
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                Foreground="#F6E05E"
+                                Kind="Star" />
+                            <TextBlock Style="{StaticResource LabelText}" Text="Credits" />
                         </StackPanel>
-                        <TextBlock Text="{Binding Module.ModuleCredits, FallbackValue=6}" 
-                                   FontSize="24" 
-                                   FontWeight="Bold" 
-                                   Foreground="#F6E05E"/>
-                        <TextBlock Text="ECTS Points" 
-                                   FontSize="10" 
-                                   Foreground="#A0AEC0"/>
+                        <TextBlock
+                            FontSize="24"
+                            FontWeight="Bold"
+                            Foreground="#F6E05E"
+                            Text="{Binding Module.ModuleCredits, FallbackValue=6}" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="#A0AEC0"
+                            Text="ECTS Points" />
                     </StackPanel>
                 </Border>
 
-                <!-- Status Card -->
+                <!--  Status Card  -->
                 <Border Grid.Column="1" Style="{StaticResource MetricCard}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                            <MaIc:MaterialIcon Kind="CheckCircle" Width="20" Height="20" Foreground="#68D391" Margin="0,0,8,0"/>
-                            <TextBlock Text="Status" Style="{StaticResource LabelText}"/>
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <MaIc:MaterialIcon
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                Foreground="#68D391"
+                                Kind="CheckCircle" />
+                            <TextBlock Style="{StaticResource LabelText}" Text="Status" />
                         </StackPanel>
-                        <TextBlock Text="{Binding Module.ExamStatus, FallbackValue='In Progress'}" 
-                                   FontSize="24" 
-                                   FontWeight="Bold" 
-                                   Foreground="#68D391"/>
-                        <TextBlock Text="Current Status" 
-                                   FontSize="10" 
-                                   Foreground="#A0AEC0"/>
+                        <TextBlock
+                            FontSize="24"
+                            FontWeight="Bold"
+                            Foreground="#68D391"
+                            Text="{Binding Module.ExamStatus, FallbackValue='In Progress'}" />
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="#A0AEC0"
+                            Text="Current Status" />
                     </StackPanel>
                 </Border>
 
-                <!-- Grade Card -->
+                <!--  Grade Card  -->
                 <Border Grid.Column="2" Style="{StaticResource MetricCard}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                            <MaIc:MaterialIcon Kind="Trophy" Width="20" Height="20" Foreground="#9F7AEA" Margin="0,0,8,0"/>
-                            <TextBlock Text="Grade" Style="{StaticResource LabelText}"/>
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <MaIc:MaterialIcon
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                Foreground="#9F7AEA"
+                                Kind="Trophy" />
+                            <TextBlock Style="{StaticResource LabelText}" Text="Grade" />
                         </StackPanel>
-                        <TextBlock FontSize="24" FontWeight="Bold" Foreground="#9F7AEA">
+                        <TextBlock
+                            FontSize="24"
+                            FontWeight="Bold"
+                            Foreground="#9F7AEA">
                             <TextBlock.Text>
-                                <Binding Path="Module.Grade" StringFormat="F1" FallbackValue="2.3" TargetNullValue="N/A"/>
+                                <Binding
+                                    FallbackValue="2.3"
+                                    Path="Module.Grade"
+                                    StringFormat="F1"
+                                    TargetNullValue="N/A" />
                             </TextBlock.Text>
                         </TextBlock>
-                        <TextBlock Text="Final Grade" 
-                                   FontSize="10" 
-                                   Foreground="#A0AEC0"/>
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="#A0AEC0"
+                            Text="Final Grade" />
                     </StackPanel>
                 </Border>
 
-                <!-- Study Time Card -->
+                <!--  Study Time Card  -->
                 <Border Grid.Column="3" Style="{StaticResource MetricCard}">
                     <StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
-                            <MaIc:MaterialIcon Kind="Clock" Width="20" Height="20" Foreground="#4FD1C7" Margin="0,0,8,0"/>
-                            <TextBlock Text="Study Time" Style="{StaticResource LabelText}"/>
+                        <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                            <MaIc:MaterialIcon
+                                Width="20"
+                                Height="20"
+                                Margin="0,0,8,0"
+                                Foreground="#4FD1C7"
+                                Kind="Clock" />
+                            <TextBlock Style="{StaticResource LabelText}" Text="Study Time" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock FontSize="20" FontWeight="Bold" Foreground="#4FD1C7">
-                                
-                            </TextBlock>
+                            <TextBlock
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="#4FD1C7"
+                                Text="{Binding LearnedMinutes}" />
                         </StackPanel>
-                        <TextBlock Text="Total Time" 
-                                   FontSize="10" 
-                                   Foreground="#A0AEC0"/>
+                        <TextBlock
+                            FontSize="12"
+                            Foreground="#A0AEC0"
+                            Text="Total Time" />
                     </StackPanel>
                 </Border>
             </Grid>
 
-            <!-- MAIN CONTENT -->
+            <!--  MAIN CONTENT  -->
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Left Column -->
+                <!--  Left Column  -->
                 <StackPanel Grid.Column="0">
-                    <!-- Module Details Card -->
+                    <!--  Module Details Card  -->
                     <Border Style="{StaticResource InfoCard}">
                         <StackPanel>
-                            <TextBlock Text="Module Details" Style="{StaticResource HeaderText}"/>
+                            <TextBlock Style="{StaticResource HeaderText}" Text="Module Details" />
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <!-- Semester -->
-                                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,15">
-                                    <TextBlock Text="Semester" Style="{StaticResource LabelText}"/>
-                                    <TextBlock Text="{Binding Module.Semester.Name, FallbackValue='Winter 2024/25'}" Style="{StaticResource ValueText}"/>
+                                <!--  Semester  -->
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Margin="0,0,10,15">
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Semester" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding Module.Semester.Name, FallbackValue='Winter 2024/25'}" />
                                 </StackPanel>
 
-                                <!-- Created Date -->
-                                <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,15">
-                                    <TextBlock Text="Created" Style="{StaticResource LabelText}"/>
-                                    <TextBlock Text="{Binding Module.CreatedString, FallbackValue='15.01.2024'}" Style="{StaticResource ValueText}"/>
+                                <!--  Created Date  -->
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="10,0,0,15">
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Created" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding Module.CreatedString, FallbackValue='15.01.2024'}" />
                                 </StackPanel>
 
-                                <!-- Exam Date -->
-                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,15">
-                                    <TextBlock Text="Exam Date" Style="{StaticResource LabelText}"/>
+                                <!--  Exam Date  -->
+                                <StackPanel
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="0,0,10,15">
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Exam Date" />
                                     <TextBlock Style="{StaticResource ValueText}">
                                         <TextBlock.Text>
-                                            <Binding Path="Module.ExamDate" StringFormat="dd.MM.yyyy" FallbackValue="15.07.2024" TargetNullValue="Not Set"/>
+                                            <Binding
+                                                FallbackValue="15.07.2024"
+                                                Path="Module.ExamDate"
+                                                StringFormat="dd.MM.yyyy"
+                                                TargetNullValue="Not Set" />
                                         </TextBlock.Text>
                                     </TextBlock>
                                 </StackPanel>
 
-                                <!-- Module ID -->
-                                <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,15">
-                                    <TextBlock Text="Module ID" Style="{StaticResource LabelText}"/>
-                                    <TextBlock Text="{Binding Module.Id, FallbackValue='001'}" Style="{StaticResource ValueText}"/>
+                                <!--  Module ID  -->
+                                <StackPanel
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="10,0,0,15">
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Days till Exam" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding DayTillExam, FallbackValue='Unknown'}" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </Border>
 
-                    <!-- Progress Card -->
+                    <!--  Progress Card  -->
                     <Border Style="{StaticResource InfoCard}">
                         <StackPanel>
-                            <TextBlock Text="Study Progress" Style="{StaticResource HeaderText}"/>
+                            <TextBlock Style="{StaticResource HeaderText}" Text="Study Progress" />
 
-                            <!-- Progress Bar -->
+                            <!--  Progress Bar  -->
                             <Grid Margin="0,0,0,15">
-                                <Border Background="#2A2D35" CornerRadius="10" Height="20">
-                                    <Border Background="#4FD1C7" 
-                                            CornerRadius="10" 
-                                            HorizontalAlignment="Left" 
-                                            Width="120"/>
-                                </Border>
-                                <TextBlock Text="60% Complete" 
-                                           HorizontalAlignment="Center" 
-                                           VerticalAlignment="Center"
-                                           FontSize="11" 
-                                           FontWeight="SemiBold"
-                                           Foreground="White"/>
+                                <!--<Border
+                                    Height="20"
+                                    Background="#2A2D35"
+                                    CornerRadius="10">
+                                    <Border
+                                        Width="120"
+                                        HorizontalAlignment="Left"
+                                        Background="#4FD1C7"
+                                        CornerRadius="10" />
+                                </Border>-->
+                                <ProgressBar
+                                    Height="20"
+                                    Background="#2A2D35"
+                                    Foreground="#1762ad"
+                                    Maximum="{Binding TotalMinutesGoal}"
+                                    Style="{StaticResource RoundedProgressBar}"
+                                    Value="{Binding Module.LearnedMinutes}" />
                             </Grid>
 
-                            <!-- Study Sessions -->
+                            <Button
+                                Height="40"
+                                Command="{Binding AddMin}"
+                                CommandParameter="15" />
+
+                            <!--  Study Sessions  -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Sessions" Style="{StaticResource LabelText}"/>
-                                    <TextBlock Text="12" Style="{StaticResource ValueText}"/>
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Sessions" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="12" />
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
-                                    <TextBlock Text="Avg. Session" Style="{StaticResource LabelText}"/>
-                                    <TextBlock Text="1h 15m" Style="{StaticResource ValueText}"/>
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Avg. Session" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="1h 15m" />
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Text="Goal" Style="{StaticResource LabelText}"/>
-                                    <TextBlock Text="25h" Style="{StaticResource ValueText}"/>
+                                <StackPanel Grid.Column="2" ToolTip="Time is calculated based on ECTS Points, minus a Lecture threshold of around 900min">
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Goal" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding LearnTimeGoal}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="3">
+                                    <TextBlock Style="{StaticResource LabelText}" Text="Min. Learned" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding LearnedMinutes}" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </Border>
                 </StackPanel>
 
-                <!-- Right Column -->
+                <!--  Right Column  -->
                 <StackPanel Grid.Column="1">
-                    <!-- Quick Actions Card -->
+                    <!--  Quick Actions Card  -->
                     <Border Style="{StaticResource InfoCard}">
                         <StackPanel>
-                            <TextBlock Text="Quick Actions" Style="{StaticResource HeaderText}"/>
+                            <TextBlock Style="{StaticResource HeaderText}" Text="Quick Actions" />
 
-                            <Button Style="{StaticResource GradientButton}" 
-                                    Margin="0,0,0,10"
-                                    Padding="12,8">
+                            <Button
+                                Margin="0,0,0,10"
+                                Padding="12,8"
+                                Style="{StaticResource GradientButton}">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="Play" Width="16" Height="16" Margin="0,0,8,0"/>
-                                    <TextBlock Text="Start Study Session"/>
+                                    <MaIc:MaterialIcon
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,8,0"
+                                        Kind="Play" />
+                                    <TextBlock Text="Start Study Session" />
                                 </StackPanel>
                             </Button>
 
-                            <Button Style="{StaticResource GrayGradientButton}" 
-                                    Margin="0,0,0,10"
-                                    Padding="12,8">
+                            <Button
+                                Margin="0,0,0,10"
+                                Padding="12,8"
+                                Style="{StaticResource GrayGradientButton}">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="BookOpenVariant" Width="16" Height="16" Margin="0,0,8,0"/>
-                                    <TextBlock Text="View Notes"/>
+                                    <MaIc:MaterialIcon
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,8,0"
+                                        Kind="BookOpenVariant" />
+                                    <TextBlock Text="View Notes" />
                                 </StackPanel>
                             </Button>
 
-                            <Button Style="{StaticResource GrayGradientButton}" 
-                                    Margin="0,0,0,10"
-                                    Padding="12,8">
+                            <Button
+                                Margin="0,0,0,10"
+                                Padding="12,8"
+                                Style="{StaticResource GrayGradientButton}">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="CalendarPlus" Width="16" Height="16" Margin="0,0,8,0"/>
-                                    <TextBlock Text="Schedule Study"/>
+                                    <MaIc:MaterialIcon
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,8,0"
+                                        Kind="CalendarPlus" />
+                                    <TextBlock Text="Schedule Study" />
                                 </StackPanel>
                             </Button>
 
-                            <Button Style="{StaticResource GrayGradientButton}" 
-                                    Padding="12,8">
+                            <Button Padding="12,8" Style="{StaticResource GrayGradientButton}">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="ChartLine" Width="16" Height="16" Margin="0,0,8,0"/>
-                                    <TextBlock Text="View Statistics"/>
+                                    <MaIc:MaterialIcon
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0,0,8,0"
+                                        Kind="ChartLine" />
+                                    <TextBlock Text="View Statistics" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
                     </Border>
 
-                    <!-- Recent Activity Card -->
+                    <!--  Recent Activity Card  -->
                     <Border Style="{StaticResource InfoCard}">
                         <StackPanel>
-                            <TextBlock Text="Recent Activity" Style="{StaticResource HeaderText}"/>
+                            <TextBlock Style="{StaticResource HeaderText}" Text="Recent Activity" />
 
-                            <!-- Activity Items -->
+                            <!--  Activity Items  -->
                             <StackPanel>
-                                <Border Background="#2A2D35" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+                                <Border
+                                    Margin="0,0,0,8"
+                                    Padding="10"
+                                    Background="#2A2D35"
+                                    CornerRadius="6">
                                     <StackPanel>
-                                        <TextBlock Text="Study Session Completed" 
-                                                   FontSize="12" 
-                                                   FontWeight="Medium" 
-                                                   Foreground="#E0E0E0"/>
-                                        <TextBlock Text="2 hours ago • 1h 30m" 
-                                                   FontSize="10" 
-                                                   Foreground="#A0AEC0"/>
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="Medium"
+                                            Foreground="#E0E0E0"
+                                            Text="Study Session Completed" />
+                                        <TextBlock
+                                            FontSize="10"
+                                            Foreground="#A0AEC0"
+                                            Text="2 hours ago • 1h 30m" />
                                     </StackPanel>
                                 </Border>
 
-                                <Border Background="#2A2D35" CornerRadius="6" Padding="10" Margin="0,0,0,8">
+                                <Border
+                                    Margin="0,0,0,8"
+                                    Padding="10"
+                                    Background="#2A2D35"
+                                    CornerRadius="6">
                                     <StackPanel>
-                                        <TextBlock Text="Notes Updated" 
-                                                   FontSize="12" 
-                                                   FontWeight="Medium" 
-                                                   Foreground="#E0E0E0"/>
-                                        <TextBlock Text="1 day ago" 
-                                                   FontSize="10" 
-                                                   Foreground="#A0AEC0"/>
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="Medium"
+                                            Foreground="#E0E0E0"
+                                            Text="Notes Updated" />
+                                        <TextBlock
+                                            FontSize="10"
+                                            Foreground="#A0AEC0"
+                                            Text="1 day ago" />
                                     </StackPanel>
                                 </Border>
 
-                                <Border Background="#2A2D35" CornerRadius="6" Padding="10">
+                                <Border
+                                    Padding="10"
+                                    Background="#2A2D35"
+                                    CornerRadius="6">
                                     <StackPanel>
-                                        <TextBlock Text="Module Created" 
-                                                   FontSize="12" 
-                                                   FontWeight="Medium" 
-                                                   Foreground="#E0E0E0"/>
-                                        <TextBlock Text="3 days ago" 
-                                                   FontSize="10" 
-                                                   Foreground="#A0AEC0"/>
+                                        <TextBlock
+                                            FontSize="12"
+                                            FontWeight="Medium"
+                                            Foreground="#E0E0E0"
+                                            Text="Module Created" />
+                                        <TextBlock
+                                            FontSize="10"
+                                            Foreground="#A0AEC0"
+                                            Text="3 days ago" />
                                     </StackPanel>
                                 </Border>
                             </StackPanel>

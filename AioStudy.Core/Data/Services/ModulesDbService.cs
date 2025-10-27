@@ -68,6 +68,37 @@ namespace AioStudy.Core.Data.Services
             }
         }
 
+        public async Task<bool> UpdateModuleAsync(Module module)
+        {
+            if (module == null) return false;
+
+            try
+            {
+                var existing = await _moduleRepository.GetByIdAsync(module.Id);
+                if (existing == null)
+                    return false;
+
+                existing.Name = module.Name;
+                existing.ExamDate = module.ExamDate;
+                existing.ExamStatus = module.ExamStatus;
+                existing.Grade = module.Grade;
+                existing.ModuleCredits = module.ModuleCredits;
+                existing.Color = module.Color;
+                existing.SemesterId = module.SemesterId;
+                existing.LearnedMinutes = module.LearnedMinutes;
+                existing.ModuleAttempt = module.ModuleAttempt;
+
+                // Persist
+                await _moduleRepository.UpdateAsync(existing);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+
         public async Task<IEnumerable<Module>> GetAllModulesAsync()
         {
             return await _moduleRepository.GetAllAsync();
