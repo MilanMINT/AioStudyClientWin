@@ -16,7 +16,6 @@
 
     <Border
         x:Name="CardBorder"
-        Background="#1F2024"
         BorderThickness="2"
         CornerRadius="8"
         RenderTransformOrigin="0.5,0.5">
@@ -26,7 +25,7 @@
                 x:Name="CardShadow"
                 BlurRadius="4"
                 Direction="270"
-                Opacity="0.9"
+                Opacity="0.2"
                 ShadowDepth="2"
                 Color="Black" />
         </Border.Effect>
@@ -45,12 +44,18 @@
             </LinearGradientBrush>
         </Border.BorderBrush>
 
+        <Border.Background>
+            <LinearGradientBrush>
+                <GradientStop Offset="0.0" Color="#1F2024" />
+                <GradientStop Offset="1.0" Color="#1A1B1E" />
+            </LinearGradientBrush>
+        </Border.Background>
+
         <Border.Triggers>
             <!--  MouseEnter: Vergrößern + Farbe ändern  -->
             <EventTrigger RoutedEvent="MouseEnter">
                 <BeginStoryboard>
                     <Storyboard>
-
                         <!--  DropShadow Animation  -->
                         <DoubleAnimation
                             Storyboard.TargetName="CardShadow"
@@ -170,30 +175,22 @@
             </Grid.ColumnDefinitions>
 
             <DockPanel Grid.ColumnSpan="2" LastChildFill="False">
-                <!--  ECTS Badge  -->
-                <Border
-                    Grid.Column="1"
-                    Width="auto"
-                    Margin="5,0,15,0"
-                    Padding="7,3"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    CornerRadius="12"
-                    DockPanel.Dock="Right">
-                    <Border.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                            <GradientStop Offset="0" Color="#4A5568" />
-                            <GradientStop Offset="1" Color="#2D3748" />
-                        </LinearGradientBrush>
-                    </Border.Background>
 
+                <Border
+                    Height="35"
+                    Margin="0,0,10,0"
+                    Padding="12,6"
+                    Background="#282A2E"
+                    BorderBrush="#51565C"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    DockPanel.Dock="Right">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock
-                            FontSize="15"
+                            FontSize="14"
                             FontWeight="SemiBold"
-                            Foreground="#A0AEC0"
-                            Text="{Binding Semester.Name, FallbackValue='WiSe25/26'}"
-                            TextAlignment="Center" />
+                            Foreground="#E0E0E0"
+                            Text="{Binding Semester.Name, FallbackValue='Not set!'}" />
                     </StackPanel>
                 </Border>
                 <TextBlock
@@ -204,7 +201,7 @@
                     FontSize="23"
                     FontWeight="Bold"
                     Foreground="#E0E0E0"
-                    Text="{Binding Name, FallbackValue='d32d23 23d 2d23d2 3d2d23d23dd23d2d d2d23d2'}"
+                    Text="{Binding Name, FallbackValue='Not set!'}"
                     TextTrimming="CharacterEllipsis"
                     ToolTip="{Binding Name}" />
             </DockPanel>

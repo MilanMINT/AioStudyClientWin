@@ -17,6 +17,7 @@ namespace AioStudy.UI.ViewModels
     {
         private readonly SemesterDbService _semesterDbService;
         private MainViewModel _mainViewModel;
+        private ModulesViewModel _modulesViewModel;
 
         private ObservableCollection<Semester> _semesters;
         private bool _isLoading;
@@ -47,9 +48,10 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand OpenSpecificModulesViewCMD { get; }
         public RelayCommand OpenSemesterOverviewCommand { get; }
 
-        public SemesterViewModel(SemesterDbService semesterDbService)
+        public SemesterViewModel(SemesterDbService semesterDbService, ModulesViewModel modulesViewModel)
         {
             _semesterDbService = semesterDbService;
+            _modulesViewModel = modulesViewModel;
             Semesters = new ObservableCollection<Semester>();
 
             LoadSemestersCommand = new RelayCommand(async _ => await LoadSemestersAsync());
@@ -156,6 +158,7 @@ namespace AioStudy.UI.ViewModels
                     if (success)
                     {
                         Semesters.Remove(semester);
+                        await _modulesViewModel.LoadModulesBySemesterAsync();
                     }
                 }
                 catch (Exception ex)

@@ -14,20 +14,24 @@
     <Border
         Margin="0,8"
         Padding="20"
-        Background="#2A2D35"
         BorderThickness="2"
-        CornerRadius="8"
-        SnapsToDevicePixels="True"
-        UseLayoutRounding="True">
+        CornerRadius="8">
         <Border.Effect>
             <DropShadowEffect
                 x:Name="CardShadow"
                 BlurRadius="4"
                 Direction="270"
-                Opacity="0.9"
+                Opacity="0.2"
                 ShadowDepth="2"
                 Color="Black" />
         </Border.Effect>
+
+        <Border.Background>
+            <LinearGradientBrush>
+                <GradientStop Offset="0.0" Color="#1F2024" />
+                <GradientStop Offset="1.0" Color="#1A1B1E" />
+            </LinearGradientBrush>
+        </Border.Background>
 
         <!--  Transform für Scaling hinzufügen  -->
         <Border.RenderTransform>
@@ -38,7 +42,7 @@
             <LinearGradientBrush>
                 <GradientStop Offset="0.0" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#608BC1}" />
                 <GradientStop Offset="1.0" Color="#133E87" />
-                <GradientStop Offset="0.5" Color="#a5bacc" />
+                <GradientStop Offset="0.5" Color="#6A8BA8" />
             </LinearGradientBrush>
         </Border.BorderBrush>
 
@@ -52,7 +56,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="CardShadow"
                             Storyboard.TargetProperty="ShadowDepth"
-                            To="5"
+                            To="3"
                             Duration="0:0:0.3">
                             <DoubleAnimation.EasingFunction>
                                 <QuadraticEase EasingMode="EaseOut" />
@@ -172,10 +176,10 @@
                         Foreground="#B0B3BA"
                         Text="{Binding StartDateString}"
                         UseLayoutRounding="True" />
-                    <TextBlock 
+                    <TextBlock
                         FontSize="12"
                         Foreground="#B0B3BA"
-                        Text=" --> "/>
+                        Text=" --&gt; " />
                     <TextBlock
                         FontSize="12"
                         Foreground="#B0B3BA"
