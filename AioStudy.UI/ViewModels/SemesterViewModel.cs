@@ -9,6 +9,7 @@ using AioStudy.UI.Commands;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.ViewModels.Forms;
 using System.Windows.Media.Animation;
+using System.Windows;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -44,6 +45,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand AddSemesterCommand { get; }
         public RelayCommand DeleteSemesterCommand { get; }
         public RelayCommand OpenSpecificModulesViewCMD { get; }
+        public RelayCommand OpenSemesterOverviewCommand { get; }
 
         public SemesterViewModel(SemesterDbService semesterDbService)
         {
@@ -53,9 +55,15 @@ namespace AioStudy.UI.ViewModels
             LoadSemestersCommand = new RelayCommand(async _ => await LoadSemestersAsync());
             AddSemesterCommand = new RelayCommand(async _ => await AddSampleSemesterAsync());
             DeleteSemesterCommand = new RelayCommand(async param => await DeleteSemesterAsync(param));
+            OpenSemesterOverviewCommand = new RelayCommand(_ => OpenSemesterOverview());
             //OpenSpecificModulesViewCMD = new RelayCommand(OpenModulesBySemester);
 
             _ = LoadSemestersAsync();
+        }
+
+        private void OpenSemesterOverview()
+        {
+            MessageBox.Show("Open!");
         }
 
         //private void OpenModulesBySemester(object? obj)

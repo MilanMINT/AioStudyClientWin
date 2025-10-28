@@ -166,24 +166,22 @@
                     Text="{Binding Name, FallbackValue=TestSemster}"
                     UseLayoutRounding="True" />
 
-                <TextBlock
-                    Margin="0,0,0,6"
-                    FontSize="13"
-                    Foreground="#B0B3BA"
-                    UseLayoutRounding="True">
-                    <TextBlock.Text>
-                        <MultiBinding StringFormat="📅 {0} - {1}">
-                            <Binding Path="StartDateString" />
-                            <Binding Path="EndDateString" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-
-                <TextBlock
-                    FontSize="11"
-                    Foreground="#8A8D95"
-                    Text="{Binding CreatedString, StringFormat='🕒 Erstellt: {0}'}"
-                    UseLayoutRounding="True" />
+                <DockPanel LastChildFill="False">
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="#B0B3BA"
+                        Text="{Binding StartDateString}"
+                        UseLayoutRounding="True" />
+                    <TextBlock 
+                        FontSize="12"
+                        Foreground="#B0B3BA"
+                        Text=" --> "/>
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="#B0B3BA"
+                        Text="{Binding EndDateString}"
+                        UseLayoutRounding="True" />
+                </DockPanel>
             </StackPanel>
 
             <!--  Module Count with better styling  -->
