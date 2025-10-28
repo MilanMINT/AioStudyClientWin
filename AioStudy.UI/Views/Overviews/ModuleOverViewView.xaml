@@ -451,15 +451,7 @@
                                     Grid.Column="0"
                                     Margin="0,0,10,15">
                                     <TextBlock Style="{StaticResource LabelText}" Text="Exam Date" />
-                                    <TextBlock Style="{StaticResource ValueText}">
-                                        <TextBlock.Text>
-                                            <Binding
-                                                FallbackValue="15.07.2024"
-                                                Path="Module.ExamDate"
-                                                StringFormat="dd.MM.yyyy"
-                                                TargetNullValue="Not Set" />
-                                        </TextBlock.Text>
-                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding Module.ExamDateString, FallbackValue='15.07.2024', TargetNullValue='Not Set'}" />
                                 </StackPanel>
 
                                 <!--  Module ID  -->

@@ -457,13 +457,13 @@
 
 
             <!--  Gradient TextBox Style - Nur Aussehen, keine Funktionalität ändern  -->
+            <!--  Gradient TextBox Style - use default control template from the toolkit  -->
             <Style x:Key="GradientTextBox" TargetType="xctk:WatermarkTextBox">
                 <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="FontWeight" Value="Normal" />
                 <Setter Property="Height" Value="40" />
-                <Setter Property="Padding" Value="5,0,0,0" />
                 <Setter Property="UseLayoutRounding" Value="True" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="Background" Value="#2A2D35" />
@@ -482,70 +482,47 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="xctk:WatermarkTextBox">
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
                                 <Border
-                                    x:Name="border"
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="6"
-                                    SnapsToDevicePixels="True"
-                                    UseLayoutRounding="True">
-
+                                    CornerRadius="8">
                                     <ScrollViewer
                                         x:Name="PART_ContentHost"
                                         Margin="{TemplateBinding Padding}"
-                                        VerticalAlignment="Center"
                                         Background="Transparent"
-                                        BorderThickness="0"
-                                        IsTabStop="False" />
+                                        HorizontalScrollBarVisibility="Hidden"
+                                        VerticalScrollBarVisibility="Hidden" />
                                 </Border>
 
-                                <Border
-                                    x:Name="shadowEffect"
-                                    Margin="0,2,0,-2"
-                                    Background="Transparent"
-                                    CornerRadius="6"
-                                    Opacity="0.2">
-                                    <Border.Effect>
-                                        <DropShadowEffect
-                                            BlurRadius="3"
-                                            Direction="270"
-                                            Opacity="1"
-                                            ShadowDepth="1"
-                                            Color="#4A5568" />
-                                    </Border.Effect>
-                                </Border>
+                                <ContentPresenter
+                                    x:Name="WatermarkContentPresenter"
+                                    Grid.Column="0"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Content="{TemplateBinding Watermark}"
+                                    IsHitTestVisible="False"
+                                    Opacity="0.29"
+                                    Visibility="Collapsed" />
                             </Grid>
 
                             <ControlTemplate.Triggers>
-                                <!--  Focus Effect  -->
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="Text" Value="" />
+                                        <Condition Property="IsFocused" Value="False" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="WatermarkContentPresenter" Property="Visibility" Value="Visible" />
+                                </MultiTrigger>
+
                                 <Trigger Property="IsFocused" Value="True">
-                                    <Setter TargetName="border" Property="BorderBrush">
-                                        <Setter.Value>
-                                            <LinearGradientBrush>
-                                                <GradientStop Offset="0.0" Color="#7BA3D3" />
-                                                <GradientStop Offset="1.0" Color="#1E4A99" />
-                                                <GradientStop Offset="0.7" Color="#B5C7DA" />
-                                            </LinearGradientBrush>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter TargetName="border" Property="Background" Value="#353842" />
-                                    <Setter TargetName="shadowEffect" Property="Opacity" Value="0.4" />
-                                    <Setter TargetName="shadowEffect" Property="Margin" Value="0,3,0,-3" />
+                                    <Setter TargetName="WatermarkContentPresenter" Property="Visibility" Value="Collapsed" />
                                 </Trigger>
 
-                                <!--  MouseOver Effect  -->
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="#353842" />
-                                    <Setter TargetName="shadowEffect" Property="Opacity" Value="0.3" />
-                                </Trigger>
-
-                                <!--  Disabled Effect  -->
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="border" Property="Background" Value="#2D2D30" />
-                                    <Setter TargetName="border" Property="BorderBrush" Value="#4D4D50" />
-                                    <Setter Property="Foreground" Value="#808080" />
-                                </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>

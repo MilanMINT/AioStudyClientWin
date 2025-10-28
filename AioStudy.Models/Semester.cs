@@ -15,6 +15,8 @@ namespace AioStudy.Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        [Required]
+        public int LearnedSemesterMinutes { get; set; } = 0;
         [AllowNull]
         public DateTime StartDate { get; set; }
         [AllowNull]

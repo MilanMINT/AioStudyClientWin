@@ -152,6 +152,7 @@
         <ScrollViewer
             Grid.Row="3"
             Margin="15"
+            Padding="10,0,10,0"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <ScrollViewer.Resources>

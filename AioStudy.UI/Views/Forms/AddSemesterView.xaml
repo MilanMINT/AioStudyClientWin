@@ -1,125 +1,141 @@
-﻿<Window x:Class="AioStudy.UI.Views.Forms.AddSemesterView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AioStudy.UI.Views.Forms"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        mc:Ignorable="d"
-        Title="AddSemesterView" Height="700" Width="500"
-        WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        UseLayoutRounding="True"
-        SnapsToDevicePixels="True">
+﻿<Window
+    x:Class="AioStudy.UI.Views.Forms.AddSemesterView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AioStudy.UI.Views.Forms"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    Title="AddSemesterView"
+    Width="500"
+    Height="700"
+    AllowsTransparency="True"
+    Background="Transparent"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
+    WindowStyle="None"
+    mc:Ignorable="d">
 
-    <Border CornerRadius="6"
-        BorderThickness="1.5" Background="#212226">
+    <Border
+        Background="#212226"
+        BorderThickness="1.5"
+        CornerRadius="6">
         <Border.BorderBrush>
             <LinearGradientBrush>
-                <GradientStop Color="#608BC1" Offset="0.0"/>
-                <GradientStop Color="#133E87" Offset="1.0"/>
-                <GradientStop Color="#a5bacc" Offset="0.7"/>
+                <GradientStop Offset="0.0" Color="#608BC1" />
+                <GradientStop Offset="1.0" Color="#133E87" />
+                <GradientStop Offset="0.7" Color="#a5bacc" />
             </LinearGradientBrush>
         </Border.BorderBrush>
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="70"/>
-                <RowDefinition Height="1"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="1"/>
-                <RowDefinition Height="70"/>
+                <RowDefinition Height="70" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="70" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="1" 
-                    Background="#3A3D45" 
-                    Height="1" 
-                    Margin="20,0"/>
-            <Border Grid.Row="3" 
-                    Background="#3A3D45" 
-                    Height="1" 
-                    Margin="20,0"/>
+            <Border
+                Grid.Row="1"
+                Height="1"
+                Margin="20,0"
+                Background="#3A3D45" />
+            <Border
+                Grid.Row="3"
+                Height="1"
+                Margin="20,0"
+                Background="#3A3D45" />
 
 
-            <Border Grid.Row="0" x:Name="AddSemesterControll" 
-                    MouseLeftButtonDown="AddSemesterControll_MouseLeftButtonDown"
-                    Background="Transparent">
-                
-            </Border>
+            <Border
+                x:Name="AddSemesterControll"
+                Grid.Row="0"
+                Background="Transparent"
+                MouseLeftButtonDown="AddSemesterControll_MouseLeftButtonDown" />
 
             <StackPanel Grid.Row="2" Margin="30">
-                <!-- Semester Name Input -->
+                <!--  Semester Name Input  -->
                 <StackPanel>
-                    <Label Content="Semestername"
-                           Foreground="#E6E5E5"
-                           FontSize="14"
-                           FontWeight="Bold"/>
-                    <xctk:WatermarkTextBox x:Name="SemesterNameTextBox"
-                                          Style="{StaticResource GradientTextBox}"
-                                          Watermark="Semester Name eingeben..."
-                                          Margin="0,5"
-                                          Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"/>
+                    <Label
+                        Content="Semestername"
+                        FontSize="14"
+                        FontWeight="Bold"
+                        Foreground="#E6E5E5" />
+                    <xctk:WatermarkTextBox
+                        x:Name="SemesterNameTextBox"
+                        Margin="0,5"
+                        Style="{StaticResource GradientTextBox}"
+                        Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
+                        Watermark="Semester Name eingeben..." />
                 </StackPanel>
 
-                <!-- DatePicker Sektion - Nebeneinander -->
+                <!--  DatePicker Sektion - Nebeneinander  -->
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Start Datum -->
+                    <!--  Start Datum  -->
                     <StackPanel Grid.Column="0">
-                        <Label Content="Startdatum" 
-                               FontWeight="Bold" 
-                               Foreground="#E6E5E5" 
-                               FontSize="14"/>
-                        <DatePicker Style="{StaticResource GradientDatePicker}"
-                                    SelectedDate="{Binding IbnBeginn, Mode=TwoWay}"/>
+                        <Label
+                            Content="Startdatum"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="#E6E5E5" />
+                        <DatePicker SelectedDate="{Binding IbnBeginn, Mode=TwoWay}" Style="{StaticResource GradientDatePicker}" />
                     </StackPanel>
 
-                    <!-- End Datum -->
+                    <!--  End Datum  -->
                     <StackPanel Grid.Column="2">
-                        <Label Content="Enddatum" 
-                               FontWeight="Bold" 
-                               Foreground="#E6E5E5" 
-                               FontSize="14"/>
-                        <DatePicker Style="{StaticResource GradientDatePicker}"
-                                    SelectedDate="{Binding IbnEnde, Mode=TwoWay}"/>
+                        <Label
+                            Content="Enddatum"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="#E6E5E5" />
+                        <DatePicker
+                            Height="40"
+                            SelectedDate="{Binding IbnEnde, Mode=TwoWay}"
+                            Style="{StaticResource GradientDatePicker}" />
                     </StackPanel>
                 </Grid>
 
-                
-                <!-- Color and Desc - Nebeneinander -->
+
+                <!--  Color and Desc - Nebeneinander  -->
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="15"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0">
-                        <Label Content="Color" 
-                               FontWeight="Bold" 
-                               Foreground="#E6E5E5" 
-                               FontSize="14"/>
-                        <xctk:ColorPicker SelectedColor="{Binding SemesterColor, Mode=TwoWay}" 
-                        Style="{StaticResource GradientColorPicker}" />
+                        <Label
+                            Content="Color"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="#E6E5E5" />
+                        <xctk:ColorPicker
+                            Height="40"
+                            SelectedColor="{Binding SemesterColor, Mode=TwoWay}"
+                            Style="{StaticResource GradientColorPicker}" />
                     </StackPanel>
 
-                    <!-- Semester Name Input -->
+                    <!--  Semester Name Input  -->
                     <StackPanel Grid.Column="2">
-                        <Label Content="Description"
-                                Foreground="#E6E5E5"
-                                FontSize="14"
-                                FontWeight="Bold"/>
-                        <xctk:WatermarkTextBox x:Name="SemesterDescTextBox"
-                                               Style="{StaticResource GradientTextBox}"
-                                               Watermark="Semester Name eingeben..."
-                                               Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
-                                               Height="35"/>
+                        <Label
+                            Content="Description"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="#E6E5E5" />
+                        <xctk:WatermarkTextBox
+                            x:Name="SemesterDescTextBox"
+                            Style="{StaticResource GradientTextBox}"
+                            Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
+                            Watermark="Semester Name eingeben..." />
                     </StackPanel>
 
 
@@ -128,25 +144,27 @@
 
             </StackPanel>
 
-            <DockPanel Grid.Row="4" LastChildFill="False"
-                       Margin="0 0 30 0">
-                <Button Content="Add"
-                        Width="80"
-                        Height="40"
-                        Style="{StaticResource GreenGradientButton}"
-                        DockPanel.Dock="Right"
-                        Margin="20 0 0 0">
-                </Button>
+            <DockPanel
+                Grid.Row="4"
+                Margin="0,0,30,0"
+                LastChildFill="False">
+                <Button
+                    Width="80"
+                    Height="40"
+                    Margin="20,0,0,0"
+                    Content="Add"
+                    DockPanel.Dock="Right"
+                    Style="{StaticResource GreenGradientButton}" />
 
-                <Button Content="Cancel"
-                        Width="95"
-                        Height="40"
-                        Style="{StaticResource GrayGradientButton}"
-                        DockPanel.Dock="Right">
-                </Button>
+                <Button
+                    Width="95"
+                    Height="40"
+                    Content="Cancel"
+                    DockPanel.Dock="Right"
+                    Style="{StaticResource GrayGradientButton}" />
             </DockPanel>
-            
-            
+
+
         </Grid>
     </Border>
 </Window>

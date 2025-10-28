@@ -12,7 +12,7 @@ namespace AioStudy.UI.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return "0h 0m";
+            if (value == null || (int)value == 0) return "0h 0m";
             if (!int.TryParse(value.ToString(), out var minutes)) return "N/A";
             var ts = TimeSpan.FromMinutes(minutes);
             return $"{(int)ts.TotalHours}h {ts.Minutes}m";

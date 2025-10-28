@@ -15,6 +15,10 @@ namespace AioStudy.Models
         [Required]
         public DateTime StartTime { get; set; } = DateTime.Now;
         [AllowNull]
+        public int? LearnedModuleId { get; set; } = null;
+        [AllowNull]
+        public Module? LearnedModule { get; set; } = null;
+        [AllowNull]
         public DateTime? EndTime { get; set; } = null;
         public int CurrentLearnedMinutes { get; set; } = 0;
 

@@ -139,7 +139,7 @@ namespace AioStudy.UI.ViewModels
                     DateTime.Now.ToUniversalTime(),  // Convert to UTC
                     DateTime.Now.AddMonths(16).ToUniversalTime()  // Convert to UTC
                 );
-
+                newSemester.LearnedSemesterMinutes = 183;
                 Semesters.Add(newSemester);
             }
             catch (Exception ex)

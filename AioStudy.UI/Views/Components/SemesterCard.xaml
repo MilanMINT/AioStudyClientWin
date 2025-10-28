@@ -6,16 +6,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Height="150"
-    d:DesignHeight="150"
-    d:DesignWidth="500"
+    Height="220"
+    d:DesignHeight="220"
+    d:DesignWidth="700"
     mc:Ignorable="d">
 
     <Border
-        Margin="0,8"
-        Padding="20"
+        Margin="0,20,0,0"
+        Padding="15,5,15,15"
         BorderThickness="2"
-        CornerRadius="8">
+        CornerRadius="10">
         <Border.Effect>
             <DropShadowEffect
                 x:Name="CardShadow"
@@ -159,71 +159,138 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="31" />
+            </Grid.RowDefinitions>
 
             <!--  Semester Info  -->
-            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0,0,0,6"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <MaIc:MaterialIcon
+                    Width="30"
+                    Height="30"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Foreground="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#608BC1}"
+                    Kind="SchoolOutline" />
+                <Rectangle
+                    Width="2"
+                    Height="20"
+                    Margin="0,0,10,0"
+                    VerticalAlignment="Center"
+                    Fill="#30343E" />
                 <TextBlock
-                    Margin="0,0,0,4"
-                    FontSize="20"
+                    FontSize="22"
                     FontWeight="SemiBold"
-                    Foreground="White"
+                    Foreground="#DEDEDE"
                     Text="{Binding Name, FallbackValue=TestSemster}"
                     UseLayoutRounding="True" />
-
-                <DockPanel LastChildFill="False">
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="#B0B3BA"
-                        Text="{Binding StartDateString}"
-                        UseLayoutRounding="True" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="#B0B3BA"
-                        Text=" --&gt; " />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="#B0B3BA"
-                        Text="{Binding EndDateString}"
-                        UseLayoutRounding="True" />
-                </DockPanel>
             </StackPanel>
 
-            <!--  Module Count with better styling  -->
+
+            <!--  Separator  -->
             <Border
-                Grid.Column="2"
-                Margin="20,0"
-                Padding="12,6"
-                VerticalAlignment="Center"
-                Background="#4A90E2"
-                CornerRadius="12"
-                SnapsToDevicePixels="True"
-                UseLayoutRounding="True">
-                <StackPanel Orientation="Horizontal">
-                    <MaIc:MaterialIcon
-                        Width="16"
-                        Height="16"
-                        Margin="0,0,6,0"
-                        Foreground="White"
-                        Kind="BookOpenPageVariant" />
-                    <TextBlock
-                        FontSize="12"
-                        FontWeight="Medium"
-                        Foreground="White"
-                        Text="{Binding Converter={StaticResource ModuleCountConverter}}"
-                        UseLayoutRounding="True" />
-                </StackPanel>
-            </Border>
+                Grid.Row="1"
+                Grid.ColumnSpan="9"
+                Height="1"
+                Background="#3A3D45" />
+
+            <StackPanel
+                Grid.Row="3"
+                Height="16"
+                Margin="0,10,0,0"
+                Orientation="Horizontal">
+                <TextBlock
+                    FontSize="13"
+                    Foreground="#B0B3BA"
+                    Text="{Binding StartDateString, FallbackValue='20.02.2032'}"
+                    UseLayoutRounding="True" />
+                <MaIc:MaterialIcon
+                    Width="13"
+                    Height="13"
+                    Margin="4,0,4,0"
+                    Foreground="#545862"
+                    Kind="ArrowForwardCircle" />
+                <TextBlock
+                    FontSize="13"
+                    Foreground="#B0B3BA"
+                    Text="{Binding EndDateString, FallbackValue='20.05.2032'}"
+                    UseLayoutRounding="True" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <!--  Module Count with better styling  -->
+                <Border
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Width="100"
+                    Height="35"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Left"
+                    Background="#2C3448"
+                    BorderBrush="#3C4F7A"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#AFC4FF"
+                            Text="" />
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#E5E7EB"
+                            Text="{Binding Converter={StaticResource ModuleCountConverter}}" />
+                    </StackPanel>
+                </Border>
+
+                <!--  Studytime  -->
+                <Border
+                    Grid.Row="2"
+                    Height="35"
+                    Padding="12,6"
+                    Background="#322C4A"
+                    BorderBrush="#5D4E91"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#D3BFFF"
+                            Text="Studytime: " />
+                        <TextBlock
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Foreground="#F4EFFF"
+                            Text="{Binding Semester.LearnedSemesterMinutes, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource MinutesToStringConverter}, TargetNullValue='N/A'}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
 
             <!--  Action Buttons (Edit + Delete)  -->
             <StackPanel
+                Grid.Row="3"
                 Grid.Column="3"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
-                <!--  Edit Button (initially hidden)  -->
+                <!--  Edit Button  -->
                 <Button
                     x:Name="EditButton"
-                    Width="26"
-                    Height="26"
+                    Width="30"
+                    Height="30"
                     Command="{Binding OpenSemesterOverviewCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Semester, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Cursor="Hand"
@@ -239,17 +306,17 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Foreground="#787777"
-                        Kind="EyeOutline"
+                        Kind="OpenInNew"
                         SnapsToDevicePixels="True"
                         UseLayoutRounding="True" />
                 </Button>
 
-                <!--  Delete Button (initially hidden)  -->
+                <!--  Delete Button  -->
                 <Button
                     x:Name="DeleteButton"
-                    Width="26"
-                    Height="26"
-                    Margin="5,0,0,0"
+                    Width="30"
+                    Height="30"
+                    Margin="10,0,0,0"
                     Command="{Binding DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Semester, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Cursor="Hand"
