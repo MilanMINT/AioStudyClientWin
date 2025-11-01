@@ -66,12 +66,10 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
-                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
                 <RowDefinition Height="0.3" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-
-
 
             <DockPanel
                 x:Name="MainControlBar"
@@ -125,6 +123,32 @@
                     Text="{Binding CurrentViewName}" />
 
             </DockPanel>
+
+
+            <!--  ==================== Active TimerLine ====================  -->
+            <Border
+                Grid.Row="1"
+                Height="30"
+                Visibility="{Binding IsTimerRunning, Converter={StaticResource BoolToVisibilityConverter}, TargetNullValue=Collapsed}">
+                <Border.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Offset="1.0" Color="#24A5E1" />
+                        <GradientStop Offset="0.5" Color="#6A8BA8" />
+                        <GradientStop Offset="0.0" Color="#2551B8" />
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="20"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Text="{Binding Remaining, StringFormat={}{0:hh\\:mm\\:ss}, FallbackValue='00:00:00'}" />
+
+
+            </Border>
+
+
             <Border
                 Grid.Row="2"
                 Height="1"

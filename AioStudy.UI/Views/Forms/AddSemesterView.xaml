@@ -68,7 +68,7 @@
                         Margin="0,5"
                         Style="{StaticResource GradientTextBox}"
                         Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
-                        Watermark="Semester Name eingeben..." />
+                        Watermark="Enter name..." />
                 </StackPanel>
 
                 <!--  DatePicker Sektion - Nebeneinander  -->
@@ -82,7 +82,7 @@
                     <!--  Start Datum  -->
                     <StackPanel Grid.Column="0">
                         <Label
-                            Content="Startdatum"
+                            Content="Start date"
                             FontSize="14"
                             FontWeight="Bold"
                             Foreground="#E6E5E5" />
@@ -92,7 +92,7 @@
                     <!--  End Datum  -->
                     <StackPanel Grid.Column="2">
                         <Label
-                            Content="Enddatum"
+                            Content="End date"
                             FontSize="14"
                             FontWeight="Bold"
                             Foreground="#E6E5E5" />
@@ -135,7 +135,7 @@
                             x:Name="SemesterDescTextBox"
                             Style="{StaticResource GradientTextBox}"
                             Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
-                            Watermark="Semester Name eingeben..." />
+                            Watermark="Enter description..." />
                     </StackPanel>
 
 

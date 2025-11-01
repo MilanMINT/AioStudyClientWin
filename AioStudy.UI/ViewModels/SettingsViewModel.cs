@@ -10,9 +10,14 @@ namespace AioStudy.UI.ViewModels
     {
         private MainViewModel _mainViewModel;
 
-        public SettingsViewModel(MainViewModel mainViewModel)
+        public SettingsViewModel()
+        {
+        }
+
+        public void SetMainViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
         }
+
     }
 }

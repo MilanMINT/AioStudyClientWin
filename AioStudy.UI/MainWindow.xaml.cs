@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using System.Runtime;
 using System.Windows.Interop;
 using AioStudy.UI.Views.Controls;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AioStudy.UI
 {
@@ -32,7 +33,7 @@ namespace AioStudy.UI
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel();
+            DataContext = App.ServiceProvider.GetRequiredService<MainViewModel>();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
         }
 

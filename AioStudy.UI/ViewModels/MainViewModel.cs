@@ -1,14 +1,17 @@
-﻿using System;
+﻿using AioStudy.Core.Manager.Settings;
+using AioStudy.Core.Services;
+using AioStudy.Core.Util;
+using AioStudy.UI.Commands;
+using AioStudy.UI.WpfServices;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using AioStudy.UI.Commands;
-using AioStudy.Core.Manager.Settings;
-using AioStudy.Core.Util;
-using Microsoft.Extensions.Primitives;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -33,6 +36,34 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand ShowGradesCMD { get; }
         public RelayCommand ShowModulesCMD { get; }
 
+        private readonly ITimerService _timerService;
+        private TimeSpan _remaining;
+        private bool _isTimerRunning;
+
+        public bool IsTimerRunning
+        {
+            get
+            {
+                return _isTimerRunning;
+            }
+            set
+            {
+                _isTimerRunning = value;
+                OnPropertyChanged(nameof(IsTimerRunning));
+            }
+        }
+
+        public TimeSpan Remaining
+        {
+            get { return _remaining; }
+            set
+            {
+                _remaining = value;
+                OnPropertyChanged(nameof(Remaining));
+            }
+        }
+
+
         public ViewModelBase CurrentViewModel
         {
             get { return _currentViewModel; }
@@ -53,7 +84,7 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public MainViewModel()
+        public MainViewModel(ITimerService timerService)
         {
             // Commands initialisieren
             Dark = new RelayCommand(ExecuteDarkCommand);
@@ -76,13 +107,29 @@ namespace AioStudy.UI.ViewModels
             _modulesViewModel.SetMainViewModel(this);
 
             // Direkt instanziierte ViewModels (haben keine DB-Abhängigkeiten)
-            _pomodoroViewModel = new PomodoroViewModel(this);
-            _settingsViewModel = new SettingsViewModel(this);
-            _gradesViewModel = new GradesViewModel(this);
+            _pomodoroViewModel = App.ServiceProvider.GetRequiredService<PomodoroViewModel>();
+            _pomodoroViewModel.SetMainViewModel(this);
+
+            _settingsViewModel = App.ServiceProvider.GetRequiredService<SettingsViewModel>();
+            _settingsViewModel.SetMainViewModel(this);
+
+            _gradesViewModel = App.ServiceProvider.GetRequiredService<GradesViewModel>();
+            _gradesViewModel.SetMainViewModel(this);
 
             // Standard View setzen
             CurrentViewModel = _dashboardViewModel;
             CurrentViewName = "Dashboard";
+
+            _timerService = timerService;
+
+            IsTimerRunning = _timerService.IsRunning;
+            Remaining = TimeSpan.FromSeconds(Math.Ceiling(_timerService.Remaining.TotalSeconds));
+
+            _timerService.TimeChanged += (_, time) =>
+            {
+                Remaining = TimeSpan.FromSeconds(Math.Ceiling(time.TotalSeconds));
+            };
+            _timerService.RunningStateChanged += (_, running) => IsTimerRunning = running;
         }
 
         private void ExecuteShowModulesCommand(object? obj)

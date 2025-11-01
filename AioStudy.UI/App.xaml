@@ -27,6 +27,7 @@
             <converters:ProgressToPercentConverter x:Key="ProgressToPercentConverter" />
             <converters:MinutesToStringConverter x:Key="MinutesToStringConverter" />
             <converters:ModuleCountConverter x:Key="ModuleCountConverter" />
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
 
             <Style x:Key="InterFont">

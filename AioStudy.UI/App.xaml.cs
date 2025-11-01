@@ -1,6 +1,7 @@
 ﻿using AioStudy.Core.Data.Services;
 using AioStudy.Core.Manager;
 using AioStudy.Core.Manager.Settings;
+using AioStudy.Core.Services;
 using AioStudy.Data.EF;
 using AioStudy.Data.Interfaces;
 using AioStudy.Data.Services;
@@ -60,13 +61,18 @@ namespace AioStudy.UI
             services.AddTransient<SemesterDbService>();
             services.AddTransient<ModulesDbService>();
 
+            services.AddSingleton<ITimerService, TimerService>();
+
             //ViewModels
             services.AddSingleton<SemesterViewModel>();
             services.AddSingleton<DashboardViewModel>();
+            services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<GradesViewModel>();
             services.AddSingleton<ModulesViewModel>();
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<AddSemesterViewModel>();
             services.AddTransient<AddModuleViewModel>();
+            services.AddSingleton<PomodoroViewModel>();
 
             //WPF Services
             services.AddSingleton<WpfThemeService>();
