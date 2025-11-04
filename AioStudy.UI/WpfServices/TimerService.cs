@@ -57,7 +57,6 @@ namespace AioStudy.UI.WpfServices
             lock (_sync)
             {
                 if (!IsRunning) return;
-                // capture remaining immediately
                 _remaining = _endTime - DateTime.UtcNow;
                 if (_remaining < TimeSpan.Zero) _remaining = TimeSpan.Zero;
                 StopInternal();
@@ -89,7 +88,6 @@ namespace AioStudy.UI.WpfServices
                     var rem = _endTime - DateTime.UtcNow;
                     if (rem <= TimeSpan.Zero)
                     {
-                        // finalize on UI thread
                         await DispatchAsync(() =>
                         {
                             _remaining = TimeSpan.Zero;
@@ -100,7 +98,6 @@ namespace AioStudy.UI.WpfServices
                         break;
                     }
 
-                    // marshal update to UI thread
                     await DispatchAsync(() => { _remaining = rem; OnTimeChanged(_remaining); });
 
                     try
@@ -110,7 +107,7 @@ namespace AioStudy.UI.WpfServices
                     catch (OperationCanceledException) { break; }
                 }
             }
-            catch (OperationCanceledException) { /* expected on stop */ }
+            catch (OperationCanceledException) {}
         }
 
         private void StopInternal()
@@ -130,7 +127,6 @@ namespace AioStudy.UI.WpfServices
             var app = Application.Current;
             if (app == null || app.Dispatcher == null || app.Dispatcher.HasShutdownStarted)
             {
-                // fallback: run inline (rare)
                 action();
                 return Task.CompletedTask;
             }

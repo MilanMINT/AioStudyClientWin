@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     d:DesignHeight="750"
     d:DesignWidth="1200"
     Background="#212226"
@@ -73,14 +74,14 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="70" />
+            <RowDefinition Height="80" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="0.5" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!--  Verbesserter Header  -->
-        <Grid Grid.Row="0" Margin="20,10">
+        <Grid Grid.Row="0" Margin="30,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -90,14 +91,14 @@
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
                 <TextBlock
                     Margin="0,0,0,2"
-                    FontSize="28"
+                    FontSize="32"
                     FontWeight="Bold"
                     Foreground="#E6E5E5"
                     Text="Semester Verwaltung" />
                 <TextBlock
                     FontSize="13"
                     Foreground="#B0B3BA"
-                    Text="Verwalten Sie Ihre Semester und Module" />
+                    Text="Manage your semesters" />
             </StackPanel>
 
             <!--  Button Bereich  -->
@@ -105,6 +106,17 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
+
+                <xctk:WatermarkTextBox
+                    Width="200"
+                    Height="40"
+                    Margin="0,0,15,0"
+                    Padding="3,4,4,0"
+                    FontSize="14"
+                    Foreground="White"
+                    Style="{StaticResource GradientTextBox}"
+                    Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                    Watermark="Search Semesters..." />
 
                 <!--  Aktualisieren Button  -->
                 <Button
@@ -136,7 +148,7 @@
                         FontSize="14"
                         FontWeight="Bold"
                         Foreground="#E6E5E5"
-                        Text="Hinzufügen" />
+                        Text="Add Semester" />
                 </Button>
             </StackPanel>
         </Grid>
@@ -145,7 +157,7 @@
         <Border
             Grid.Row="2"
             Height="1"
-            Margin="20,0"
+            Margin="30,0"
             Background="#3A3D45" />
 
         <!--  Semester List mit ScrollViewer  -->

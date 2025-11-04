@@ -1,16 +1,21 @@
-﻿using AioStudy.Core.Manager.Settings;
+﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Manager.Settings;
 using AioStudy.Core.Services;
 using AioStudy.Core.Util;
 using AioStudy.UI.Commands;
+using AioStudy.UI.ViewModels.Forms;
+using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace AioStudy.UI.ViewModels
@@ -26,7 +31,7 @@ namespace AioStudy.UI.ViewModels
         private ModulesViewModel _modulesViewModel;
 
         private string _currentViewName;
-        
+
         public RelayCommand Dark { get; }
         public RelayCommand Light { get; }
         public RelayCommand ShowDashboardCMD { get; }
@@ -102,11 +107,9 @@ namespace AioStudy.UI.ViewModels
             _dashboardViewModel = App.ServiceProvider.GetRequiredService<DashboardViewModel>();
             _dashboardViewModel.SetMainViewModel(this);
 
-            // ViewModels von DI bekommen
             _modulesViewModel = App.ServiceProvider.GetRequiredService<ModulesViewModel>();
             _modulesViewModel.SetMainViewModel(this);
 
-            // Direkt instanziierte ViewModels (haben keine DB-Abhängigkeiten)
             _pomodoroViewModel = App.ServiceProvider.GetRequiredService<PomodoroViewModel>();
             _pomodoroViewModel.SetMainViewModel(this);
 
@@ -130,6 +133,8 @@ namespace AioStudy.UI.ViewModels
                 Remaining = TimeSpan.FromSeconds(Math.Ceiling(time.TotalSeconds));
             };
             _timerService.RunningStateChanged += (_, running) => IsTimerRunning = running;
+
+            CheckForExistingUser();
         }
 
         private void ExecuteShowModulesCommand(object? obj)
@@ -171,19 +176,56 @@ namespace AioStudy.UI.ViewModels
         private void ExecuteDarkCommand(object? parameter)
         {
             var settingsManager = SettingsManager.Instance;
-            
+
             settingsManager.Settings.Theme = Enums.ApplicationTheme.Dark.ToString();
-            
+
             settingsManager.SaveSettings();
         }
 
         private void ExecuteLightCommand(object? parameter)
         {
             var settingsManager = SettingsManager.Instance;
-            
+
             settingsManager.Settings.Theme = Enums.ApplicationTheme.Light.ToString();
-            
+
             settingsManager.SaveSettings();
+        }
+
+        private async void CheckForExistingUser()
+        {
+            bool hasUser;
+            try
+            {
+                hasUser = await App.ServiceProvider.GetRequiredService<UserDbService>().IsUserTableEmpty() == false;
+            }
+            catch (Exception)
+            {
+                hasUser = false;
+            }
+            if (!hasUser)
+            {
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    var vm = App.ServiceProvider.GetRequiredService<CreateUsernameViewModel>();
+                    var createUsernameView = new CreateUsername
+                    {
+                        DataContext = vm,
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen
+                    };
+
+                    if (Application.Current.MainWindow != null && Application.Current.MainWindow.IsLoaded)
+                    {
+                        createUsernameView.Owner = Application.Current.MainWindow;
+                        createUsernameView.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    }
+
+                    bool? result = createUsernameView.ShowDialog();
+                    if (!result.HasValue || result.Value == false)
+                    {
+                        Application.Current.Shutdown();
+                    }
+                });
+            }
         }
     }
 }

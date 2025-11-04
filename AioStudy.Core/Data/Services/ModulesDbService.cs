@@ -98,6 +98,23 @@ namespace AioStudy.Core.Data.Services
             }
         }
 
+        public async Task<int> GetModuleLearnedMinutes(Module module)
+        {
+            if (module == null) return 0;
+
+            try
+            {
+                var existing = await _moduleRepository.GetByIdAsync(module.Id);
+                if (existing == null)
+                    return 0;
+                return existing.LearnedMinutes;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
 
         public async Task<IEnumerable<Module>> GetAllModulesAsync()
         {

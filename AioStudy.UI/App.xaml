@@ -467,7 +467,7 @@
                 <Setter Property="Height" Value="40" />
                 <Setter Property="UseLayoutRounding" Value="True" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
-                <Setter Property="Background" Value="#2A2D35" />
+                <Setter Property="Background" Value="#212226" />
                 <Setter Property="CaretBrush" Value="White" />
                 <Setter Property="SelectionBrush" Value="#608BC1" />
                 <Setter Property="BorderBrush">

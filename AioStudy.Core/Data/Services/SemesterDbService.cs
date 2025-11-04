@@ -82,5 +82,13 @@ namespace AioStudy.Core.Data.Services
             var modules = await _moduleRepository.GetAllAsync();
             return modules.Count(m => m.SemesterId == semester.Id);
         }
+
+        public async Task<int> GetLearnedSemesterMinutes(Semester semester)
+        {
+            var modules = await _moduleRepository.GetAllAsync();
+            if (modules == null || !modules.Any())
+                return 0;
+            return modules.Where(m => m.SemesterId == semester.Id).Sum(m => m.LearnedMinutes);
+        }
     }
 }

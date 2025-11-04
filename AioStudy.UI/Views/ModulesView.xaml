@@ -197,16 +197,11 @@
 
                 <!--  Add Module Button  -->
                 <Button
-                    Padding="10"
+                    Padding="28,8"
                     Command="{Binding CreateModuleCommand}"
                     Style="{StaticResource GradientButton}"
                     ToolTip="Add New Module">
                     <StackPanel Orientation="Horizontal">
-                        <MaIc:MaterialIcon
-                            Width="18"
-                            Height="18"
-                            Margin="0,0,8,0"
-                            Kind="Plus" />
                         <TextBlock
                             FontSize="14"
                             FontWeight="Medium"
