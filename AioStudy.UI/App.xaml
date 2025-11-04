@@ -853,6 +853,133 @@
             </Style>
 
 
+            <!--  Add this style to your existing App.xaml ResourceDictionary, after the other converter/style definitions  -->
+
+            <!--  Gradient IntegerUpDown Style  -->
+            <Style x:Key="GradientIntegerUpDown" TargetType="xctk:IntegerUpDown">
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontWeight" Value="Medium" />
+                <Setter Property="Height" Value="40" />
+                <Setter Property="Width" Value="80" />
+                <Setter Property="UseLayoutRounding" Value="True" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Background" Value="#2A2D35" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="MouseWheelActiveTrigger" Value="MouseOver" />
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <LinearGradientBrush>
+                            <GradientStop Offset="0.0" Color="#608BC1" />
+                            <GradientStop Offset="1.0" Color="#133E87" />
+                            <GradientStop Offset="0.7" Color="#a5bacc" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="xctk:IntegerUpDown">
+                            <Grid>
+                                <Border
+                                    x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6"
+                                    SnapsToDevicePixels="True"
+                                    UseLayoutRounding="True">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--  TextBox for value input  -->
+                                        <xctk:ButtonSpinner
+                                            x:Name="PART_Spinner"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            AllowSpin="{TemplateBinding AllowSpin}"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="Transparent"
+                                            IsTabStop="False"
+                                            ShowSpinner="True"
+                                            SpinnerLocation="Right">
+                                            <xctk:WatermarkTextBox
+                                                x:Name="PART_TextBox"
+                                                MinWidth="20"
+                                                Padding="5,0,0,0"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                AcceptsReturn="False"
+                                                AutoMoveFocus="{TemplateBinding AutoMoveFocus}"
+                                                AutoSelectBehavior="{TemplateBinding AutoSelectBehavior}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                ContextMenu="{TemplateBinding ContextMenu}"
+                                                FontFamily="{TemplateBinding FontFamily}"
+                                                FontSize="{TemplateBinding FontSize}"
+                                                FontStretch="{TemplateBinding FontStretch}"
+                                                FontStyle="{TemplateBinding FontStyle}"
+                                                FontWeight="{TemplateBinding FontWeight}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                                IsTabStop="True"
+                                                IsUndoEnabled="{Binding IsUndoEnabled, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}"
+                                                TextAlignment="{TemplateBinding TextAlignment}"
+                                                TextWrapping="NoWrap"
+                                                Watermark="{TemplateBinding Watermark}"
+                                                WatermarkTemplate="{TemplateBinding WatermarkTemplate}" />
+                                        </xctk:ButtonSpinner>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#353842" />
+                                    <Setter TargetName="border" Property="BorderBrush">
+                                        <Setter.Value>
+                                            <LinearGradientBrush>
+                                                <GradientStop Offset="0.0" Color="#7BA3D3" />
+                                                <GradientStop Offset="1.0" Color="#1E4A99" />
+                                                <GradientStop Offset="0.7" Color="#B5C7DA" />
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+
+                                <Trigger Property="IsFocused" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#353842" />
+                                    <Setter TargetName="border" Property="BorderBrush">
+                                        <Setter.Value>
+                                            <LinearGradientBrush>
+                                                <GradientStop Offset="0.0" Color="#7BA3D3" />
+                                                <GradientStop Offset="1.0" Color="#1E4A99" />
+                                                <GradientStop Offset="0.7" Color="#B5C7DA" />
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#2D2D30" />
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#4D4D50" />
+                                    <Setter Property="Foreground" Value="#808080" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
 
         </ResourceDictionary>
     </Application.Resources>

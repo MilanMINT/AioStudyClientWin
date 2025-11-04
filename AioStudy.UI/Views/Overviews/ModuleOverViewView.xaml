@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views.Overviews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:overview="clr-namespace:AioStudy.UI.ViewModels.Overview"
+    d:DataContext="{d:DesignInstance Type=overview:ModuleOverViewViewModel}"
     d:DesignHeight="1800"
     d:DesignWidth="1200"
     Background="#212226"
@@ -548,34 +550,6 @@
                                         Margin="0,0,8,0"
                                         Kind="Play" />
                                     <TextBlock Text="Start Study Session" />
-                                </StackPanel>
-                            </Button>
-
-                            <Button
-                                Margin="0,0,0,10"
-                                Padding="12,8"
-                                Style="{StaticResource GrayGradientButton}">
-                                <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon
-                                        Width="16"
-                                        Height="16"
-                                        Margin="0,0,8,0"
-                                        Kind="BookOpenVariant" />
-                                    <TextBlock Text="View Notes" />
-                                </StackPanel>
-                            </Button>
-
-                            <Button
-                                Margin="0,0,0,10"
-                                Padding="12,8"
-                                Style="{StaticResource GrayGradientButton}">
-                                <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon
-                                        Width="16"
-                                        Height="16"
-                                        Margin="0,0,8,0"
-                                        Kind="CalendarPlus" />
-                                    <TextBlock Text="Schedule Study" />
                                 </StackPanel>
                             </Button>
 
