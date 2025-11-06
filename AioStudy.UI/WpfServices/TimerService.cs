@@ -15,6 +15,7 @@ namespace AioStudy.UI.WpfServices
 
         public TimeSpan Remaining => _remaining;
         public bool IsRunning { get; private set; }
+        public DateTime? EndTime { get; private set; } // Neue Property
 
         public event EventHandler<TimeSpan>? TimeChanged;
         public event EventHandler? TimerEnded;
@@ -33,6 +34,7 @@ namespace AioStudy.UI.WpfServices
                 StopInternal();
                 _remaining = duration;
                 _endTime = DateTime.UtcNow.Add(duration);
+                EndTime = DateTime.Now.Add(duration); // Lokale Zeit für UI
                 _cts = new CancellationTokenSource();
                 IsRunning = true;
                 OnRunningChanged(true);
@@ -48,6 +50,7 @@ namespace AioStudy.UI.WpfServices
             {
                 StopInternal();
                 _remaining = TimeSpan.Zero;
+                EndTime = null; // Endzeit zurücksetzen
                 OnTimeChanged(_remaining);
             }
         }
@@ -60,6 +63,7 @@ namespace AioStudy.UI.WpfServices
                 _remaining = _endTime - DateTime.UtcNow;
                 if (_remaining < TimeSpan.Zero) _remaining = TimeSpan.Zero;
                 StopInternal();
+                // EndTime bleibt erhalten beim Pausieren
                 OnTimeChanged(_remaining);
             }
         }
@@ -70,6 +74,7 @@ namespace AioStudy.UI.WpfServices
             {
                 if (IsRunning || _remaining <= TimeSpan.Zero) return;
                 _endTime = DateTime.UtcNow.Add(_remaining);
+                EndTime = DateTime.Now.Add(_remaining); // Endzeit aktualisieren
                 _cts = new CancellationTokenSource();
                 IsRunning = true;
                 OnRunningChanged(true);
@@ -93,6 +98,7 @@ namespace AioStudy.UI.WpfServices
                             _remaining = TimeSpan.Zero;
                             OnTimeChanged(_remaining);
                             StopInternal();
+                            EndTime = null;
                             OnTimerEnded();
                         });
                         break;
@@ -107,7 +113,7 @@ namespace AioStudy.UI.WpfServices
                     catch (OperationCanceledException) { break; }
                 }
             }
-            catch (OperationCanceledException) {}
+            catch (OperationCanceledException) { }
         }
 
         private void StopInternal()

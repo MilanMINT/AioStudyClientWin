@@ -19,5 +19,6 @@ namespace AioStudy.Core.Services
         event EventHandler<TimeSpan> TimeChanged;
         event EventHandler TimerEnded;
         event EventHandler<bool> RunningStateChanged;
+        DateTime? EndTime { get; }
     }
 }
