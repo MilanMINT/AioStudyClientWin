@@ -5,42 +5,148 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:AioStudy.UI.ViewModels"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:Background="#212226"
+    d:DataContext="{d:DesignInstance Type=viewmodels:PomodoroViewModel}"
+    d:DesignHeight="750"
+    d:DesignWidth="1200"
     mc:Ignorable="d">
+
     <Grid>
-        <StackPanel
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Orientation="Horizontal">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition Height="1" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-            <xctk:IntegerUpDown
-                Margin="0,0,10,0"
-                Maximum="23"
-                Minimum="0"
-                Style="{StaticResource GradientIntegerUpDown}"
-                Value="{Binding Hours, Mode=TwoWay}" />
+        <!--  Header  -->
+        <Grid Grid.Row="0" Margin="30,0,30,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-            <TextBlock
-                VerticalAlignment="Center"
-                FontSize="24"
-                Foreground="White"
-                Text=":" />
+            <!--  Titel Sektion  -->
+            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                <TextBlock
+                    Margin="0,0,0,4"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    Foreground="White"
+                    Text="Pomodoro" />
+                <TextBlock
+                    FontSize="14"
+                    Foreground="#B0B3BA"
+                    Text="Keep track of your time with the Pomodoro technique" />
+            </StackPanel>
+        </Grid>
 
-            <xctk:IntegerUpDown
-                Margin="10,0,0,0"
-                Maximum="59"
-                Minimum="0"
-                Style="{StaticResource GradientIntegerUpDown}"
-                Value="{Binding Minutes, Mode=TwoWay}" />
+        <!--  Separator  -->
+        <Border
+            Grid.Row="1"
+            Height="1"
+            Margin="30,0"
+            Background="#3A3D45" />
 
-            <TextBlock
-                Margin="10,0,0,0"
-                VerticalAlignment="Center"
-                FontSize="16"
-                Foreground="Gray"
-                Text="hh:mm" />
-        </StackPanel>
+        <Border Grid.Row="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="24"
+                        Foreground="White"
+                        Text="Pomodoro View" />
+                    <Button Command="{Binding StartTimerCommand}">
+                        StartTimer
+                    </Button>
+                    <Button Command="{Binding PauseTimerCommand}">
+                        PauseTimer
+                    </Button>
+                    <Button Command="{Binding ResumeTimerCommand}">
+                        ResumeTimer
+                    </Button>
+                </StackPanel>
+
+                <Border
+                    Grid.Row="1"
+                    Width="400"
+                    Height="200"
+                    Margin="0,30,0,0"
+                    BorderThickness="1"
+                    CornerRadius="10">
+
+                    <Border.BorderBrush>
+                        <LinearGradientBrush>
+                            <GradientStop Offset="0.0" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#608BC1}" />
+                            <GradientStop Offset="1.0" Color="#133E87" />
+                            <GradientStop Offset="0.5" Color="#a5bacc" />
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel
+                                Margin="0,0,0,-10"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+
+                                <xctk:IntegerUpDown
+                                    Width="auto"
+                                    Height="80"
+                                    HorizontalContentAlignment="Right"
+                                    FontFamily="Arial Rounded MT Bold"
+                                    FontSize="60"
+                                    FormatString="00"
+                                    IsEnabled="{Binding ToggleSetTimer}"
+                                    Maximum="300"
+                                    Minimum="0"
+                                    Style="{StaticResource GradientIntegerUpDownTransparent}"
+                                    Value="{Binding Minutes, Mode=TwoWay, FallbackValue=12, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock
+                                    Margin="0,-10,-10,0"
+                                    FontSize="65"
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text=":" />
+
+                                <xctk:IntegerUpDown
+                                    Width="85"
+                                    Height="80"
+                                    Margin="3,0,0,0"
+                                    HorizontalContentAlignment="Left"
+                                    FontFamily="Arial Rounded MT Bold"
+                                    FontSize="60"
+                                    FormatString="00"
+                                    IsEnabled="{Binding ToggleSetTimer}"
+                                    Maximum="59"
+                                    Minimum="0"
+                                    Style="{StaticResource GradientIntegerUpDownTransparent}"
+                                    TextAlignment="Left"
+                                    Value="{Binding Seconds, Mode=TwoWay, FallbackValue=12, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <TextBlock
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Foreground="#696969"
+                                Text="{Binding TimerUpClockTime, FallbackValue=10:22, StringFormat={}{0:hh\\:mm\\:ss}, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

@@ -981,6 +981,93 @@
 
 
 
+
+            <!--  Gradient GradientIntegerUpDownTransparent Style  -->
+            <Style x:Key="GradientIntegerUpDownTransparent" TargetType="xctk:IntegerUpDown">
+                <Setter Property="BorderThickness" Value="1.5" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontWeight" Value="Medium" />
+                <Setter Property="Height" Value="40" />
+                <Setter Property="Width" Value="80" />
+                <Setter Property="UseLayoutRounding" Value="True" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="MouseWheelActiveTrigger" Value="MouseOver" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="xctk:IntegerUpDown">
+                            <Grid>
+                                <Border
+                                    x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6"
+                                    SnapsToDevicePixels="True"
+                                    UseLayoutRounding="True">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--  TextBox for value input  -->
+                                        <xctk:ButtonSpinner
+                                            x:Name="PART_Spinner"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            AllowSpin="{TemplateBinding AllowSpin}"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="Transparent"
+                                            IsTabStop="False"
+                                            ShowSpinner="False"
+                                            SpinnerLocation="Right">
+                                            <xctk:WatermarkTextBox
+                                                x:Name="PART_TextBox"
+                                                MinWidth="20"
+                                                Padding="5,0,0,0"
+                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                AcceptsReturn="False"
+                                                AutoMoveFocus="{TemplateBinding AutoMoveFocus}"
+                                                AutoSelectBehavior="{TemplateBinding AutoSelectBehavior}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                ContextMenu="{TemplateBinding ContextMenu}"
+                                                FontFamily="{TemplateBinding FontFamily}"
+                                                FontSize="{TemplateBinding FontSize}"
+                                                FontStretch="{TemplateBinding FontStretch}"
+                                                FontStyle="{TemplateBinding FontStyle}"
+                                                FontWeight="{TemplateBinding FontWeight}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                                IsTabStop="True"
+                                                IsUndoEnabled="{Binding IsUndoEnabled, RelativeSource={RelativeSource TemplatedParent}}"
+                                                Text="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}"
+                                                TextAlignment="{TemplateBinding TextAlignment}"
+                                                TextWrapping="NoWrap"
+                                                Watermark="{TemplateBinding Watermark}"
+                                                WatermarkTemplate="{TemplateBinding WatermarkTemplate}" />
+                                        </xctk:ButtonSpinner>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
