@@ -29,6 +29,13 @@
             <converters:ModuleCountConverter x:Key="ModuleCountConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
+            <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
+            <converters:PlayPauseCommandConverter x:Key="PlayPauseCommandConverter" />
+            <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+
+
+
+
 
             <Style x:Key="InterFont">
                 <Setter Property="TextElement.FontFamily" Value="/Fonts/#Inter" />
@@ -125,7 +132,7 @@
                 <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource AncestorType=RadioButton}}" />
                 <Setter Property="Width" Value="22" />
                 <Setter Property="Height" Value="22" />
-                <Setter Property="Margin" Value="30,0,15,3" />
+                <Setter Property="Margin" Value="30,2,15,3" />
             </Style>
 
             <!--  Menu button text  -->
@@ -1065,6 +1072,36 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+
+            <Style x:Key="CircleButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="#3A3D45" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Ellipse Fill="{TemplateBinding Background}" />
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#4A4D55" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="#2A2D35" />
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="#252525" />
+                        <Setter Property="Opacity" Value="0.5" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+
 
 
 

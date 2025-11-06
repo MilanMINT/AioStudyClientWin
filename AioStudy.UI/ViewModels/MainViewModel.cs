@@ -41,6 +41,29 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand ShowGradesCMD { get; }
         public RelayCommand ShowModulesCMD { get; }
 
+        private bool _isTimerPaused;
+        public bool IsTimerPaused
+        {
+            get => _isTimerPaused;
+            set
+            {
+                _isTimerPaused = value;
+                UpdateStatusBarVisibility();
+                OnPropertyChanged(nameof(IsTimerPaused));
+            }
+        }
+
+        private bool _showStatusBar = true;
+        public bool ShowStatusBar
+        {
+            get => _showStatusBar;
+            set
+            {
+                _showStatusBar = value;
+                OnPropertyChanged(nameof(ShowStatusBar));
+            }
+        }
+
         private readonly ITimerService _timerService;
         private TimeSpan _remaining;
         private bool _isTimerRunning;
@@ -54,6 +77,7 @@ namespace AioStudy.UI.ViewModels
             set
             {
                 _isTimerRunning = value;
+                UpdateStatusBarVisibility();
                 OnPropertyChanged(nameof(IsTimerRunning));
             }
         }
@@ -75,6 +99,7 @@ namespace AioStudy.UI.ViewModels
             set
             {
                 _currentViewModel = value;
+                UpdateStatusBarVisibility();
                 OnPropertyChanged(nameof(CurrentViewModel));
             }
         }
@@ -123,6 +148,8 @@ namespace AioStudy.UI.ViewModels
             CurrentViewModel = _dashboardViewModel;
             CurrentViewName = "Dashboard";
 
+            ShowStatusBar = false;
+
             _timerService = timerService;
 
             IsTimerRunning = _timerService.IsRunning;
@@ -132,7 +159,25 @@ namespace AioStudy.UI.ViewModels
             {
                 Remaining = TimeSpan.FromSeconds(Math.Ceiling(time.TotalSeconds));
             };
-            _timerService.RunningStateChanged += (_, running) => IsTimerRunning = running;
+            _timerService.RunningStateChanged += (_, running) =>
+            {
+                IsTimerRunning = running;
+                if (!running)
+                {
+                    IsTimerPaused = _timerService.Remaining > TimeSpan.Zero;
+                }
+                else
+                {
+                    IsTimerPaused = false;
+                }
+            };
+
+            _timerService.TimerReset += (_, _) =>
+            {
+                IsTimerRunning = false;
+                IsTimerPaused = false;
+                UpdateStatusBarVisibility();
+            };
 
             CheckForExistingUser();
         }
@@ -226,6 +271,16 @@ namespace AioStudy.UI.ViewModels
                     }
                 });
             }
+        }
+
+        private void UpdateStatusBarVisibility()
+        {
+            ShowStatusBar = (_isTimerRunning || _isTimerPaused) && !(_currentViewModel is PomodoroViewModel);
+        }
+
+        public void ResetTimer()
+        {
+            _timerService.Reset();
         }
     }
 }

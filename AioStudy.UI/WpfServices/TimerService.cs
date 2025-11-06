@@ -13,13 +13,16 @@ namespace AioStudy.UI.WpfServices
         private TimeSpan _remaining;
         private readonly object _sync = new();
 
+        private TimeSpan _initialDuration;
         public TimeSpan Remaining => _remaining;
         public bool IsRunning { get; private set; }
-        public DateTime? EndTime { get; private set; } // Neue Property
+        public DateTime? EndTime { get; private set; } 
 
         public event EventHandler<TimeSpan>? TimeChanged;
         public event EventHandler? TimerEnded;
         public event EventHandler<bool>? RunningStateChanged;
+        public event EventHandler? TimerReset;
+
 
         private const int PollIntervalMs = 200;
 
@@ -31,10 +34,11 @@ namespace AioStudy.UI.WpfServices
         {
             lock (_sync)
             {
+                _initialDuration = duration;
                 StopInternal();
                 _remaining = duration;
                 _endTime = DateTime.UtcNow.Add(duration);
-                EndTime = DateTime.Now.Add(duration); // Lokale Zeit für UI
+                EndTime = DateTime.Now.Add(duration);
                 _cts = new CancellationTokenSource();
                 IsRunning = true;
                 OnRunningChanged(true);
@@ -50,7 +54,7 @@ namespace AioStudy.UI.WpfServices
             {
                 StopInternal();
                 _remaining = TimeSpan.Zero;
-                EndTime = null; // Endzeit zurücksetzen
+                EndTime = null; 
                 OnTimeChanged(_remaining);
             }
         }
@@ -63,7 +67,6 @@ namespace AioStudy.UI.WpfServices
                 _remaining = _endTime - DateTime.UtcNow;
                 if (_remaining < TimeSpan.Zero) _remaining = TimeSpan.Zero;
                 StopInternal();
-                // EndTime bleibt erhalten beim Pausieren
                 OnTimeChanged(_remaining);
             }
         }
@@ -74,7 +77,7 @@ namespace AioStudy.UI.WpfServices
             {
                 if (IsRunning || _remaining <= TimeSpan.Zero) return;
                 _endTime = DateTime.UtcNow.Add(_remaining);
-                EndTime = DateTime.Now.Add(_remaining); // Endzeit aktualisieren
+                EndTime = DateTime.Now.Add(_remaining);
                 _cts = new CancellationTokenSource();
                 IsRunning = true;
                 OnRunningChanged(true);
@@ -147,6 +150,26 @@ namespace AioStudy.UI.WpfServices
         public void Dispose()
         {
             StopInternal();
+        }
+
+        public void Reset()
+        {
+            lock (_sync)
+            {
+                StopInternal();
+
+                _remaining = _initialDuration;
+                _endTime = DateTime.UtcNow.Add(_initialDuration);
+                EndTime = DateTime.Now.Add(_initialDuration);
+
+                OnTimeChanged(_remaining);
+                OnTimerReset();
+            }
+        }
+
+        protected virtual void OnTimerReset()
+        {
+            TimerReset?.Invoke(this, EventArgs.Empty);
         }
     }
 }

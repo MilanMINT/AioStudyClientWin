@@ -11,6 +11,7 @@
     xmlns:views1="clr-namespace:AioStudy.UI.Views.Overviews"
     xmlns:vm="clr-namespace:AioStudy.UI.ViewModels"
     xmlns:vm1="clr-namespace:AioStudy.UI.ViewModels.Overview"
+    xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Title="AioStudy"
     Width="1300"
@@ -72,6 +73,8 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+
+
             <DockPanel
                 x:Name="MainControlBar"
                 Grid.Row="0"
@@ -131,7 +134,7 @@
                 Grid.Row="1"
                 Height="30"
                 Panel.ZIndex="9999999"
-                Visibility="{Binding IsTimerRunning, Converter={StaticResource BoolToVisibilityConverter}, TargetNullValue=Collapsed}">
+                Visibility="{Binding ShowStatusBar, Converter={StaticResource BoolToVisibilityConverter}, TargetNullValue=Collapsed}">
                 <Border.Background>
                     <LinearGradientBrush>
                         <GradientStop Offset="1.0" Color="#23C6EC" />
@@ -190,7 +193,7 @@
 
                 <Border
                     Grid.Column="0"
-                    Panel.ZIndex="999999"
+                    Panel.ZIndex="999999999"
                     Background="#191A1C"
                     BorderBrush="#444"
                     CornerRadius="0 0 0 6">
@@ -217,7 +220,10 @@
                                 Style="{StaticResource menuButton}"
                                 Tag="white">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="ViewDashboard" Style="{StaticResource menuButtonIcon}" />
+                                    <MaIc:MaterialIcon
+                                        Foreground="#a3a3a3"
+                                        Kind="ViewDashboard"
+                                        Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Dashboard" />
                                 </StackPanel>
                             </RadioButton>
@@ -227,7 +233,10 @@
                                 Style="{StaticResource menuButton}"
                                 Tag="white">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="ClockOutline" Style="{StaticResource menuButtonIcon}" />
+                                    <MaIc:MaterialIcon
+                                        Foreground="#a3a3a3"
+                                        Kind="ClockOutline"
+                                        Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Pomodoro" />
                                 </StackPanel>
                             </RadioButton>
@@ -237,7 +246,10 @@
                                 Style="{StaticResource menuButton}"
                                 Tag="white">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="BookArrowDownOutline" Style="{StaticResource menuButtonIcon}" />
+                                    <MaIc:MaterialIcon
+                                        Foreground="#a3a3a3"
+                                        Kind="BookArrowDownOutline"
+                                        Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Semester" />
                                 </StackPanel>
                             </RadioButton>
@@ -247,7 +259,10 @@
                                 Style="{StaticResource menuButton}"
                                 Tag="white">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="ReportScatterPlot" Style="{StaticResource menuButtonIcon}" />
+                                    <MaIc:MaterialIcon
+                                        Foreground="#a3a3a3"
+                                        Kind="ReportScatterPlot"
+                                        Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Modules" />
                                 </StackPanel>
                             </RadioButton>
@@ -257,7 +272,10 @@
                                 Style="{StaticResource menuButton}"
                                 Tag="white">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="Grade" Style="{StaticResource menuButtonIcon}" />
+                                    <MaIc:MaterialIcon
+                                        Foreground="#a3a3a3"
+                                        Kind="Grade"
+                                        Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Grades" />
                                 </StackPanel>
                             </RadioButton>
@@ -267,7 +285,10 @@
                                 Style="{StaticResource menuButton}"
                                 Tag="white">
                                 <StackPanel Orientation="Horizontal">
-                                    <MaIc:MaterialIcon Kind="SettingsOutline" Style="{StaticResource menuButtonIcon}" />
+                                    <MaIc:MaterialIcon
+                                        Foreground="#a3a3a3"
+                                        Kind="SettingsOutline"
+                                        Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Settings" />
                                 </StackPanel>
                             </RadioButton>

@@ -101,6 +101,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand StartTimerCommand { get; }
         public RelayCommand PauseTimerCommand { get; }
         public RelayCommand ResumeTimerCommand { get; }
+        public RelayCommand ResetTimerCommand { get; }
 
         private MainViewModel _mainViewModel;
 
@@ -118,11 +119,28 @@ namespace AioStudy.UI.ViewModels
         {
             Text = "Initial Text";
             _timerService = timerService;
-            _timerService.TimeChanged += (_, time) => Remaining = time;
+
+            _timerService.TimeChanged += (_, time) =>
+            {
+                Remaining = time;
+                UpdateTimerUpClockTime();
+            };
+
+            _timerService.TimerReset += (_, _) =>
+            {
+                IsTimerRunning = false;
+                ToggleSetTimer = true;
+                _isUpdatingFromTimer = true;
+                Minutes = (int)_timerService.Remaining.TotalMinutes;
+                Seconds = _timerService.Remaining.Seconds;
+                _isUpdatingFromTimer = false;
+                UpdateTimerUpClockTime();
+            };
             _timerService.TimerEnded += OnTimerEnded;
             StartTimerCommand = new RelayCommand(StartTimer, CanStartTimer);
             PauseTimerCommand = new RelayCommand(PauseTimer);
             ResumeTimerCommand = new RelayCommand(ResumeTimer);
+            ResetTimerCommand = new RelayCommand(ResetTimer);
 
             UpdateTimerUpClockTime();
 
@@ -181,6 +199,10 @@ namespace AioStudy.UI.ViewModels
             int totalSeconds = Minutes * 60 + Seconds;
             DateTime endTime = DateTime.Now.AddSeconds(totalSeconds);
             TimerUpClockTime = endTime.ToString("HH:mm");
+        }
+        private void ResetTimer(object? obj)
+        {
+            _timerService.Reset();
         }
     }
 }

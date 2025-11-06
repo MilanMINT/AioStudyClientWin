@@ -15,10 +15,12 @@ namespace AioStudy.Core.Services
         void Stop();
         void Pause();
         void Resume();
+        void Reset();
 
         event EventHandler<TimeSpan> TimeChanged;
         event EventHandler TimerEnded;
         event EventHandler<bool> RunningStateChanged;
+        event EventHandler? TimerReset;
         DateTime? EndTime { get; }
     }
 }

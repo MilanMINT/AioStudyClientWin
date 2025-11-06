@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Web.WebView2.Core;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
