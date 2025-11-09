@@ -43,5 +43,16 @@ namespace AioStudy.Core.Data.Services
                 return null;
             }
         }
+
+        public async Task AddTimeToUser(int minutes)
+        {
+            var users = await _userRepository.GetAllAsync();
+            var user = users.FirstOrDefault();
+            if (user != null)
+            {
+                user.LearnedMinutes += minutes;
+                await _userRepository.UpdateAsync(user);
+            }
+        }
     }
 }

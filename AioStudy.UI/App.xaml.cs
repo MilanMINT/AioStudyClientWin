@@ -46,49 +46,6 @@ namespace AioStudy.UI
                 Shutdown();
                 return;
             }
-
-            //bool hasUser;
-            //try
-            //{
-            //    hasUser = ServiceProvider.GetRequiredService<UserDbService>().IsUserTableEmpty().GetAwaiter().GetResult() == false;
-            //}
-            //catch (Exception)
-            //{
-            //    hasUser = false;
-            //}
-
-            //if (!hasUser)
-            //{
-            //    var createUsernameView = new CreateUsername();
-            //    if (ServiceProvider.GetService<CreateUsernameViewModel>() is CreateUsernameViewModel createVm)
-            //        createUsernameView.DataContext = createVm;
-            //    createUsernameView.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
-            //    var dialogResult = createUsernameView.ShowDialog();
-
-            //    if (dialogResult != true)
-            //    {
-            //        Shutdown();
-            //        return;
-            //    }
-
-            //    bool nowHasUser = ServiceProvider.GetRequiredService<UserDbService>()
-            //                       .IsUserTableEmpty().GetAwaiter().GetResult() == false;
-            //    if (!nowHasUser)
-            //    {
-            //        MessageBox.Show("Benutzer konnte nicht erstellt werden. Anwendung wird beendet.", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-            //        Shutdown();
-            //        return;
-            //    }
-            //}
-
-            //var main = new MainWindow();
-
-            //if (ServiceProvider.GetService<MainViewModel>() is MainViewModel mainVm)
-            //    main.DataContext = mainVm;
-
-            //main.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            //main.Show();
         }
 
         private void ConfigureServices(ServiceCollection services)
@@ -107,7 +64,6 @@ namespace AioStudy.UI
             services.AddTransient<ModulesDbService>();
             services.AddTransient<UserDbService>();
 
-            services.AddSingleton<ITimerService, TimerService>();
 
             //ViewModels
             services.AddSingleton<SemesterViewModel>();
@@ -122,6 +78,7 @@ namespace AioStudy.UI
             services.AddTransient<CreateUsernameViewModel>();
 
             //WPF Services
+            services.AddSingleton<ITimerService, TimerService>();
             services.AddSingleton<WpfThemeService>();
         }
 

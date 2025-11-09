@@ -153,11 +153,11 @@ namespace AioStudy.UI.ViewModels
             _timerService = timerService;
 
             IsTimerRunning = _timerService.IsRunning;
-            Remaining = TimeSpan.FromSeconds(Math.Ceiling(_timerService.Remaining.TotalSeconds));
+            Remaining = _timerService.Remaining;
 
             _timerService.TimeChanged += (_, time) =>
             {
-                Remaining = TimeSpan.FromSeconds(Math.Ceiling(time.TotalSeconds));
+                Remaining = time;
             };
             _timerService.RunningStateChanged += (_, running) =>
             {

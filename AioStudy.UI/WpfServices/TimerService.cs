@@ -1,4 +1,8 @@
-﻿using AioStudy.Core.Services;
+﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Services;
+using AioStudy.Models;
+using AioStudy.UI.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,33 +20,44 @@ namespace AioStudy.UI.WpfServices
         private TimeSpan _initialDuration;
         public TimeSpan Remaining => _remaining;
         public bool IsRunning { get; private set; }
-        public DateTime? EndTime { get; private set; } 
+        public DateTime? EndTime { get; private set; }
 
         public event EventHandler<TimeSpan>? TimeChanged;
         public event EventHandler? TimerEnded;
         public event EventHandler<bool>? RunningStateChanged;
         public event EventHandler? TimerReset;
 
+        public Module? SelectedModule { get; set; } = null;
 
         private const int PollIntervalMs = 200;
+        private const int PollsPerMinute = (1000 / PollIntervalMs) * 60;
+        private int pollCounter = 0;
 
-        public TimerService()
+        private UserDbService _userDbService;
+        private ModulesDbService _modulesDbService;
+
+        public TimerService(UserDbService userDbService, ModulesDbService modulesDbService)
         {
+            _userDbService = userDbService;
+            _modulesDbService = modulesDbService;
         }
 
-        public void Start(TimeSpan duration)
+        public void Start(TimeSpan duration, Module? module = null)
         {
             lock (_sync)
             {
                 _initialDuration = duration;
                 StopInternal();
-                _remaining = duration;
+                _remaining = RoundToSeconds(duration);
                 _endTime = DateTime.UtcNow.Add(duration);
                 EndTime = DateTime.Now.Add(duration);
                 _cts = new CancellationTokenSource();
                 IsRunning = true;
+                SelectedModule = module;
+                pollCounter = 0;
                 OnRunningChanged(true);
                 OnTimeChanged(_remaining);
+
 
                 _ = RunLoopAsync(_cts.Token);
             }
@@ -54,7 +69,8 @@ namespace AioStudy.UI.WpfServices
             {
                 StopInternal();
                 _remaining = TimeSpan.Zero;
-                EndTime = null; 
+                EndTime = null;
+                pollCounter = 0;
                 OnTimeChanged(_remaining);
             }
         }
@@ -64,8 +80,11 @@ namespace AioStudy.UI.WpfServices
             lock (_sync)
             {
                 if (!IsRunning) return;
-                _remaining = _endTime - DateTime.UtcNow;
-                if (_remaining < TimeSpan.Zero) _remaining = TimeSpan.Zero;
+                var rawRemaining = _endTime - DateTime.UtcNow;
+                if (rawRemaining < TimeSpan.Zero) rawRemaining = TimeSpan.Zero;
+
+                _remaining = RoundToSeconds(rawRemaining);
+
                 StopInternal();
                 OnTimeChanged(_remaining);
             }
@@ -94,20 +113,49 @@ namespace AioStudy.UI.WpfServices
                 while (!ct.IsCancellationRequested)
                 {
                     var rem = _endTime - DateTime.UtcNow;
+
+                    pollCounter++;
+
+                    if (pollCounter >= PollsPerMinute)
+                    {
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await _userDbService.AddTimeToUser(1);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Fehler beim Speichern der Zeit: {ex.Message}");
+                            }
+                        });
+                        pollCounter = 0;
+                    }
+
                     if (rem <= TimeSpan.Zero)
                     {
-                        await DispatchAsync(() =>
+                        _ = DispatchAsync(() =>
                         {
                             _remaining = TimeSpan.Zero;
                             OnTimeChanged(_remaining);
+                        });
+
+                        lock (_sync)
+                        {
                             StopInternal();
                             EndTime = null;
-                            OnTimerEnded();
-                        });
+                        }
+
+                        OnTimerEnded();
                         break;
                     }
 
-                    await DispatchAsync(() => { _remaining = rem; OnTimeChanged(_remaining); });
+                    var roundedRem = RoundToSeconds(rem);
+                    _ = DispatchAsync(() =>
+                    {
+                        _remaining = roundedRem;
+                        OnTimeChanged(_remaining);
+                    });
 
                     try
                     {
@@ -117,7 +165,12 @@ namespace AioStudy.UI.WpfServices
                 }
             }
             catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Fehler in RunLoopAsync: {ex.Message}");
+            }
         }
+
 
         private void StopInternal()
         {
@@ -158,9 +211,11 @@ namespace AioStudy.UI.WpfServices
             {
                 StopInternal();
 
-                _remaining = _initialDuration;
+                _remaining = RoundToSeconds(_initialDuration);
                 _endTime = DateTime.UtcNow.Add(_initialDuration);
                 EndTime = DateTime.Now.Add(_initialDuration);
+
+                pollCounter = 0;
 
                 OnTimeChanged(_remaining);
                 OnTimerReset();
@@ -170,6 +225,11 @@ namespace AioStudy.UI.WpfServices
         protected virtual void OnTimerReset()
         {
             TimerReset?.Invoke(this, EventArgs.Empty);
+        }
+
+        private TimeSpan RoundToSeconds(TimeSpan time)
+        {
+            return TimeSpan.FromSeconds(Math.Ceiling(time.TotalSeconds));
         }
     }
 }

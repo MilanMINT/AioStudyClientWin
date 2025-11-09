@@ -45,6 +45,7 @@
   <ItemGroup>
     <None Remove="Assets\AioStudyLogo.png" />
     <None Remove="Assets\Fonts\Inter-Regular.otf" />
+    <None Remove="Assets\Sounds\start_timer_sound.wav" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,6 +74,9 @@
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Assets\Fonts\Inter-Regular.otf" />
+	  <Resource Include="Assets\Sounds\start_timer_sound.wav">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
 </Project>

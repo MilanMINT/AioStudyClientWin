@@ -1,6 +1,6 @@
-@AioStudy.API_HostAddress = http://localhost:5173
+@AioStudy.Api_HostAddress = http://localhost:5233
 
-GET {{AioStudy.API_HostAddress}}/weatherforecast/
+GET {{AioStudy.Api_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

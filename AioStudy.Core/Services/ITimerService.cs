@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AioStudy.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace AioStudy.Core.Services
         TimeSpan Remaining { get; }
         bool IsRunning { get; }
 
-        void Start(TimeSpan duration);
+        void Start(TimeSpan duration, Module? module = null);
         void Stop();
         void Pause();
         void Resume();

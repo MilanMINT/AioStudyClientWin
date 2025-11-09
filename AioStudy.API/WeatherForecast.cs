@@ -1,4 +1,4 @@
-namespace AioStudy.API
+namespace AioStudy.Api
 {
     public class WeatherForecast
     {

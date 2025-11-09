@@ -1,6 +1,8 @@
 ﻿using AioStudy.Core.Services;
 using AioStudy.UI.Commands;
 using System;
+using System.Media;
+using System.Windows.Media;
 
 namespace AioStudy.UI.ViewModels
 {
