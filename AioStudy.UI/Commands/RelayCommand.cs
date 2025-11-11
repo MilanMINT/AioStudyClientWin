@@ -12,10 +12,12 @@ namespace AioStudy.UI.Commands
         private Action<object?> execute;
         private Func<object?, bool>? canExecute;
 
+        private event EventHandler? canExecuteChangedInternal;
+
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add { CommandManager.RequerySuggested += value; canExecuteChangedInternal += value; }
+            remove { CommandManager.RequerySuggested -= value; canExecuteChangedInternal -= value; }
         }
 
         public RelayCommand(Action<object?> execute, Func<object?, bool>? canexecute = null)
@@ -32,6 +34,11 @@ namespace AioStudy.UI.Commands
         public void Execute(object? parameter)
         {
             this.execute(parameter);
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            canExecuteChangedInternal?.Invoke(this, EventArgs.Empty);
         }
     }
 }

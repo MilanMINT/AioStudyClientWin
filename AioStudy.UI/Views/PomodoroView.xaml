@@ -178,7 +178,9 @@
                                     <MultiBinding Converter="{StaticResource PlayPauseCommandConverter}">
                                         <Binding Path="StartTimerCommand" />
                                         <Binding Path="PauseTimerCommand" />
+                                        <Binding Path="ResumeTimerCommand" />
                                         <Binding Path="IsTimerRunning" />
+                                        <Binding Path="Remaining" />
                                     </MultiBinding>
                                 </Button.Command>
                                 <MaIc:MaterialIcon

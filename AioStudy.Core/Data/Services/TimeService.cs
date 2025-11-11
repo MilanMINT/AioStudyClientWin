@@ -1,16 +1,14 @@
-﻿using AioStudy.Core.Data.Services;
-using AioStudy.Core.Services;
+﻿using AioStudy.Core.Services;
 using AioStudy.Models;
-using AioStudy.UI.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
-namespace AioStudy.UI.WpfServices
+namespace AioStudy.Core.Data.Services
 {
-    public class TimerService : ITimerService, IDisposable
+    public class TimeService : ITimerService, IDisposable
     {
         private CancellationTokenSource? _cts;
         private DateTime _endTime;
@@ -18,7 +16,17 @@ namespace AioStudy.UI.WpfServices
         private readonly object _sync = new();
 
         private TimeSpan _initialDuration;
-        public TimeSpan Remaining => _remaining;
+        public TimeSpan Remaining
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _remaining;
+                }
+            }
+        }
+
         public bool IsRunning { get; private set; }
         public DateTime? EndTime { get; private set; }
 
@@ -33,14 +41,19 @@ namespace AioStudy.UI.WpfServices
         private const int PollsPerMinute = (1000 / PollIntervalMs) * 60;
         private int pollCounter = 0;
 
-        private UserDbService _userDbService;
-        private ModulesDbService _modulesDbService;
-        private LearnSessionDbService _learnSessionDbService;
+        private readonly UserDbService _userDbService;
+        private readonly ModulesDbService _modulesDbService;
+        private readonly LearnSessionDbService _learnSessionDbService;
 
         private LearnSession? _currentSession;
         private bool _sessionCreated = false;
 
-        public TimerService(UserDbService userDbService, ModulesDbService modulesDbService, LearnSessionDbService learnSessionDbService)
+        public TimeSpan InitDateTime { get; set; }
+
+        public TimeService(
+            UserDbService userDbService,
+            ModulesDbService modulesDbService,
+            LearnSessionDbService learnSessionDbService)
         {
             _userDbService = userDbService;
             _modulesDbService = modulesDbService;
@@ -51,7 +64,9 @@ namespace AioStudy.UI.WpfServices
         {
             lock (_sync)
             {
-                _initialDuration = duration;
+                System.Diagnostics.Debug.WriteLine($"STARTED!!!!!!!!!!!!!!!!!!!!!!!");
+
+                InitDateTime = duration;
                 StopInternal();
                 _remaining = RoundToSeconds(duration);
                 _endTime = DateTime.UtcNow.Add(duration);
@@ -60,9 +75,10 @@ namespace AioStudy.UI.WpfServices
                 IsRunning = true;
                 SelectedModule = module;
                 pollCounter = 0;
+                _sessionCreated = false;
+                _currentSession = null;
                 OnRunningChanged(true);
                 OnTimeChanged(_remaining);
-
 
                 _ = RunLoopAsync(_cts.Token);
             }
@@ -76,6 +92,7 @@ namespace AioStudy.UI.WpfServices
                 _remaining = TimeSpan.Zero;
                 EndTime = null;
                 pollCounter = 0;
+                _sessionCreated = false;
                 OnTimeChanged(_remaining);
             }
         }
@@ -119,6 +136,60 @@ namespace AioStudy.UI.WpfServices
                 {
                     var rem = _endTime - DateTime.UtcNow;
 
+                    if (rem <= TimeSpan.Zero)
+                    {
+                        LearnSession? sessionToComplete;
+                        lock (_sync)
+                        {
+                            sessionToComplete = _currentSession;
+                        }
+
+                        if (sessionToComplete != null && pollCounter > 0)
+                        {
+                            int remainingMinutes = (int)Math.Ceiling(pollCounter / (double)PollsPerMinute);
+
+                            try
+                            {
+                                await _userDbService.AddTimeToUser(remainingMinutes);
+                                await _learnSessionDbService.AddTimeToSessionAsync(sessionToComplete, remainingMinutes);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Fehler beim Speichern der finalen Zeit: {ex.Message}");
+                            }
+                        }
+
+                        if (sessionToComplete != null)
+                        {
+                            try
+                            {
+                                await _learnSessionDbService.CompleteSessionAsync(sessionToComplete);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Fehler beim Abschließen der Session: {ex.Message}");
+                            }
+                        }
+
+                        lock (_sync)
+                        {
+                            _remaining = TimeSpan.Zero;
+                        }
+                        OnTimeChanged(TimeSpan.Zero);
+
+                        lock (_sync)
+                        {
+                            StopInternal();
+                            SelectedModule = null;
+                            _currentSession = null;
+                            _sessionCreated = false;
+                            EndTime = null;
+                        }
+
+                        OnTimerEnded();
+                        break;
+                    }
+                    System.Diagnostics.Debug.WriteLine($"PollCOunter {pollCounter}");
                     pollCounter++;
 
                     if (pollCounter >= PollsPerMinute)
@@ -143,93 +214,36 @@ namespace AioStudy.UI.WpfServices
                             }
                         }
 
-                        _ = Task.Run(async () =>
+                        try
                         {
-                            try
-                            {
-                                await _userDbService.AddTimeToUser(1);
+                            await _userDbService.AddTimeToUser(1);
 
-                                LearnSession? currentSessionSnapshot;
-                                lock (_sync)
-                                {
-                                    currentSessionSnapshot = _currentSession;
-                                }
-
-                                if (currentSessionSnapshot != null)
-                                {
-                                    await _learnSessionDbService.AddTimeToSessionAsync(currentSessionSnapshot, 1);
-                                }
-                            }
-                            catch (Exception ex)
+                            LearnSession? currentSessionSnapshot;
+                            lock (_sync)
                             {
-                                System.Diagnostics.Debug.WriteLine($"Fehler beim Speichern der Zeit: {ex.Message}");
+                                currentSessionSnapshot = _currentSession;
                             }
-                        });
+
+                            if (currentSessionSnapshot != null)
+                            {
+                                await _learnSessionDbService.AddTimeToSessionAsync(currentSessionSnapshot, 1);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Fehler beim Speichern der Zeit: {ex.Message}");
+                        }
 
                         pollCounter = 0;
                     }
 
-                    if (rem <= TimeSpan.Zero)
-                    {
-                        LearnSession? sessionToComplete;
-                        lock (_sync)
-                        {
-                            sessionToComplete = _currentSession;
-                        }
-
-                        if (sessionToComplete != null && pollCounter > 0)
-                        {
-                            int remainingMinutes = (int)Math.Ceiling(pollCounter / (double)PollsPerMinute);
-
-                            try
-                            {
-                                await _userDbService.AddTimeToUser(remainingMinutes);
-                                await _learnSessionDbService.AddTimeToSessionAsync(sessionToComplete, remainingMinutes);
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Fehler beim Speichern der finalen Zeit: {ex.Message}");
-                            }
-                        }
-
-                        // Session abschließen
-                        if (sessionToComplete != null)
-                        {
-                            try
-                            {
-                                await _learnSessionDbService.CompleteSessionAsync(sessionToComplete);
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"Fehler beim Abschließen der Session: {ex.Message}");
-                            }
-                        }
-
-                        _ = DispatchAsync(() =>
-                        {
-                            _remaining = TimeSpan.Zero;
-                            OnTimeChanged(_remaining);
-                        });
-
-                        lock (_sync)
-                        {
-                            StopInternal();
-                            SelectedModule = null;
-                            _currentSession = null;
-                            _sessionCreated = false;
-                            EndTime = null;
-                        }
-
-                        OnTimerEnded();
-                        break;
-                    }
-
                     var roundedRem = RoundToSeconds(rem);
-                    _ = DispatchAsync(() =>
+
+                    lock (_sync)
                     {
                         _remaining = roundedRem;
-                        OnTimeChanged(_remaining);
-                    });
+                    }
+                    OnTimeChanged(roundedRem);
 
                     try
                     {
@@ -238,13 +252,11 @@ namespace AioStudy.UI.WpfServices
                     catch (OperationCanceledException) { break; }
                 }
             }
-            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Fehler in RunLoopAsync: {ex.Message}");
             }
         }
-
 
         private void StopInternal()
         {
@@ -256,18 +268,6 @@ namespace AioStudy.UI.WpfServices
             }
             IsRunning = false;
             OnRunningChanged(false);
-        }
-
-        private Task DispatchAsync(Action action)
-        {
-            var app = Application.Current;
-            if (app == null || app.Dispatcher == null || app.Dispatcher.HasShutdownStarted)
-            {
-                action();
-                return Task.CompletedTask;
-            }
-
-            return app.Dispatcher.InvokeAsync(action).Task;
         }
 
         private void OnTimeChanged(TimeSpan ts) => TimeChanged?.Invoke(this, ts);
@@ -283,18 +283,20 @@ namespace AioStudy.UI.WpfServices
         {
             lock (_sync)
             {
-                StopInternal();
-                SelectedModule = null;
-                _remaining = RoundToSeconds(_initialDuration);
-                _endTime = DateTime.UtcNow.Add(_initialDuration);
-                EndTime = DateTime.Now.Add(_initialDuration);
+                //StopInternal();
+                //SelectedModule = null;
 
+                //_remaining = TimeSpan.Zero;
+                //_endTime = DateTime.UtcNow.Add(_initialDuration);
+                //EndTime = DateTime.Now.Add(_initialDuration);
 
-                _sessionCreated = false;
-                pollCounter = 0;
+                //_sessionCreated = false;
+                //_currentSession = null;
+                //pollCounter = 0;
 
-                OnTimeChanged(_remaining);
-                OnTimerReset();
+                //OnTimerReset();
+
+                Stop();
             }
         }
 

@@ -144,7 +144,6 @@ namespace AioStudy.UI.ViewModels
             _gradesViewModel = App.ServiceProvider.GetRequiredService<GradesViewModel>();
             _gradesViewModel.SetMainViewModel(this);
 
-            // Standard View setzen
             CurrentViewModel = _dashboardViewModel;
             CurrentViewName = "Dashboard";
 
@@ -155,11 +154,24 @@ namespace AioStudy.UI.ViewModels
             IsTimerRunning = _timerService.IsRunning;
             Remaining = _timerService.Remaining;
 
-            _timerService.TimeChanged += (_, time) =>
+            _timerService.TimeChanged += TimerService_TimeChanged;
+            _timerService.RunningStateChanged += TimerService_RunningStateChanged;
+            _timerService.TimerReset += TimerService_TimerReset;
+
+            CheckForExistingUser();
+        }
+
+        private void TimerService_TimeChanged(object? sender, TimeSpan time)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
             {
                 Remaining = time;
-            };
-            _timerService.RunningStateChanged += (_, running) =>
+            });
+        }
+
+        private void TimerService_RunningStateChanged(object? sender, bool running)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
             {
                 IsTimerRunning = running;
                 if (!running)
@@ -170,16 +182,17 @@ namespace AioStudy.UI.ViewModels
                 {
                     IsTimerPaused = false;
                 }
-            };
+            });
+        }
 
-            _timerService.TimerReset += (_, _) =>
+        private void TimerService_TimerReset(object? sender, EventArgs e)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
             {
                 IsTimerRunning = false;
                 IsTimerPaused = false;
                 UpdateStatusBarVisibility();
-            };
-
-            CheckForExistingUser();
+            });
         }
 
         private void ExecuteShowModulesCommand(object? obj)

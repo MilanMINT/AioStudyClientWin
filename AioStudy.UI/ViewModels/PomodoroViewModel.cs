@@ -1,8 +1,8 @@
 ﻿using AioStudy.Core.Services;
 using AioStudy.UI.Commands;
 using System;
-using System.Media;
-using System.Windows.Media;
+using System.Windows;
+using System.Windows.Input;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -17,6 +17,9 @@ namespace AioStudy.UI.ViewModels
         private string _timerUpClockTime;
         private int _minutes = 25;
         private int _seconds = 0;
+
+        private int _oldMinutes;
+        private int _oldSeconds;
 
         private bool _isUpdatingFromTimer = false;
 
@@ -46,9 +49,10 @@ namespace AioStudy.UI.ViewModels
             set
             {
                 _minutes = value;
-                OnPropertyChanged(nameof(Minutes));
                 if (!_isUpdatingFromTimer)
                     UpdateTimerUpClockTime();
+                OnPropertyChanged(nameof(Minutes));
+                StartTimerCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -58,9 +62,10 @@ namespace AioStudy.UI.ViewModels
             set
             {
                 _seconds = value;
-                OnPropertyChanged(nameof(Seconds));
                 if (!_isUpdatingFromTimer)
                     UpdateTimerUpClockTime();
+                OnPropertyChanged(nameof(Seconds));
+                StartTimerCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -85,7 +90,7 @@ namespace AioStudy.UI.ViewModels
             {
                 _remaining = value;
                 OnPropertyChanged(nameof(Remaining));
-                
+
                 if (IsTimerRunning)
                 {
                     _isUpdatingFromTimer = true;
@@ -122,31 +127,58 @@ namespace AioStudy.UI.ViewModels
             Text = "Initial Text";
             _timerService = timerService;
 
-            _timerService.TimeChanged += (_, time) =>
-            {
-                Remaining = time;
-                UpdateTimerUpClockTime();
-            };
+            _timerService.TimerReset += TimerService_TimerReset;
+            _timerService.TimeChanged += TimerService_TimeChanged;
+            _timerService.TimerEnded += TimerService_TimerEnded;
+            _timerService.RunningStateChanged += TimerService_RunningStateChanged;
 
-            _timerService.TimerReset += (_, _) =>
-            {
-                IsTimerRunning = false;
-                ToggleSetTimer = true;
-                _isUpdatingFromTimer = true;
-                Minutes = (int)_timerService.Remaining.TotalMinutes;
-                Seconds = _timerService.Remaining.Seconds;
-                _isUpdatingFromTimer = false;
-                UpdateTimerUpClockTime();
-            };
-            _timerService.TimerEnded += OnTimerEnded;
             StartTimerCommand = new RelayCommand(StartTimer, CanStartTimer);
             PauseTimerCommand = new RelayCommand(PauseTimer);
             ResumeTimerCommand = new RelayCommand(ResumeTimer);
             ResetTimerCommand = new RelayCommand(ResetTimer);
 
             UpdateTimerUpClockTime();
-
             ToggleSetTimer = true;
+        }
+
+        private void TimerService_TimeChanged(object? sender, TimeSpan time)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                Remaining = time;
+                UpdateTimerUpClockTime();
+            });
+        }
+
+        private void TimerService_TimerReset(object? sender, EventArgs e)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                IsTimerRunning = false;
+                ToggleSetTimer = true;
+
+                UpdateTimerUpClockTime();
+            });
+        }
+
+        private void TimerService_TimerEnded(object? sender, EventArgs e)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                IsTimerRunning = false;
+                ToggleSetTimer = true;
+                Minutes = 0;
+                Seconds = 0;
+            });
+        }
+
+        private void TimerService_RunningStateChanged(object? sender, bool isRunning)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                IsTimerRunning = isRunning;
+                CommandManager.InvalidateRequerySuggested();
+            });
         }
 
         private bool CanStartTimer(object? arg)
@@ -161,16 +193,9 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        private void OnTimerEnded(object? sender, EventArgs e)
-        {
-            IsTimerRunning = false;
-            ToggleSetTimer = true;
-            Minutes = 0;
-            Seconds = 0;
-        }
-
         private void ResumeTimer(object? obj)
         {
+            System.Diagnostics.Debug.WriteLine($"[CMD Resume]");
             _timerService.Resume();
             IsTimerRunning = true;
             ToggleSetTimer = false;
@@ -178,6 +203,7 @@ namespace AioStudy.UI.ViewModels
 
         private void PauseTimer(object? obj)
         {
+            System.Diagnostics.Debug.WriteLine($"[CMD Pause]");
             _timerService.Pause();
             IsTimerRunning = false;
             ToggleSetTimer = true;
@@ -186,6 +212,9 @@ namespace AioStudy.UI.ViewModels
         private void StartTimer(object? obj)
         {
             int totalSeconds = Minutes * 60 + Seconds;
+            _oldMinutes = Minutes;
+            _oldSeconds = Seconds;
+            System.Diagnostics.Debug.WriteLine($"[CMD Start] Minutes={Minutes}, Seconds={Seconds}, Total={totalSeconds}s");
             _timerService.Start(TimeSpan.FromSeconds(totalSeconds));
             IsTimerRunning = true;
             ToggleSetTimer = false;
@@ -202,9 +231,15 @@ namespace AioStudy.UI.ViewModels
             DateTime endTime = DateTime.Now.AddSeconds(totalSeconds);
             TimerUpClockTime = endTime.ToString("HH:mm");
         }
+
         private void ResetTimer(object? obj)
         {
+            System.Diagnostics.Debug.WriteLine($"[CMD Reset] Current Minutes={Minutes}, Seconds={Seconds}");
             _timerService.Reset();
+            ToggleSetTimer = true;
+            System.Diagnostics.Debug.WriteLine($"[CMD Reset] After Reset: _timerService.Remaining={_timerService.Remaining}");
+            Minutes = _oldMinutes;
+            Seconds = _oldSeconds;
         }
     }
 }
