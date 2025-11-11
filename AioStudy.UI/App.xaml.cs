@@ -63,6 +63,7 @@ namespace AioStudy.UI
             services.AddTransient<SemesterDbService>();
             services.AddTransient<ModulesDbService>();
             services.AddTransient<UserDbService>();
+            services.AddTransient<LearnSessionDbService>();
 
 
             //ViewModels

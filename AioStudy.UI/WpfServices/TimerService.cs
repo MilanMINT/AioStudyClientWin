@@ -35,11 +35,16 @@ namespace AioStudy.UI.WpfServices
 
         private UserDbService _userDbService;
         private ModulesDbService _modulesDbService;
+        private LearnSessionDbService _learnSessionDbService;
 
-        public TimerService(UserDbService userDbService, ModulesDbService modulesDbService)
+        private LearnSession? _currentSession;
+        private bool _sessionCreated = false;
+
+        public TimerService(UserDbService userDbService, ModulesDbService modulesDbService, LearnSessionDbService learnSessionDbService)
         {
             _userDbService = userDbService;
             _modulesDbService = modulesDbService;
+            _learnSessionDbService = learnSessionDbService;
         }
 
         public void Start(TimeSpan duration, Module? module = null)
@@ -118,22 +123,88 @@ namespace AioStudy.UI.WpfServices
 
                     if (pollCounter >= PollsPerMinute)
                     {
+                        if (!_sessionCreated)
+                        {
+                            _sessionCreated = true;
+                            try
+                            {
+                                var session = await _learnSessionDbService.CreateLearnSessionAsync(SelectedModule);
+                                if (session != null)
+                                {
+                                    lock (_sync)
+                                    {
+                                        _currentSession = session;
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Fehler beim Erstellen der LearnSession: {ex.Message}");
+                            }
+                        }
+
                         _ = Task.Run(async () =>
                         {
                             try
                             {
                                 await _userDbService.AddTimeToUser(1);
+
+                                LearnSession? currentSessionSnapshot;
+                                lock (_sync)
+                                {
+                                    currentSessionSnapshot = _currentSession;
+                                }
+
+                                if (currentSessionSnapshot != null)
+                                {
+                                    await _learnSessionDbService.AddTimeToSessionAsync(currentSessionSnapshot, 1);
+                                }
                             }
                             catch (Exception ex)
                             {
                                 System.Diagnostics.Debug.WriteLine($"Fehler beim Speichern der Zeit: {ex.Message}");
                             }
                         });
+
                         pollCounter = 0;
                     }
 
                     if (rem <= TimeSpan.Zero)
                     {
+                        LearnSession? sessionToComplete;
+                        lock (_sync)
+                        {
+                            sessionToComplete = _currentSession;
+                        }
+
+                        if (sessionToComplete != null && pollCounter > 0)
+                        {
+                            int remainingMinutes = (int)Math.Ceiling(pollCounter / (double)PollsPerMinute);
+
+                            try
+                            {
+                                await _userDbService.AddTimeToUser(remainingMinutes);
+                                await _learnSessionDbService.AddTimeToSessionAsync(sessionToComplete, remainingMinutes);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Fehler beim Speichern der finalen Zeit: {ex.Message}");
+                            }
+                        }
+
+                        // Session abschließen
+                        if (sessionToComplete != null)
+                        {
+                            try
+                            {
+                                await _learnSessionDbService.CompleteSessionAsync(sessionToComplete);
+                            }
+                            catch (Exception ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Fehler beim Abschließen der Session: {ex.Message}");
+                            }
+                        }
+
                         _ = DispatchAsync(() =>
                         {
                             _remaining = TimeSpan.Zero;
@@ -143,6 +214,9 @@ namespace AioStudy.UI.WpfServices
                         lock (_sync)
                         {
                             StopInternal();
+                            SelectedModule = null;
+                            _currentSession = null;
+                            _sessionCreated = false;
                             EndTime = null;
                         }
 
@@ -210,11 +284,13 @@ namespace AioStudy.UI.WpfServices
             lock (_sync)
             {
                 StopInternal();
-
+                SelectedModule = null;
                 _remaining = RoundToSeconds(_initialDuration);
                 _endTime = DateTime.UtcNow.Add(_initialDuration);
                 EndTime = DateTime.Now.Add(_initialDuration);
 
+
+                _sessionCreated = false;
                 pollCounter = 0;
 
                 OnTimeChanged(_remaining);

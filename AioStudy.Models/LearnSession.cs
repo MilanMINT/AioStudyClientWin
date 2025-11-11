@@ -20,6 +20,7 @@ namespace AioStudy.Models
         public Module? LearnedModule { get; set; } = null;
         [AllowNull]
         public DateTime? EndTime { get; set; } = null;
+        public bool SessionCompleted { get; set; } = false;
         public int CurrentLearnedMinutes { get; set; } = 0;
 
 
