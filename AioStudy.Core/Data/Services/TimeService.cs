@@ -34,6 +34,7 @@ namespace AioStudy.Core.Data.Services
         public event EventHandler? TimerEnded;
         public event EventHandler<bool>? RunningStateChanged;
         public event EventHandler? TimerReset;
+        public event EventHandler<bool> PausedStateChanged;
 
         public Module? SelectedModule { get; set; } = null;
 
@@ -49,6 +50,10 @@ namespace AioStudy.Core.Data.Services
         private bool _sessionCreated = false;
 
         public TimeSpan InitDateTime { get; set; }
+
+        DateTime ITimerService.EndTime => throw new NotImplementedException();
+
+        public bool IsPaused => throw new NotImplementedException();
 
         public TimeService(
             UserDbService userDbService,

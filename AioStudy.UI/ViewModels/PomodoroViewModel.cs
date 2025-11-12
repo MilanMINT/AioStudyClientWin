@@ -11,75 +11,28 @@ namespace AioStudy.UI.ViewModels
         private string _text = string.Empty;
         private readonly ITimerService _timerService;
         private TimeSpan _remaining;
-        private bool _isTimerRunning;
-        private bool _toggleTimerSet;
-
-        private string _timerUpClockTime;
         private int _minutes = 25;
         private int _seconds = 0;
+        private bool _isPaused;
+        private bool _isRunning;
 
-        private int _oldMinutes;
-        private int _oldSeconds;
-
-        private bool _isUpdatingFromTimer = false;
-
-        public bool ToggleSetTimer
+        public bool IsRunning
         {
-            get { return _toggleTimerSet; }
+            get { return _isRunning; }
             set
             {
-                _toggleTimerSet = value;
-                OnPropertyChanged(nameof(ToggleSetTimer));
+                _isRunning = value;
+                OnPropertyChanged(nameof(IsRunning));
             }
         }
 
-        public string TimerUpClockTime
+        public bool IsPaused
         {
-            get { return _timerUpClockTime; }
+            get { return _isPaused; }
             set
             {
-                _timerUpClockTime = value;
-                OnPropertyChanged(nameof(TimerUpClockTime));
-            }
-        }
-
-        public int Minutes
-        {
-            get { return _minutes; }
-            set
-            {
-                _minutes = value;
-                if (!_isUpdatingFromTimer)
-                    UpdateTimerUpClockTime();
-                OnPropertyChanged(nameof(Minutes));
-                StartTimerCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-        public int Seconds
-        {
-            get { return _seconds; }
-            set
-            {
-                _seconds = value;
-                if (!_isUpdatingFromTimer)
-                    UpdateTimerUpClockTime();
-                OnPropertyChanged(nameof(Seconds));
-                StartTimerCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-        public bool IsTimerRunning
-        {
-            get { return _isTimerRunning; }
-            set
-            {
-                _isTimerRunning = value;
-                OnPropertyChanged(nameof(IsTimerRunning));
-                if (IsTimerRunning == false)
-                {
-                    UpdateTimerUpClockTime();
-                }
+                _isPaused = value;
+                OnPropertyChanged(nameof(IsPaused));
             }
         }
 
@@ -91,17 +44,28 @@ namespace AioStudy.UI.ViewModels
                 _remaining = value;
                 OnPropertyChanged(nameof(Remaining));
 
-                if (IsTimerRunning)
-                {
-                    _isUpdatingFromTimer = true;
-                    Minutes = (int)_remaining.TotalMinutes;
-                    Seconds = _remaining.Seconds;
-                    _isUpdatingFromTimer = false;
-                }
-                else
-                {
-                    UpdateTimerUpClockTime();
-                }
+                Minutes = (int)_remaining.TotalMinutes;
+                Seconds = _remaining.Seconds;
+            }
+        }
+
+        public int Minutes
+        {
+            get { return _minutes; }
+            set
+            {
+                _minutes = value;
+                OnPropertyChanged(nameof(Minutes));
+            }
+        }
+
+        public int Seconds
+        {
+            get { return _seconds; }
+            set
+            {
+                _seconds = value;
+                OnPropertyChanged(nameof(Seconds));
             }
         }
 
@@ -109,6 +73,8 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand PauseTimerCommand { get; }
         public RelayCommand ResumeTimerCommand { get; }
         public RelayCommand ResetTimerCommand { get; }
+
+        public RelayCommand ControlTimerCommand { get; }
 
         private MainViewModel _mainViewModel;
 
@@ -127,119 +93,85 @@ namespace AioStudy.UI.ViewModels
             Text = "Initial Text";
             _timerService = timerService;
 
-            _timerService.TimerReset += TimerService_TimerReset;
-            _timerService.TimeChanged += TimerService_TimeChanged;
-            _timerService.TimerEnded += TimerService_TimerEnded;
-            _timerService.RunningStateChanged += TimerService_RunningStateChanged;
-
             StartTimerCommand = new RelayCommand(StartTimer, CanStartTimer);
             PauseTimerCommand = new RelayCommand(PauseTimer);
             ResumeTimerCommand = new RelayCommand(ResumeTimer);
             ResetTimerCommand = new RelayCommand(ResetTimer);
+            ControlTimerCommand = new RelayCommand(ControlTimer);
 
-            UpdateTimerUpClockTime();
-            ToggleSetTimer = true;
+            _timerService.TimeChanged += (s, time) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Remaining = time;
+                });
+            };
+
+            _timerService.PausedStateChanged += (s, isPaused) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    IsPaused = isPaused;
+                });
+            };
+
+            _timerService.RunningStateChanged += (s, isRunning) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    IsRunning = isRunning;
+                });
+            };
         }
 
-        private void TimerService_TimeChanged(object? sender, TimeSpan time)
+        private void ControlTimer(object? obj)
         {
-            Application.Current?.Dispatcher.Invoke(() =>
+            if (_timerService.IsRunning)
             {
-                Remaining = time;
-                UpdateTimerUpClockTime();
-            });
-        }
-
-        private void TimerService_TimerReset(object? sender, EventArgs e)
-        {
-            Application.Current?.Dispatcher.Invoke(() =>
+                if (_timerService.IsPaused)
+                {
+                    ResumeTimer(null);
+                }
+                else
+                {
+                    PauseTimer(null);
+                }
+            }
+            else
             {
-                IsTimerRunning = false;
-                ToggleSetTimer = true;
-
-                UpdateTimerUpClockTime();
-            });
-        }
-
-        private void TimerService_TimerEnded(object? sender, EventArgs e)
-        {
-            Application.Current?.Dispatcher.Invoke(() =>
-            {
-                IsTimerRunning = false;
-                ToggleSetTimer = true;
-                Minutes = 0;
-                Seconds = 0;
-            });
-        }
-
-        private void TimerService_RunningStateChanged(object? sender, bool isRunning)
-        {
-            Application.Current?.Dispatcher.Invoke(() =>
-            {
-                IsTimerRunning = isRunning;
-                CommandManager.InvalidateRequerySuggested();
-            });
+                StartTimer(null);
+            }
         }
 
         private bool CanStartTimer(object? arg)
         {
-            if (IsTimerRunning)
-            {
-                return false;
-            }
-            else
-            {
-                return Minutes > 0 || Seconds > 0;
-            }
+            return true;
         }
 
         private void ResumeTimer(object? obj)
         {
-            System.Diagnostics.Debug.WriteLine($"[CMD Resume]");
             _timerService.Resume();
-            IsTimerRunning = true;
-            ToggleSetTimer = false;
         }
 
         private void PauseTimer(object? obj)
         {
-            System.Diagnostics.Debug.WriteLine($"[CMD Pause]");
             _timerService.Pause();
-            IsTimerRunning = false;
-            ToggleSetTimer = true;
         }
 
         private void StartTimer(object? obj)
         {
-            int totalSeconds = Minutes * 60 + Seconds;
-            _oldMinutes = Minutes;
-            _oldSeconds = Seconds;
-            System.Diagnostics.Debug.WriteLine($"[CMD Start] Minutes={Minutes}, Seconds={Seconds}, Total={totalSeconds}s");
+            int totalSeconds = (_minutes * 60) + _seconds;
             _timerService.Start(TimeSpan.FromSeconds(totalSeconds));
-            IsTimerRunning = true;
-            ToggleSetTimer = false;
+        }
+
+        private void ResetTimer(object? obj)
+        {
+            _timerService.Reset();
         }
 
         public void SetMainViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
-        }
-
-        private void UpdateTimerUpClockTime()
-        {
-            int totalSeconds = Minutes * 60 + Seconds;
-            DateTime endTime = DateTime.Now.AddSeconds(totalSeconds);
-            TimerUpClockTime = endTime.ToString("HH:mm");
-        }
-
-        private void ResetTimer(object? obj)
-        {
-            System.Diagnostics.Debug.WriteLine($"[CMD Reset] Current Minutes={Minutes}, Seconds={Seconds}");
-            _timerService.Reset();
-            ToggleSetTimer = true;
-            System.Diagnostics.Debug.WriteLine($"[CMD Reset] After Reset: _timerService.Remaining={_timerService.Remaining}");
-            Minutes = _oldMinutes;
-            Seconds = _oldSeconds;
         }
     }
 }

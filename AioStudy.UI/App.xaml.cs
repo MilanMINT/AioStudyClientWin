@@ -79,8 +79,10 @@ namespace AioStudy.UI
             services.AddTransient<CreateUsernameViewModel>();
 
             //WPF Services
-            services.AddSingleton<ITimerService, TimeService>();
+            //services.AddSingleton<ITimerService, TimeService>();
+            services.AddSingleton<ITimerService, TimerService>();
             services.AddSingleton<WpfThemeService>();
+
         }
 
         protected override void OnExit(ExitEventArgs e)

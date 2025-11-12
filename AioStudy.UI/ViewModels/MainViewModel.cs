@@ -41,18 +41,6 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand ShowGradesCMD { get; }
         public RelayCommand ShowModulesCMD { get; }
 
-        private bool _isTimerPaused;
-        public bool IsTimerPaused
-        {
-            get => _isTimerPaused;
-            set
-            {
-                _isTimerPaused = value;
-                UpdateStatusBarVisibility();
-                OnPropertyChanged(nameof(IsTimerPaused));
-            }
-        }
-
         private bool _showStatusBar = true;
         public bool ShowStatusBar
         {
@@ -64,42 +52,12 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        private readonly ITimerService _timerService;
-        private TimeSpan _remaining;
-        private bool _isTimerRunning;
-
-        public bool IsTimerRunning
-        {
-            get
-            {
-                return _isTimerRunning;
-            }
-            set
-            {
-                _isTimerRunning = value;
-                UpdateStatusBarVisibility();
-                OnPropertyChanged(nameof(IsTimerRunning));
-            }
-        }
-
-        public TimeSpan Remaining
-        {
-            get { return _remaining; }
-            set
-            {
-                _remaining = value;
-                OnPropertyChanged(nameof(Remaining));
-            }
-        }
-
-
         public ViewModelBase CurrentViewModel
         {
             get { return _currentViewModel; }
             set
             {
                 _currentViewModel = value;
-                UpdateStatusBarVisibility();
                 OnPropertyChanged(nameof(CurrentViewModel));
             }
         }
@@ -114,7 +72,7 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public MainViewModel(ITimerService timerService)
+        public MainViewModel()
         {
             // Commands initialisieren
             Dark = new RelayCommand(ExecuteDarkCommand);
@@ -149,50 +107,7 @@ namespace AioStudy.UI.ViewModels
 
             ShowStatusBar = false;
 
-            _timerService = timerService;
-
-            IsTimerRunning = _timerService.IsRunning;
-            Remaining = _timerService.Remaining;
-
-            _timerService.TimeChanged += TimerService_TimeChanged;
-            _timerService.RunningStateChanged += TimerService_RunningStateChanged;
-            _timerService.TimerReset += TimerService_TimerReset;
-
             CheckForExistingUser();
-        }
-
-        private void TimerService_TimeChanged(object? sender, TimeSpan time)
-        {
-            Application.Current?.Dispatcher.Invoke(() =>
-            {
-                Remaining = time;
-            });
-        }
-
-        private void TimerService_RunningStateChanged(object? sender, bool running)
-        {
-            Application.Current?.Dispatcher.Invoke(() =>
-            {
-                IsTimerRunning = running;
-                if (!running)
-                {
-                    IsTimerPaused = _timerService.Remaining > TimeSpan.Zero;
-                }
-                else
-                {
-                    IsTimerPaused = false;
-                }
-            });
-        }
-
-        private void TimerService_TimerReset(object? sender, EventArgs e)
-        {
-            Application.Current?.Dispatcher.Invoke(() =>
-            {
-                IsTimerRunning = false;
-                IsTimerPaused = false;
-                UpdateStatusBarVisibility();
-            });
         }
 
         private void ExecuteShowModulesCommand(object? obj)
@@ -284,16 +199,6 @@ namespace AioStudy.UI.ViewModels
                     }
                 });
             }
-        }
-
-        private void UpdateStatusBarVisibility()
-        {
-            ShowStatusBar = (_isTimerRunning || _isTimerPaused) && !(_currentViewModel is PomodoroViewModel);
-        }
-
-        public void ResetTimer()
-        {
-            _timerService.Reset();
         }
     }
 }

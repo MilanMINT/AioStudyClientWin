@@ -10,7 +10,10 @@ namespace AioStudy.Core.Services
     public interface ITimerService
     {
         TimeSpan Remaining { get; }
+        DateTime EndTime { get; }
+
         bool IsRunning { get; }
+        bool IsPaused { get; }
 
         void Start(TimeSpan duration, Module? module = null);
         void Stop();
@@ -21,7 +24,6 @@ namespace AioStudy.Core.Services
         event EventHandler<TimeSpan> TimeChanged;
         event EventHandler TimerEnded;
         event EventHandler<bool> RunningStateChanged;
-        event EventHandler? TimerReset;
-        DateTime? EndTime { get; }
+        event EventHandler<bool> PausedStateChanged;
     }
 }

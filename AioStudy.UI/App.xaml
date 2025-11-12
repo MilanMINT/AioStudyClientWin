@@ -30,7 +30,6 @@
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
             <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
-            <converters:PlayPauseCommandConverter x:Key="PlayPauseCommandConverter" />
             <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
 
 
