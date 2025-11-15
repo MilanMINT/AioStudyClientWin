@@ -22,6 +22,8 @@ namespace AioStudy.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private readonly ITimerService _timerService;
+
         private ViewModelBase _currentViewModel;
         private DashboardViewModel _dashboardViewModel;
         private PomodoroViewModel _pomodoroViewModel;
@@ -41,7 +43,12 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand ShowGradesCMD { get; }
         public RelayCommand ShowModulesCMD { get; }
 
-        private bool _showStatusBar = true;
+        private TimeSpan _time;
+
+        private bool _showStatusBar;
+        private bool _isRunning;
+        private bool _isPaused;
+
         public bool ShowStatusBar
         {
             get => _showStatusBar;
@@ -49,6 +56,16 @@ namespace AioStudy.UI.ViewModels
             {
                 _showStatusBar = value;
                 OnPropertyChanged(nameof(ShowStatusBar));
+            }
+        }
+
+        public TimeSpan Time
+        {
+            get { return _time; }
+            set
+            {
+                _time = value;
+                OnPropertyChanged(nameof(Time));
             }
         }
 
@@ -72,8 +89,10 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public MainViewModel()
+        public MainViewModel(ITimerService timerService)
         {
+            _timerService = timerService;
+
             // Commands initialisieren
             Dark = new RelayCommand(ExecuteDarkCommand);
             Light = new RelayCommand(ExecuteLightCommand);
@@ -108,6 +127,29 @@ namespace AioStudy.UI.ViewModels
             ShowStatusBar = false;
 
             CheckForExistingUser();
+
+            _timerService.TimeChanged += TimerService_TimeChanged;
+            _timerService.RunningStateChanged += TimerService_RunningStateChanged;
+            _timerService.PausedStateChanged += TimerService_PausedStateChanged;
+        }
+
+        private void TimerService_TimeChanged(object? sender, TimeSpan e)
+        {
+            Time = e;
+        }
+
+        private void TimerService_PausedStateChanged(object? sender, bool e)
+        {
+            _isPaused = e;
+            UpdateTimerStatusBarVisibility();
+        }
+
+        
+
+        private void TimerService_RunningStateChanged(object? sender, bool e)
+        {
+            _isRunning = e;
+            UpdateTimerStatusBarVisibility();
         }
 
         private void ExecuteShowModulesCommand(object? obj)
@@ -199,6 +241,20 @@ namespace AioStudy.UI.ViewModels
                     }
                 });
             }
+        }
+
+        public void Dispose()
+        {
+            (_pomodoroViewModel as IDisposable)?.Dispose();
+            (_gradesViewModel as IDisposable)?.Dispose();
+            _timerService.RunningStateChanged -= TimerService_RunningStateChanged;
+            _timerService.PausedStateChanged -= TimerService_PausedStateChanged;
+            // REST KOMMT NOCH
+        }
+
+        private void UpdateTimerStatusBarVisibility()
+        {
+            ShowStatusBar = _isRunning || _isPaused;
         }
     }
 }

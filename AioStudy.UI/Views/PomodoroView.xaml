@@ -58,12 +58,26 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
+                <ComboBox
+                    Grid.Row="1"
+                    Width="300"
+                    Height="40"
+                    ItemsSource="{Binding Modules}"
+                    SelectedItem="{Binding SelectedModule}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
                 <!--  Timer Display Border  -->
                 <Border
                     Grid.Row="0"
                     Width="400"
                     Height="240"
                     Margin="0,30,0,0"
+                    Panel.ZIndex="9999999"
                     Background="#1F2024"
                     BorderThickness="1"
                     CornerRadius="10">
@@ -91,10 +105,33 @@
                             <RowDefinition Height="1" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="50" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button
+                            Grid.Column="1"
+                            Width="30"
+                            Height="30"
+                            Margin="15,0,0,0"
+                            VerticalAlignment="Top"
+                            Cursor="Hand"
+                            Style="{StaticResource NoHoverButtonStyle}"
+                            ToolTip="Open Popout timer">
+                            <MaIc:MaterialIcon
+                                Width="20"
+                                Height="20"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="#3A3D45"
+                                Kind="OpenInNew" />
+                        </Button>
 
                         <!--  Separator  -->
                         <Border
                             Grid.Row="1"
+                            Grid.ColumnSpan="2"
                             Height="1"
                             Margin="30,0"
                             Background="#3A3D45" />
@@ -107,7 +144,10 @@
                             Focusable="False"
                             IsEnabled="False" />-->
 
-                        <StackPanel Background="Transparent" Orientation="Vertical">
+                        <StackPanel
+                            Grid.ColumnSpan="2"
+                            Background="Transparent"
+                            Orientation="Vertical">
                             <StackPanel
                                 Margin="0,0,0,-10"
                                 HorizontalAlignment="Center"
@@ -121,7 +161,7 @@
                                     FontFamily="Arial Rounded MT Bold"
                                     FontSize="60"
                                     FormatString="00"
-                                    IsEnabled="{Binding ToggleSetTimer}"
+                                    IsEnabled="{Binding CanChangeTime}"
                                     Maximum="300"
                                     Minimum="0"
                                     Style="{StaticResource GradientIntegerUpDownTransparent}"
@@ -144,7 +184,7 @@
                                     FontFamily="Arial Rounded MT Bold"
                                     FontSize="60"
                                     FormatString="00"
-                                    IsEnabled="{Binding ToggleSetTimer}"
+                                    IsEnabled="{Binding CanChangeTime}"
                                     Maximum="59"
                                     Minimum="0"
                                     Style="{StaticResource GradientIntegerUpDownTransparent}"
@@ -159,7 +199,7 @@
                                 FontSize="14"
                                 FontWeight="Bold"
                                 Foreground="#696969"
-                                Text="{Binding TimerUpClockTime, FallbackValue=10:22, StringFormat={}{0:hh\\:mm\\:ss}, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding TimerFinishedTime, FallbackValue=10:22, StringFormat={}{0:hh\\:mm}, UpdateSourceTrigger=PropertyChanged}" />
 
 
 
@@ -168,6 +208,7 @@
                         <!--  Ersetze den DockPanel-Bereich mit diesem Code  -->
                         <DockPanel
                             Grid.Row="2"
+                            Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             LastChildFill="False">

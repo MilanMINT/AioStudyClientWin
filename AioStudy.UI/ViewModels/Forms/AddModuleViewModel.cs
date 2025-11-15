@@ -278,6 +278,8 @@ namespace AioStudy.UI.ViewModels.Forms
                     await ToastService.ShowSuccessAsync("Success", $"Module with Name: '{ModuleName}' successfully created!");
                     _modulesViewModel.Modules.Add(res);
                     await _modulesViewModel.LoadModulesBySemesterAsync();
+                    var vm = App.ServiceProvider.GetRequiredService<PomodoroViewModel>();
+                    await vm.LoadModulesAsync();
 
                     Application.Current.Windows.OfType<AddModuleView>().FirstOrDefault()?.Close();
                 }

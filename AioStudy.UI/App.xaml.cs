@@ -64,6 +64,7 @@ namespace AioStudy.UI
             services.AddTransient<ModulesDbService>();
             services.AddTransient<UserDbService>();
             services.AddTransient<LearnSessionDbService>();
+            services.AddTransient<DailyModuleStatsDbService>();
 
 
             //ViewModels
@@ -74,12 +75,12 @@ namespace AioStudy.UI
             services.AddSingleton<ModulesViewModel>();
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<AddSemesterViewModel>();
-            services.AddTransient<AddModuleViewModel>();
             services.AddSingleton<PomodoroViewModel>();
+
+            services.AddTransient<AddModuleViewModel>();
             services.AddTransient<CreateUsernameViewModel>();
 
             //WPF Services
-            //services.AddSingleton<ITimerService, TimeService>();
             services.AddSingleton<ITimerService, TimerService>();
             services.AddSingleton<WpfThemeService>();
 
@@ -87,6 +88,10 @@ namespace AioStudy.UI
 
         protected override void OnExit(ExitEventArgs e)
         {
+            if (MainWindow?.DataContext is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
             ServiceProvider?.Dispose();
             base.OnExit(e);
         }

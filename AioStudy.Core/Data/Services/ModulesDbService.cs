@@ -121,5 +121,23 @@ namespace AioStudy.Core.Data.Services
             return await _moduleRepository.GetAllAsync();
         }
 
+        public async Task AddTimeToModuleAsync(Module module, int minutes)
+        {
+            if (module == null) return;
+
+            try
+            {
+                var existing = await _moduleRepository.GetByIdAsync(module.Id);
+                if (existing == null) return;
+
+                existing.LearnedMinutes += minutes;
+                await _moduleRepository.UpdateAsync(existing);
+            }
+            catch (Exception)
+            {
+                
+            }
+        }
+
     }
 }

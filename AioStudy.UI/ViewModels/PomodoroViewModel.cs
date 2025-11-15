@@ -1,20 +1,72 @@
-﻿using AioStudy.Core.Services;
+﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Services;
+using AioStudy.Models;
 using AioStudy.UI.Commands;
 using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace AioStudy.UI.ViewModels
 {
-    public class PomodoroViewModel : ViewModelBase
+    public class PomodoroViewModel : ViewModelBase, IDisposable
     {
         private string _text = string.Empty;
         private readonly ITimerService _timerService;
         private TimeSpan _remaining;
+        private DateTime _timerFinishedTime;
+        private readonly DispatcherTimer _clockTimer;
+        private Module _selectedModule;
         private int _minutes = 25;
         private int _seconds = 0;
         private bool _isPaused;
         private bool _isRunning;
+        private bool _canChangeTime;
+
+        private ObservableCollection<Module> _modules = new ObservableCollection<Module>();
+
+        private readonly ModulesDbService _modulesDbService;
+
+        public ObservableCollection<Module> Modules
+        {
+            get { return _modules; }
+            set
+            {
+                _modules = value;
+                OnPropertyChanged(nameof(Modules));
+            }
+        }
+
+        public Module SelectedModule
+        {
+            get { return _selectedModule; }
+            set
+            {
+                _selectedModule = value;
+                OnPropertyChanged(nameof(SelectedModule));
+            }
+        }
+
+        public DateTime TimerFinishedTime
+        {
+            get { return _timerFinishedTime; }
+            set
+            {
+                _timerFinishedTime = value;
+                OnPropertyChanged(nameof(TimerFinishedTime));
+            }
+        }
+
+        public bool CanChangeTime
+        {
+            get { return _canChangeTime; }
+            set
+            {
+                _canChangeTime = value;
+                OnPropertyChanged(nameof(CanChangeTime));
+            }
+        }
 
         public bool IsRunning
         {
@@ -56,6 +108,9 @@ namespace AioStudy.UI.ViewModels
             {
                 _minutes = value;
                 OnPropertyChanged(nameof(Minutes));
+                OnPropertyChanged(nameof(TimerFinishedTime));
+                UpdateTimerFinishedTime();
+                ControlTimerCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -66,6 +121,9 @@ namespace AioStudy.UI.ViewModels
             {
                 _seconds = value;
                 OnPropertyChanged(nameof(Seconds));
+                OnPropertyChanged(nameof(TimerFinishedTime));
+                UpdateTimerFinishedTime();
+                ControlTimerCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -88,40 +146,83 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public PomodoroViewModel(ITimerService timerService)
+        public PomodoroViewModel(ITimerService timerService, ModulesDbService modulesDbService)
         {
             Text = "Initial Text";
             _timerService = timerService;
+            _modulesDbService = modulesDbService;
 
-            StartTimerCommand = new RelayCommand(StartTimer, CanStartTimer);
+            IsPaused = false;
+            IsRunning = false;
+            CanChangeTime = true;
+
+            _modules = new ObservableCollection<Module>();
+
+            StartTimerCommand = new RelayCommand(StartTimer);
             PauseTimerCommand = new RelayCommand(PauseTimer);
             ResumeTimerCommand = new RelayCommand(ResumeTimer);
             ResetTimerCommand = new RelayCommand(ResetTimer);
-            ControlTimerCommand = new RelayCommand(ControlTimer);
+            ControlTimerCommand = new RelayCommand(ControlTimer, CanStartTimer);
 
-            _timerService.TimeChanged += (s, time) =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Remaining = time;
-                });
-            };
+            UpdateTimerFinishedTime();
 
-            _timerService.PausedStateChanged += (s, isPaused) =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    IsPaused = isPaused;
-                });
-            };
+            // Events
+            _timerService.TimeChanged += OnTimeChanged;
+            _timerService.PausedStateChanged += OnPausedStateChanged;
+            _timerService.RunningStateChanged += OnRunningStateChanged;
 
-            _timerService.RunningStateChanged += (s, isRunning) =>
+            // Clock Timer
+            _clockTimer = new DispatcherTimer
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    IsRunning = isRunning;
-                });
+                Interval = TimeSpan.FromSeconds(1)
             };
+            _clockTimer.Tick += ClockTimer_Tick;
+            _clockTimer.Start();
+
+            _ = LoadModulesAsync();
+        }
+
+        public async Task LoadModulesAsync()
+        {
+            Modules.Clear();
+            var modules = await _modulesDbService.GetAllModulesAsync();
+            foreach (var module in modules)
+            {
+                Modules.Add(module);
+            }
+        }
+
+        private void ClockTimer_Tick(object? sender, EventArgs e)
+        {
+            if (!_isRunning || _isPaused)
+            {
+                UpdateTimerFinishedTime();
+            }
+        }
+
+        private void OnTimeChanged(object? sender, TimeSpan time)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                Remaining = time;
+            });
+        }
+
+        private void OnPausedStateChanged(object? sender, bool isPaused)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                IsPaused = isPaused;
+            });
+        }
+
+        private void OnRunningStateChanged(object? sender, bool isRunning)
+        {
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                IsRunning = isRunning;
+                CanChangeTime = !isRunning;
+            });
         }
 
         private void ControlTimer(object? obj)
@@ -145,6 +246,8 @@ namespace AioStudy.UI.ViewModels
 
         private bool CanStartTimer(object? arg)
         {
+            if (_minutes == 0 && _seconds == 0)
+                return false;
             return true;
         }
 
@@ -158,10 +261,10 @@ namespace AioStudy.UI.ViewModels
             _timerService.Pause();
         }
 
-        private void StartTimer(object? obj)
+        private void StartTimer(object? obj)   
         {
             int totalSeconds = (_minutes * 60) + _seconds;
-            _timerService.Start(TimeSpan.FromSeconds(totalSeconds));
+            _timerService.Start(TimeSpan.FromSeconds(totalSeconds), _selectedModule);
         }
 
         private void ResetTimer(object? obj)
@@ -172,6 +275,24 @@ namespace AioStudy.UI.ViewModels
         public void SetMainViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
+        }
+
+        private void UpdateTimerFinishedTime()
+        {
+            TimerFinishedTime = DateTime.Now.AddMinutes(Minutes).AddSeconds(Seconds);
+        }
+
+        public void Dispose()
+        {
+            if (_clockTimer != null)
+            {
+                _clockTimer.Stop();
+                _clockTimer.Tick -= ClockTimer_Tick;
+            }
+
+            _timerService.TimeChanged -= OnTimeChanged;
+            _timerService.PausedStateChanged -= OnPausedStateChanged;
+            _timerService.RunningStateChanged -= OnRunningStateChanged;
         }
     }
 }
