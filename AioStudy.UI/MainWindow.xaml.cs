@@ -1,22 +1,23 @@
 ﻿using AioStudy.UI.ViewModels;
+using AioStudy.UI.Views.Controls;
+using AioStudy.UI.WpfServices;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Web.WebView2.Core;
 using Microsoft.Win32;
 using System.IO;
+using System.Runtime;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Web.WebView2.Core;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Runtime.InteropServices;
-using System.Runtime;
-using System.Windows.Interop;
-using AioStudy.UI.Views.Controls;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AioStudy.UI
 {
@@ -25,6 +26,8 @@ namespace AioStudy.UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly GlobalHotKeyService _hotKeyService;
+        private PomodoroViewModel _pomodoroViewModel;
 
         public ToastNotification GetToastOverlay()
         {
@@ -36,6 +39,12 @@ namespace AioStudy.UI
             InitializeComponent();
             DataContext = App.ServiceProvider.GetRequiredService<MainViewModel>();
             this.MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+
+            _hotKeyService = App.ServiceProvider.GetRequiredService<GlobalHotKeyService>();
+            _pomodoroViewModel = App.ServiceProvider.GetRequiredService<PomodoroViewModel>();
+
+            Loaded += MainWindow_Loaded;
+            Closed += MainWindow_Closed;
         }
 
         [DllImport("user32.dll")]
@@ -72,6 +81,32 @@ namespace AioStudy.UI
         private void BtnMinApp_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Hole Window Handle
+            var helper = new WindowInteropHelper(this);
+            _hotKeyService.Initialize(helper.Handle);
+
+            // Verbinde Events mit PomodoroViewModel
+            if (_pomodoroViewModel != null)
+            {
+                _hotKeyService.ToggleTimerRequested += (s, args) =>
+                {
+                    _pomodoroViewModel.ControlTimerCommand?.Execute(null);
+                };
+
+                _hotKeyService.ResetTimerRequested += (s, args) =>
+                {
+                    _pomodoroViewModel.ResetTimerCommand?.Execute(null);
+                };
+            }
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            _hotKeyService?.Dispose();
         }
     }
 }   

@@ -15,6 +15,7 @@ namespace AioStudy.Data.EF
         public DbSet<Semester> Semesters { get; set; }
         public DbSet<DailyModuleStats> DailyModuleStats { get; set; }
         public DbSet<LearnSession> LearnSessions { get; set; }
+        public DbSet<QuickTimer> QuickTimers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

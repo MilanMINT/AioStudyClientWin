@@ -872,6 +872,7 @@
                 <Setter Property="FontWeight" Value="Medium" />
                 <Setter Property="Height" Value="40" />
                 <Setter Property="Width" Value="80" />
+                <Setter Property="AllowTextInput" Value="False" />
                 <Setter Property="UseLayoutRounding" Value="True" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="Background" Value="#2A2D35" />

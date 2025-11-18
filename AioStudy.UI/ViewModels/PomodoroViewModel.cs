@@ -25,10 +25,21 @@ namespace AioStudy.UI.ViewModels
         private bool _isPaused;
         private bool _isRunning;
         private bool _canChangeTime;
+        private bool _canChangeModule;
 
         private ObservableCollection<Module> _modules = new ObservableCollection<Module>();
 
         private readonly ModulesDbService _modulesDbService;
+
+        public bool CanChangeModule
+        {
+            get { return _canChangeModule; }
+            set
+            {
+                _canChangeModule = value;
+                OnPropertyChanged(nameof(CanChangeModule));
+            }
+        }
 
         public ObservableCollection<Module> Modules
         {
@@ -161,6 +172,7 @@ namespace AioStudy.UI.ViewModels
             IsRunning = false;
             CanChangeTime = true;
             SelectedModule = null;
+            CanChangeModule = true;
 
             _modules = new ObservableCollection<Module>();
 
@@ -261,22 +273,26 @@ namespace AioStudy.UI.ViewModels
         private void ResumeTimer(object? obj)
         {
             _timerService.Resume();
+            CanChangeModule = false;
         }
 
         private void PauseTimer(object? obj)
         {
             _timerService.Pause();
+            CanChangeModule = false;
         }
 
         private void StartTimer(object? obj)   
         {
             int totalSeconds = (_minutes * 60) + _seconds;
             _timerService.Start(TimeSpan.FromSeconds(totalSeconds), _selectedModule);
+            CanChangeModule = false;
         }   
 
         private void ResetTimer(object? obj)
         {
             _timerService.Reset();
+            CanChangeModule = true;
         }
 
         public void SetMainViewModel(MainViewModel mainViewModel)

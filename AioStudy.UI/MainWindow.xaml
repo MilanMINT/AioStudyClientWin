@@ -27,6 +27,15 @@
     WindowStyle="None"
     mc:Ignorable="d">
 
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            CaptionHeight="30"
+            CornerRadius="6"
+            GlassFrameThickness="1"
+            ResizeBorderThickness="5"
+            UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
@@ -87,21 +96,24 @@
                 <Button
                     x:Name="btnCloseApp"
                     Click="BtnCloseApp_Click"
-                    Style="{StaticResource controlButton}">
+                    Style="{StaticResource controlButton}"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
                     <MaIc:MaterialIcon Kind="Close" Style="{StaticResource controlButtonIcon}" />
                 </Button>
 
                 <Button
                     x:Name="btnMaxApp"
                     Click="BtnMaxApp_Click"
-                    Style="{StaticResource controlButton}">
+                    Style="{StaticResource controlButton}"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
                     <MaIc:MaterialIcon Kind="WindowMaximize" Style="{StaticResource controlButtonIcon}" />
                 </Button>
 
                 <Button
                     x:Name="btnMinApp"
                     Click="BtnMinApp_Click"
-                    Style="{StaticResource controlButton}">
+                    Style="{StaticResource controlButton}"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
                     <MaIc:MaterialIcon Kind="WindowMinimize" Style="{StaticResource controlButtonIcon}" />
                 </Button>
 

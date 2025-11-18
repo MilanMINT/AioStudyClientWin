@@ -64,10 +64,10 @@ namespace AioStudy.Core.Data.Services
             session.SessionCompleted = true;
             session.EndTime = DateTime.UtcNow;
             await _learnSessionRepository.UpdateAsync(session);
-            if (dailyModuleStats != null)
-            {
-                await _dailyModuleStatsDbService.IncrementSessionCountAsync(dailyModuleStats);
-            }
+            //if (dailyModuleStats != null)
+            //{
+            //    await _dailyModuleStatsDbService.IncrementSessionCountAsync(dailyModuleStats);
+            //}
         }
     }
 }

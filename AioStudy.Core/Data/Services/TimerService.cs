@@ -74,6 +74,11 @@ namespace AioStudy.Core.Data.Services
                 _currentDailyModuleStats = _dailyModuleStatsDbService.CreateDailyModuleStatIfNotExist(module).GetAwaiter().GetResult();
             }
 
+            if (_currentDailyModuleStats != null)
+            {
+                _ = _dailyModuleStatsDbService.IncrementSessionCountAsync(_currentDailyModuleStats);
+            }
+
             _ = RunLoopAsync(_cts.Token);
         }
 

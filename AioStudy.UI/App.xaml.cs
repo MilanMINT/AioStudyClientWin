@@ -83,6 +83,7 @@ namespace AioStudy.UI
             //WPF Services
             services.AddSingleton<ITimerService, TimerService>();
             services.AddSingleton<WpfThemeService>();
+            services.AddSingleton<GlobalHotKeyService>();
 
         }
 
