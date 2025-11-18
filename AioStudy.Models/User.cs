@@ -24,6 +24,10 @@ namespace AioStudy.Models
         public string? Email { get; set; } = "";
         [AllowNull]
         public int? MatrikelNumber { get; set; } = null;
+        [AllowNull]
+        public int? CurrentSemsterId { get; set; }
+        [AllowNull]
+        public Semester? CurrentSemester { get; set; }
 
         public DateTime Created { get; set; } = DateTime.Now;
 

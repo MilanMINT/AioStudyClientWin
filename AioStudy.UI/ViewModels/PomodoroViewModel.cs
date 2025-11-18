@@ -6,7 +6,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using NAudio.Wave;
 using System.Windows.Threading;
+using System.IO;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -131,7 +133,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand PauseTimerCommand { get; }
         public RelayCommand ResumeTimerCommand { get; }
         public RelayCommand ResetTimerCommand { get; }
-
+        public RelayCommand ClearSelectionCommand { get; }
         public RelayCommand ControlTimerCommand { get; }
 
         private MainViewModel _mainViewModel;
@@ -146,6 +148,9 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
+        WaveOutEvent output;
+        AudioFileReader reader;
+
         public PomodoroViewModel(ITimerService timerService, ModulesDbService modulesDbService)
         {
             Text = "Initial Text";
@@ -155,6 +160,7 @@ namespace AioStudy.UI.ViewModels
             IsPaused = false;
             IsRunning = false;
             CanChangeTime = true;
+            SelectedModule = null;
 
             _modules = new ObservableCollection<Module>();
 
@@ -163,6 +169,7 @@ namespace AioStudy.UI.ViewModels
             ResumeTimerCommand = new RelayCommand(ResumeTimer);
             ResetTimerCommand = new RelayCommand(ResetTimer);
             ControlTimerCommand = new RelayCommand(ControlTimer, CanStartTimer);
+            ClearSelectionCommand = new RelayCommand(_ => SelectedModule = null);
 
             UpdateTimerFinishedTime();
 
@@ -265,7 +272,7 @@ namespace AioStudy.UI.ViewModels
         {
             int totalSeconds = (_minutes * 60) + _seconds;
             _timerService.Start(TimeSpan.FromSeconds(totalSeconds), _selectedModule);
-        }
+        }   
 
         private void ResetTimer(object? obj)
         {

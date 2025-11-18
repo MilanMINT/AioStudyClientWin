@@ -18,6 +18,7 @@ namespace AioStudy.UI.ViewModels
         private readonly SemesterDbService _semesterDbService;
         private MainViewModel _mainViewModel;
         private ModulesViewModel _modulesViewModel;
+        private readonly SemaphoreSlim _loadSemaphore = new SemaphoreSlim(1, 1);
 
         private ObservableCollection<Semester> _semesters;
         private bool _isLoading;
@@ -58,7 +59,6 @@ namespace AioStudy.UI.ViewModels
             AddSemesterCommand = new RelayCommand(async _ => await AddSampleSemesterAsync());
             DeleteSemesterCommand = new RelayCommand(async param => await DeleteSemesterAsync(param));
             OpenSemesterOverviewCommand = new RelayCommand(_ => OpenSemesterOverview());
-            //OpenSpecificModulesViewCMD = new RelayCommand(OpenModulesBySemester);
 
             _ = LoadSemestersAsync();
         }
@@ -68,24 +68,6 @@ namespace AioStudy.UI.ViewModels
             MessageBox.Show("Open!");
         }
 
-        //private void OpenModulesBySemester(object? obj)
-        //{
-        //    if (obj is Semester semester)
-        //    {
-        //        try
-        //        {
-        //            var modulesViewModel = App.ServiceProvider.GetRequiredService<ModulesViewModel>();
-        //            modulesViewModel.SetSelectedSemester(semester);
-        //            _mainViewModel.CurrentViewModel = modulesViewModel;
-        //        }
-        //        catch (Exception)
-        //        {
-
-        //            throw;
-        //        }
-        //    }
-        //}
-
         public void SetMainViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
@@ -93,53 +75,53 @@ namespace AioStudy.UI.ViewModels
 
         private async Task LoadSemestersAsync()
         {
-            IsLoading = true;
+            if (!await _loadSemaphore.WaitAsync(0))
+            {
+                System.Diagnostics.Debug.WriteLine("LoadSemestersAsync bereits aktiv, überspringe...");
+                return;
+            }
+
             try
             {
+                IsLoading = true;
+                
                 var semesters = await _semesterDbService.GetAllSemestersAsync();
                 
                 Semesters.Clear();
-                var fillTasks = new List<Task>();
+                
                 foreach (var semester in semesters)
                 {
                     Semesters.Add(semester);
-
-                    fillTasks.Add(Task.Run(async () =>
-                    {
-                        var modulesCount = await _semesterDbService.GetModulesCountForSemester(semester);
-                        semester.ModulesCount = modulesCount;
-                    }));
+                    
+                    var modulesCount = await _semesterDbService.GetModulesCountForSemester(semester);
+                    semester.ModulesCount = modulesCount;
                 }
-
-                await Task.WhenAll(fillTasks);
+                
                 OnPropertyChanged(nameof(Semesters));
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Fehler beim Laden der Semester: {ex.Message}");
+                MessageBox.Show($"Fehler beim Laden der Semester: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
                 IsLoading = false;
+                _loadSemaphore.Release();
             }
         }
 
         private async Task AddSampleSemesterAsync()
         {
-            //var addWindow = new AddSemesterView();
-            //var viewModel = App.ServiceProvider.GetRequiredService<AddSemesterViewModel>();
-            //addWindow.DataContext = viewModel;
-            //addWindow.Owner = System.Windows.Application.Current.MainWindow;
-            //addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
-            //addWindow.ShowDialog();
             try
             {
                 var newSemester = await _semesterDbService.CreateSemesterAsync(
                     $"SemesterWiSe {DateTime.Now:yyyy-MM}",
-                    DateTime.Now.ToUniversalTime(),  // Convert to UTC
-                    DateTime.Now.AddMonths(16).ToUniversalTime()  // Convert to UTC
+                    DateTime.Now.ToUniversalTime(),
+                    DateTime.Now.AddMonths(16).ToUniversalTime()
                 );
                 newSemester.LearnedSemesterMinutes = 183;
+                newSemester.Color = "#FF5733";
                 Semesters.Add(newSemester);
             }
             catch (Exception ex)

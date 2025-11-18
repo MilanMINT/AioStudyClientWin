@@ -28,6 +28,7 @@
             <converters:MinutesToStringConverter x:Key="MinutesToStringConverter" />
             <converters:ModuleCountConverter x:Key="ModuleCountConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
 
             <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
             <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
@@ -89,11 +90,11 @@
                                 <!--  Aktive Linie als separates Element  -->
                                 <Border
                                     x:Name="ActiveLine"
-                                    Width="5"
-                                    Height="28"
+                                    Width="230"
+                                    Height="40"
                                     Margin="15,0,0,0"
                                     HorizontalAlignment="Left"
-                                    Background="#6189C2"
+                                    Background="#2D676767"
                                     CornerRadius="3"
                                     Visibility="Collapsed">
                                     <Border.Effect>
@@ -112,7 +113,9 @@
                             <ControlTemplate.Triggers>
                                 <!--  Button Style on hover  -->
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#1AFFFFFF" />
+                                    <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" />
+                                    <Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" />
+                                    <Setter TargetName="ActiveLine" Property="Visibility" Value="Visible" />
                                 </Trigger>
                                 <!--  Activated button style  -->
                                 <Trigger Property="IsChecked" Value="True">
@@ -1099,11 +1102,6 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-
-
-
-
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -110,6 +110,7 @@ namespace AioStudy.Core.Data.Services
                 RunningStateChanged?.Invoke(this, false);
                 _currentDailyModuleStats = null;
                 _isRunning = false;
+                TimeChanged?.Invoke(this, _totalDuration);
             }
         }
 
@@ -180,6 +181,7 @@ namespace AioStudy.Core.Data.Services
         {
             _lastMinute = elapsedMinutes;
             _ = _learnSessionDbService.AddTimeToSessionAsync(_currentSession!, 1);
+            _ = _userDbService.AddTimeToUser(1);
 
             if (_currentModule != null)
             {

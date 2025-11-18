@@ -105,7 +105,6 @@ namespace AioStudy.UI.Views.Controls
             }
             catch (TaskCanceledException)
             {
-                System.Diagnostics.Debug.WriteLine("Toast wurde überschrieben");
             }
             finally
             {

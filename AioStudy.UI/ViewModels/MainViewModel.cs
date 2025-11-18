@@ -23,6 +23,8 @@ namespace AioStudy.UI.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private readonly ITimerService _timerService;
+        private readonly UserDbService _userDbService;
+        private readonly SemesterDbService _semesterDbService;
 
         private ViewModelBase _currentViewModel;
         private DashboardViewModel _dashboardViewModel;
@@ -48,6 +50,44 @@ namespace AioStudy.UI.ViewModels
         private bool _showStatusBar;
         private bool _isRunning;
         private bool _isPaused;
+
+        // FirstSecondLetterOfUsername
+        //Username
+        //CurrentSemester
+
+        private string _firstSecondLetterOfUsername;
+        private string _username;
+        private string _currentSemester;
+
+        public string FirstSecondLetterOfUsername
+        {
+            get => _firstSecondLetterOfUsername;
+            set
+            {
+                _firstSecondLetterOfUsername = value;
+                OnPropertyChanged(nameof(FirstSecondLetterOfUsername));
+            }
+        }
+
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                _username = value;
+                OnPropertyChanged(nameof(Username));
+            }
+        }
+
+        public string CurrentSemester
+        {
+            get => _currentSemester;
+            set
+            {
+                _currentSemester = value;
+                OnPropertyChanged(nameof(CurrentSemester));
+            }
+        }
 
         public bool ShowStatusBar
         {
@@ -89,9 +129,11 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public MainViewModel(ITimerService timerService)
+        public MainViewModel(ITimerService timerService, UserDbService userDbService, SemesterDbService semesterDbService)
         {
             _timerService = timerService;
+            _userDbService = userDbService;
+            _semesterDbService = semesterDbService;
 
             // Commands initialisieren
             Dark = new RelayCommand(ExecuteDarkCommand);
@@ -127,6 +169,7 @@ namespace AioStudy.UI.ViewModels
             ShowStatusBar = false;
 
             CheckForExistingUser();
+            LoadUserBottomInfoPanel();
 
             _timerService.TimeChanged += TimerService_TimeChanged;
             _timerService.RunningStateChanged += TimerService_RunningStateChanged;
@@ -143,8 +186,6 @@ namespace AioStudy.UI.ViewModels
             _isPaused = e;
             UpdateTimerStatusBarVisibility();
         }
-
-        
 
         private void TimerService_RunningStateChanged(object? sender, bool e)
         {
@@ -254,7 +295,16 @@ namespace AioStudy.UI.ViewModels
 
         private void UpdateTimerStatusBarVisibility()
         {
-            ShowStatusBar = _isRunning || _isPaused;
+            ShowStatusBar = _isRunning;
+        }
+
+        public async void LoadUserBottomInfoPanel()
+        {
+            var user = await _userDbService.GetUser()!;
+            var firstSecondLetter = StringUtils.GetFirstSecondLetter(user?.Username);
+            FirstSecondLetterOfUsername = firstSecondLetter?.ToUpper() ?? "??";
+            CurrentSemester = user?.CurrentSemester?.Name ?? "Current semester not set!";
+            Username = user?.Username ?? "Username not set!";
         }
     }
 }

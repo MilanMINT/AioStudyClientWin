@@ -15,6 +15,320 @@
     d:DesignWidth="1200"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <!--  Scrollbar Styles  -->
+        <Style x:Key="LocalScrollBarThumb" TargetType="Thumb">
+            <Setter Property="Background" Value="#4A4D55" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border
+                            Background="#4A4D55"
+                            CornerRadius="3"
+                            Opacity="0.6" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="LocalScrollBar" TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Width="8" Background="Transparent">
+                            <Track Name="PART_Track" IsDirectionReversed="true">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton
+                                        Background="Transparent"
+                                        Command="ScrollBar.PageUpCommand"
+                                        Opacity="0" />
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource LocalScrollBarThumb}" />
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton
+                                        Background="Transparent"
+                                        Command="ScrollBar.PageDownCommand"
+                                        Opacity="0" />
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!--  ComboBox Style für Module Selector  -->
+        <Style x:Key="ModuleComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="BorderThickness" Value="1.5" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Height" Value="45" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="Background" Value="#2A2D35" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border
+                                x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="30" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Toggle Button (muss ZUERST sein, damit er im Hintergrund liegt)  -->
+                                    <ToggleButton
+                                        Grid.ColumnSpan="3"
+                                        Panel.ZIndex="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Focusable="False"
+                                        IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent" />
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+
+                                    <!--  Placeholder  -->
+                                    <TextBlock
+                                        x:Name="PlaceholderText"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="3"
+                                        Margin="12,0,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Panel.ZIndex="1"
+                                        FontSize="12"
+                                        Foreground="#B0B3BA"
+                                        IsHitTestVisible="False"
+                                        Text="Select Module"
+                                        Visibility="Collapsed" />
+
+                                    <!--  Selected Content  -->
+                                    <Grid
+                                        x:Name="SelectedContent"
+                                        Grid.Column="0"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Panel.ZIndex="1"
+                                        IsHitTestVisible="False">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border
+                                            Grid.Column="0"
+                                            Width="4"
+                                            Height="24"
+                                            Margin="0,0,0,0"
+                                            Background="{Binding SelectedItem.Color, Converter={StaticResource StringToBrushConverter}, RelativeSource={RelativeSource TemplatedParent}}"
+                                            CornerRadius="2" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="10,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="13"
+                                            FontWeight="Bold"
+                                            Foreground="White"
+                                            Text="{Binding SelectedItem.Name, RelativeSource={RelativeSource TemplatedParent}}"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Grid>
+
+                                    <!--  Clear Button (ÜBER dem ToggleButton)  -->
+                                    <Button
+                                        x:Name="PART_ClearButton"
+                                        Grid.Column="1"
+                                        Width="20"
+                                        Height="20"
+                                        Margin="0,0,-8,0"
+                                        VerticalAlignment="Center"
+                                        Panel.ZIndex="2"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Command="{Binding DataContext.ClearSelectionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        Cursor="Hand"
+                                        Focusable="False"
+                                        Visibility="Visible">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid Background="Transparent">
+                                                    <Ellipse
+                                                        x:Name="ellipse"
+                                                        Width="18"
+                                                        Height="18"
+                                                        Fill="#3A3D45" />
+                                                    <Path
+                                                        Width="8"
+                                                        Height="8"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Data="M 0,0 L 8,8 M 8,0 L 0,8"
+                                                        Stretch="Fill"
+                                                        Stroke="White"
+                                                        StrokeThickness="1.5" />
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ellipse" Property="Fill" Value="#FF6B6B" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+
+                                    <!--  Dropdown Arrow  -->
+                                    <MaIc:MaterialIcon
+                                        x:Name="DropdownArrow"
+                                        Grid.Column="2"
+                                        Width="16"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Panel.ZIndex="1"
+                                        Foreground="#B0B3BA"
+                                        IsHitTestVisible="False"
+                                        Kind="ChevronDown" />
+                                </Grid>
+                            </Border>
+
+                            <!--  Popup  -->
+                            <Popup
+                                x:Name="PART_Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                Placement="Bottom"
+                                PopupAnimation="Slide">
+                                <Border
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="200"
+                                    Margin="0,5,0,0"
+                                    Background="#2A2D35"
+                                    BorderBrush="#608BC1"
+                                    BorderThickness="1"
+                                    CornerRadius="5">
+                                    <Border.Effect>
+                                        <DropShadowEffect
+                                            BlurRadius="15"
+                                            Direction="270"
+                                            Opacity="0.4"
+                                            ShadowDepth="5"
+                                            Color="#000000" />
+                                    </Border.Effect>
+                                    <ScrollViewer
+                                        MaxHeight="200"
+                                        HorizontalScrollBarVisibility="Disabled"
+                                        VerticalScrollBarVisibility="Auto">
+                                        <ScrollViewer.Resources>
+                                            <Style BasedOn="{StaticResource LocalScrollBar}" TargetType="ScrollBar" />
+                                        </ScrollViewer.Resources>
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="SelectedItem" Value="{x:Null}">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="SelectedContent" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="PART_ClearButton" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+
+                            <!--  Hover Effect  -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#353842" />
+                            </Trigger>
+
+                            <!--  Dropdown Open  -->
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="DropdownArrow" Property="Kind" Value="ChevronUp" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  ComboBoxItem Style  -->
+        <Style x:Key="ModuleComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border
+                            x:Name="border"
+                            Width="250"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}">
+                            <Grid Width="226">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border
+                                    Grid.Column="0"
+                                    Width="4"
+                                    Height="24"
+                                    Margin="0,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    Background="{Binding Color, Converter={StaticResource StringToBrushConverter}}"
+                                    CornerRadius="2" />
+
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    Foreground="White"
+                                    Text="{Binding Name}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#3A3D45" />
+                                <Setter TargetName="border" Property="CornerRadius" Value="10" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#4A4D55" />
+                                <Setter TargetName="border" Property="CornerRadius" Value="10" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80" />
@@ -58,19 +372,6 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <ComboBox
-                    Grid.Row="1"
-                    Width="300"
-                    Height="40"
-                    ItemsSource="{Binding Modules}"
-                    SelectedItem="{Binding SelectedModule}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
                 <!--  Timer Display Border  -->
                 <Border
                     Grid.Row="0"
@@ -101,7 +402,7 @@
 
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="2*" />
                             <RowDefinition Height="1" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
@@ -135,14 +436,6 @@
                             Height="1"
                             Margin="30,0"
                             Background="#3A3D45" />
-
-                        <!--<wv2:WebView2
-                            x:Name="DotwaveView"
-                            Grid.Row="3"
-                            Panel.ZIndex="-1"
-                            AllowDrop="False"
-                            Focusable="False"
-                            IsEnabled="False" />-->
 
                         <StackPanel
                             Grid.ColumnSpan="2"
@@ -201,11 +494,19 @@
                                 Foreground="#696969"
                                 Text="{Binding TimerFinishedTime, FallbackValue=10:22, StringFormat={}{0:hh\\:mm}, UpdateSourceTrigger=PropertyChanged}" />
 
-
-
+                            <!--  Module Selector ComboBox  -->
+                            <ComboBox
+                                x:Name="ModuleComboBox"
+                                Width="250"
+                                Height="45"
+                                Margin="0,10,0,0"
+                                ItemContainerStyle="{StaticResource ModuleComboBoxItemStyle}"
+                                ItemsSource="{Binding Modules}"
+                                SelectedItem="{Binding SelectedModule, Mode=TwoWay}"
+                                Style="{StaticResource ModuleComboBoxStyle}" />
                         </StackPanel>
 
-                        <!--  Ersetze den DockPanel-Bereich mit diesem Code  -->
+                        <!--  Control Buttons  -->
                         <DockPanel
                             Grid.Row="2"
                             Grid.ColumnSpan="2"
@@ -213,7 +514,6 @@
                             VerticalAlignment="Center"
                             LastChildFill="False">
 
-                            <!--  Kombinierter Play/Pause Button  -->
                             <Button
                                 Width="60"
                                 Command="{Binding ControlTimerCommand}"

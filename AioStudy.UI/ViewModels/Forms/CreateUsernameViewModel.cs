@@ -11,6 +11,7 @@ namespace AioStudy.UI.ViewModels.Forms
     {
         private string _username = string.Empty;
         private readonly UserDbService _userDbService;
+        private MainViewModel _mainViewModel;
 
         public string Username
         {
@@ -23,9 +24,10 @@ namespace AioStudy.UI.ViewModels.Forms
 
         public event EventHandler<bool>? RequestClose;
 
-        public CreateUsernameViewModel(UserDbService userDbService)
+        public CreateUsernameViewModel(UserDbService userDbService, MainViewModel mainViewModel)
         {
             _userDbService = userDbService;
+            _mainViewModel = mainViewModel;
             CancelCreateUserCommand = new RelayCommand(ExecuteCancelCreateUser);
             CreateUserCommand = new RelayCommand(async _ => await ExecuteCreateUserAsync());
         }
@@ -47,6 +49,7 @@ namespace AioStudy.UI.ViewModels.Forms
                 {
                     RequestClose?.Invoke(this, true);
                     await ToastService.ShowSuccessAsync("Success", $"User with Name: '{Username}' successfully created!");
+                    _mainViewModel.LoadUserBottomInfoPanel();
                 }
                 else
                 {

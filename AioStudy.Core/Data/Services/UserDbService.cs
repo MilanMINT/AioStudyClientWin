@@ -17,9 +17,10 @@ namespace AioStudy.Core.Data.Services
             _userRepository = userRepository;
         }
 
-        public async Task<User?> GetUserByIdAsync(int userId)
+        public async Task<User?> GetUser()
         {
-            return await _userRepository.GetByIdAsync(userId);
+            var users = await _userRepository.GetAllAsync();
+            return users.FirstOrDefault();
         }
 
         /// <summary>

@@ -29,9 +29,5 @@ namespace AioStudy.Core.Data.Services
             _learnSessionRepository = learnSessionRepository;
             _userRepository = userRepository;
         }
-
-
-
-
     }
 }

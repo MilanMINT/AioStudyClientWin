@@ -45,7 +45,6 @@
   <ItemGroup>
     <None Remove="Assets\AioStudyLogo.png" />
     <None Remove="Assets\Fonts\Inter-Regular.otf" />
-    <None Remove="Assets\Sounds\start_timer_sound.wav" />
     <None Remove="Sounds\start.wav" />
   </ItemGroup>
 
@@ -64,6 +63,7 @@
     <PackageReference Include="MaterialDesignColors" Version="5.3.0" />
     <PackageReference Include="MaterialDesignThemes" Version="5.3.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3595.46" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -75,14 +75,15 @@
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Resource>
 	  <Resource Include="Assets\Fonts\Inter-Regular.otf" />
-	  <Resource Include="Sounds\start.wav" />
 	  <Resource Include="Sounds\start_timer_sound.wav">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Resource>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Assets\Sounds\" />
+		<None Update="Sounds\start.wav">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>
