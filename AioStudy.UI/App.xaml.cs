@@ -7,6 +7,7 @@ using AioStudy.Data.Interfaces;
 using AioStudy.Data.Services;
 using AioStudy.Models;
 using AioStudy.UI.ViewModels;
+using AioStudy.UI.ViewModels.Components;
 using AioStudy.UI.ViewModels.Forms;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
@@ -58,6 +59,7 @@ namespace AioStudy.UI
             services.AddTransient<IRepository<Semester>, Repository<Semester>>();
             services.AddTransient<IRepository<DailyModuleStats>, Repository<DailyModuleStats>>();
             services.AddTransient<IRepository<LearnSession>, Repository<LearnSession>>();
+            services.AddTransient<IRepository<QuickTimer>, Repository<QuickTimer>>();
 
             //Services
             services.AddTransient<SemesterDbService>();
@@ -65,6 +67,7 @@ namespace AioStudy.UI
             services.AddTransient<UserDbService>();
             services.AddTransient<LearnSessionDbService>();
             services.AddTransient<DailyModuleStatsDbService>();
+            services.AddTransient<QuickTimerDbService>();
 
 
             //ViewModels
@@ -76,6 +79,7 @@ namespace AioStudy.UI
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<AddSemesterViewModel>();
             services.AddSingleton<PomodoroViewModel>();
+            services.AddSingleton<QuickTimersViewModel>();
 
             services.AddTransient<AddModuleViewModel>();
             services.AddTransient<CreateUsernameViewModel>();

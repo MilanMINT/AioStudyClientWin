@@ -10,6 +10,8 @@ namespace AioStudy.Models
 {
     public class QuickTimer
     {
+        // TODO START IMPLEMTNTING THIS!
+
         [Key]
         public int Id { get; set; }
         [AllowNull]
@@ -24,6 +26,7 @@ namespace AioStudy.Models
         public QuickTimer(int moduleId, TimeSpan duration)
         {
             Duration = duration;
+            Id = moduleId;
         }
     }
 }

@@ -2,13 +2,14 @@
 using AioStudy.Core.Services;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
+using AioStudy.UI.ViewModels.Components;
+using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using NAudio.Wave;
 using System.Windows.Threading;
-using System.IO;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -19,6 +20,7 @@ namespace AioStudy.UI.ViewModels
         private TimeSpan _remaining;
         private DateTime _timerFinishedTime;
         private readonly DispatcherTimer _clockTimer;
+        private QuickTimersViewModel _quickTimersViewModel;
         private Module _selectedModule;
         private int _minutes = 25;
         private int _seconds = 0;
@@ -30,6 +32,16 @@ namespace AioStudy.UI.ViewModels
         private ObservableCollection<Module> _modules = new ObservableCollection<Module>();
 
         private readonly ModulesDbService _modulesDbService;
+
+        public QuickTimersViewModel QuickTimersViewModel
+        {
+            get => _quickTimersViewModel;
+            set
+            {
+                _quickTimersViewModel = value;
+                OnPropertyChanged(nameof(QuickTimersViewModel));
+            }
+        }
 
         public bool CanChangeModule
         {
@@ -162,11 +174,12 @@ namespace AioStudy.UI.ViewModels
         WaveOutEvent output;
         AudioFileReader reader;
 
-        public PomodoroViewModel(ITimerService timerService, ModulesDbService modulesDbService)
+        public PomodoroViewModel(ITimerService timerService, ModulesDbService modulesDbService, QuickTimersViewModel quickTimersViewModel)
         {
             Text = "Initial Text";
             _timerService = timerService;
             _modulesDbService = modulesDbService;
+            QuickTimersViewModel = quickTimersViewModel;
 
             IsPaused = false;
             IsRunning = false;
@@ -175,6 +188,8 @@ namespace AioStudy.UI.ViewModels
             CanChangeModule = true;
 
             _modules = new ObservableCollection<Module>();
+
+            QuickTimersViewModel.QuickTimerSelected += OnQuickTimerSelected;
 
             StartTimerCommand = new RelayCommand(StartTimer);
             PauseTimerCommand = new RelayCommand(PauseTimer);
@@ -199,6 +214,22 @@ namespace AioStudy.UI.ViewModels
             _clockTimer.Start();
 
             _ = LoadModulesAsync();
+        }
+
+        private void OnQuickTimerSelected(object? sender, QuickTimer qt)
+        {
+            if (_isRunning)
+            {
+                return;
+            }
+            Minutes = qt.Duration.Minutes;
+            Seconds = qt.Duration.Seconds;
+            SelectedModule = qt.Module;
+
+            if(CanStartTimer(null))
+            {
+                StartTimer(null);
+            }
         }
 
         public async Task LoadModulesAsync()
@@ -311,6 +342,11 @@ namespace AioStudy.UI.ViewModels
             {
                 _clockTimer.Stop();
                 _clockTimer.Tick -= ClockTimer_Tick;
+            }
+
+            if (QuickTimersViewModel != null)
+            {
+                QuickTimersViewModel.QuickTimerSelected -= OnQuickTimerSelected;
             }
 
             _timerService.TimeChanged -= OnTimeChanged;
