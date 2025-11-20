@@ -29,6 +29,8 @@
             <converters:ModuleCountConverter x:Key="ModuleCountConverter" />
             <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
             <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+            <converters:NullToVisibilityConverter x:Key="NullToCollapsedConverter" Invert="True" />
 
             <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
             <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />

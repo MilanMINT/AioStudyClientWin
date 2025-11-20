@@ -20,13 +20,14 @@ namespace AioStudy.Models
         public Module? Module { get; set; } = null;
         [Required]
         public TimeSpan Duration { get; set; }
-
+        public int Slot { get; set; }
         public QuickTimer(){}
 
-        public QuickTimer(int moduleId, TimeSpan duration)
+        public QuickTimer(int moduleId, TimeSpan duration, int slot)
         {
             Duration = duration;
             Id = moduleId;
+            Slot = slot;
         }
     }
 }
