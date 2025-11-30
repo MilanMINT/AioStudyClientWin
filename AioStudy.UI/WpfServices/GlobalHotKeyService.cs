@@ -16,27 +16,25 @@ namespace AioStudy.UI.WpfServices
 
         // Modifier keys
         private const uint MOD_ALT = 0x0001;
-        private const uint MOD_CONTROL = 0x0002;
-        private const uint MOD_SHIFT = 0x0004;
-        private const uint MOD_WIN = 0x0008;
 
         // Virtual Key Codes
         private const uint VK_RETURN = 0x0D;    // Enter
-        private const uint VK_BACK = 0x08;       // Backspace ✅
-        private const uint VK_SPACE = 0x20;      // Space
+        private const uint VK_BACK = 0x08;       // Backspace 
+        private const uint VK_OEM_PLUS = 0xBB;   // +
 
         private const int WM_HOTKEY = 0x0312;
 
         private IntPtr _windowHandle;
-        private HwndSource _source;
+        private HwndSource? _source;
 
         // HotKey IDs
         private const int HOTKEY_ID_TOGGLE = 9000;
         private const int HOTKEY_ID_RESET = 9001;
+        private const int HOTKEY_ID_STAR = 9002;
 
         public event EventHandler? ToggleTimerRequested;
         public event EventHandler? ResetTimerRequested;
-
+        public event EventHandler? MoveTimerWindowRequested;
         public void Initialize(IntPtr windowHandle)
         {
             _windowHandle = windowHandle;
@@ -46,10 +44,13 @@ namespace AioStudy.UI.WpfServices
             // Registriere Alt+Enter für Toggle
             RegisterHotKey(_windowHandle, HOTKEY_ID_TOGGLE, MOD_ALT, VK_RETURN);
             
-            // Registriere Alt+Backspace für Reset ✅
+            // Registriere Alt+Backspace für Reset 
             RegisterHotKey(_windowHandle, HOTKEY_ID_RESET, MOD_ALT, VK_BACK);
 
-            System.Diagnostics.Debug.WriteLine("🎹 GlobalHotKeys registriert: Alt+Enter (Toggle), Alt+Backspace (Reset)");
+            // Regisriere Alt+* für Move Timer Window
+            RegisterHotKey(_windowHandle, HOTKEY_ID_STAR, MOD_ALT, VK_OEM_PLUS);
+
+            System.Diagnostics.Debug.WriteLine("GlobalHotKeys registriert: Alt+Enter (Toggle), Alt+Backspace (Reset), Alt+* (Move Timer Window)");
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -61,14 +62,20 @@ namespace AioStudy.UI.WpfServices
                 switch (id)
                 {
                     case HOTKEY_ID_TOGGLE:
-                        System.Diagnostics.Debug.WriteLine("⌨️ Alt+Enter gedrückt - Toggle Timer");
+                        System.Diagnostics.Debug.WriteLine("Alt+Enter gedrückt - Toggle Timer");
                         ToggleTimerRequested?.Invoke(this, EventArgs.Empty);
                         handled = true;
                         break;
                         
                     case HOTKEY_ID_RESET:
-                        System.Diagnostics.Debug.WriteLine("⌨️ Alt+Backspace gedrückt - Reset Timer");
+                        System.Diagnostics.Debug.WriteLine("Alt+Backspace gedrückt - Reset Timer");
                         ResetTimerRequested?.Invoke(this, EventArgs.Empty);
+                        handled = true;
+                        break;
+
+                    case HOTKEY_ID_STAR:
+                        System.Diagnostics.Debug.WriteLine("Alt+* gedrückt - Move Timer Window");
+                        MoveTimerWindowRequested?.Invoke(this, EventArgs.Empty);
                         handled = true;
                         break;
                 }
@@ -83,6 +90,7 @@ namespace AioStudy.UI.WpfServices
             {
                 UnregisterHotKey(_windowHandle, HOTKEY_ID_TOGGLE);
                 UnregisterHotKey(_windowHandle, HOTKEY_ID_RESET);
+                UnregisterHotKey(_windowHandle, HOTKEY_ID_STAR);
                 _source?.RemoveHook(HwndHook);
                 
                 System.Diagnostics.Debug.WriteLine("🎹 GlobalHotKeys deregistriert");

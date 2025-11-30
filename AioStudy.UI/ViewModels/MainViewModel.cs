@@ -3,6 +3,7 @@ using AioStudy.Core.Manager.Settings;
 using AioStudy.Core.Services;
 using AioStudy.Core.Util;
 using AioStudy.UI.Commands;
+using AioStudy.UI.ViewModels.Components;
 using AioStudy.UI.ViewModels.Forms;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Primitives;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -33,6 +35,9 @@ namespace AioStudy.UI.ViewModels
         private GradesViewModel _gradesViewModel;
         private SemesterViewModel _semesterViewModel;
         private ModulesViewModel _modulesViewModel;
+
+        private TimerOverlayViewModel _timerOverlayViewModel;
+        private bool _isMainWindowMinimized;
 
         private string _currentViewName;
 
@@ -129,6 +134,27 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
+        public TimerOverlayViewModel TimerOverlayViewModel
+        {
+            get => _timerOverlayViewModel;
+            set
+            {
+                _timerOverlayViewModel = value;
+                OnPropertyChanged(nameof(TimerOverlayViewModel));
+            }
+        }
+
+        public bool IsMainWindowMinimized
+        {
+            get => _isMainWindowMinimized;
+            set
+            {
+                _isMainWindowMinimized = value;
+                OnPropertyChanged(nameof(IsMainWindowMinimized));
+                UpdateTimerOverlayVisibility();
+            }
+        }
+
         public MainViewModel(ITimerService timerService, UserDbService userDbService, SemesterDbService semesterDbService)
         {
             _timerService = timerService;
@@ -144,6 +170,8 @@ namespace AioStudy.UI.ViewModels
             ShowPomodoroCMD = new RelayCommand(ExecuteShowPomodoroCommand);
             ShowGradesCMD = new RelayCommand(ExecuteShowGradesCommand);
             ShowModulesCMD = new RelayCommand(ExecuteShowModulesCommand);
+
+            TimerOverlayViewModel = App.ServiceProvider.GetRequiredService<TimerOverlayViewModel>();
 
             _semesterViewModel = App.ServiceProvider.GetRequiredService<SemesterViewModel>();
             _semesterViewModel.SetMainViewModel(this);
@@ -168,12 +196,31 @@ namespace AioStudy.UI.ViewModels
 
             ShowStatusBar = false;
 
+            _pomodoroViewModel.PropertyChanged += OnPomodoroViewModelPropertyChanged;
+
             CheckForExistingUser();
             LoadUserBottomInfoPanel();
 
             _timerService.TimeChanged += TimerService_TimeChanged;
             _timerService.RunningStateChanged += TimerService_RunningStateChanged;
             _timerService.PausedStateChanged += TimerService_PausedStateChanged;
+        }
+
+        private void OnPomodoroViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(PomodoroViewModel.IsRunning) ||
+                e.PropertyName == nameof(PomodoroViewModel.IsPaused))
+            {
+                UpdateTimerOverlayVisibility();
+            }
+        }
+
+        private void UpdateTimerOverlayVisibility()
+        {
+            if (TimerOverlayViewModel != null && _pomodoroViewModel != null)
+            {
+                TimerOverlayViewModel.IsVisible = IsMainWindowMinimized && _pomodoroViewModel.IsRunning;
+            }
         }
 
         private void TimerService_TimeChanged(object? sender, TimeSpan e)

@@ -1,0 +1,167 @@
+﻿<Window
+    x:Class="AioStudy.UI.Views.Components.TimerOverlayWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:AioStudy.UI.Views.Components"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Timer"
+    Width="280"
+    Height="155"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    Topmost="True"
+    Visibility="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+    WindowStyle="None"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Window.Resources>
+
+    <Border
+        Background="#1F2024"
+        BorderThickness="2"
+        CornerRadius="12"
+        MouseLeftButtonDown="Border_MouseLeftButtonDown">
+
+        <Border.BorderBrush>
+            <LinearGradientBrush>
+                <GradientStop Offset="0.0" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#608BC1}" />
+                <GradientStop Offset="1.0" Color="#133E87" />
+                <GradientStop Offset="0.5" Color="#6A8BA8" />
+            </LinearGradientBrush>
+        </Border.BorderBrush>
+
+        <Grid Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!--  Header  -->
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="11"
+                    FontWeight="SemiBold"
+                    Foreground="#787C8E"
+                    Text="Timer läuft" />
+
+                <Button
+                    Width="20"
+                    Height="20"
+                    HorizontalAlignment="Right"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Command="{Binding CloseCommand}"
+                    Cursor="Hand">
+                    <MaIc:MaterialIcon
+                        Width="16"
+                        Height="16"
+                        Foreground="#787C8E"
+                        Kind="Close" />
+                </Button>
+            </Grid>
+
+            <!--  Timer Display  -->
+            <StackPanel
+                Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    FontFamily="Arial Rounded MT Bold"
+                    FontSize="42"
+                    Foreground="#F2F2F2"
+                    Text="{Binding Minutes, FallbackValue=12, StringFormat={}{0:00}}" />
+                <TextBlock
+                    Margin="4,0"
+                    FontFamily="Arial Rounded MT Bold"
+                    FontSize="42"
+                    Foreground="#F2F2F2"
+                    Text=":" />
+                <TextBlock
+                    FontFamily="Arial Rounded MT Bold"
+                    FontSize="42"
+                    Foreground="#F2F2F2"
+                    Text="{Binding Seconds, FallbackValue=12, StringFormat={}{0:00}}" />
+            </StackPanel>
+
+            <!--  Control Buttons  -->
+            <StackPanel
+                Grid.Row="2"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
+                    Width="35"
+                    Height="35"
+                    Margin="5,0"
+                    Background="#2A2D35"
+                    BorderBrush="#3A3D45"
+                    BorderThickness="1"
+                    Command="{Binding ControlTimerCommand}"
+                    Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <MaIc:MaterialIcon
+                        Width="20"
+                        Height="20"
+                        Foreground="#F2F2F2">
+                        <MaIc:MaterialIcon.Style>
+                            <Style TargetType="MaIc:MaterialIcon">
+                                <Setter Property="Kind" Value="Pause" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                        <Setter Property="Kind" Value="Play" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </MaIc:MaterialIcon.Style>
+                    </MaIc:MaterialIcon>
+                </Button>
+
+                <Button
+                    Width="35"
+                    Height="35"
+                    Margin="5,0"
+                    Background="#4A2020"
+                    BorderBrush="#6A3030"
+                    BorderThickness="1"
+                    Command="{Binding ResetTimerCommand}"
+                    Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <MaIc:MaterialIcon
+                        Width="20"
+                        Height="20"
+                        Foreground="#EF4444"
+                        Kind="Restart" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

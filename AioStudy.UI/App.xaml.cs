@@ -80,6 +80,7 @@ namespace AioStudy.UI
             services.AddSingleton<AddSemesterViewModel>();
             services.AddSingleton<PomodoroViewModel>();
             services.AddSingleton<QuickTimersViewModel>();
+            services.AddTransient<TimerOverlayViewModel>();
 
             services.AddTransient<AddModuleViewModel>();
             services.AddTransient<CreateUsernameViewModel>();

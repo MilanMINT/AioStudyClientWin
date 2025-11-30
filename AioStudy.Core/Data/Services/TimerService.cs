@@ -89,8 +89,6 @@ namespace AioStudy.Core.Data.Services
         }
 
 
-        // TODO ADD DB LOGIC; UI STUFF
-
         public void Reset()
         {
             _isRunning = false;

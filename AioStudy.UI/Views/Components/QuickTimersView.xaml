@@ -2,13 +2,12 @@
     x:Class="AioStudy.UI.Views.Components.QuickTimersView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
     xmlns:components="clr-namespace:AioStudy.UI.ViewModels.Components"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DataContext="{d:DesignInstance Type=components:QuickTimersViewModel}"
-    d:DesignHeight="150"
-    d:DesignWidth="800"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -16,7 +15,7 @@
         <Style x:Key="InfoCard" TargetType="Border">
             <Setter Property="Background" Value="#1F2024" />
             <Setter Property="CornerRadius" Value="12" />
-            <Setter Property="Padding" Value="20" />
+            <Setter Property="Padding" Value="5" />
             <Setter Property="Margin" Value="0,5,0,0" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="BorderBrush" Value="#3A3D45" />
@@ -32,29 +31,84 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#2B3651" />
+                    <Setter Property="BorderBrush" Value="#4A5568" />
                     <Setter Property="Effect">
                         <Setter.Value>
-                            <!--  stronger shadow on hover  -->
                             <DropShadowEffect
-                                BlurRadius="18"
-                                Opacity="0.32"
-                                ShadowDepth="6"
+                                BlurRadius="16"
+                                Opacity="0.4"
+                                ShadowDepth="4"
                                 Color="#000000" />
                         </Setter.Value>
                     </Setter>
-                    <!--  slight elevation  -->
-                    <!--<Setter Property="RenderTransform">
-                        <Setter.Value>
-                            <TranslateTransform Y="-2" />
-                        </Setter.Value>
-                    </Setter>
-                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />-->
                 </Trigger>
             </Style.Triggers>
         </Style>
-    </UserControl.Resources>
 
+        <!--  Action Button Style  -->
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Background" Value="#2A2D35" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#3A3D45" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Opacity" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#3A3D45" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  Delete Button Style  -->
+        <Style
+            x:Key="DeleteActionButton"
+            BasedOn="{StaticResource ActionButton}"
+            TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#4A2020" />
+                    <Setter Property="BorderBrush" Value="#6A3030" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  Edit Button Style  -->
+        <Style
+            x:Key="EditActionButton"
+            BasedOn="{StaticResource ActionButton}"
+            TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2B3651" />
+                    <Setter Property="BorderBrush" Value="#3B4661" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  Timer Label Style  -->
+        <Style x:Key="TimerLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#787C8E" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -66,7 +120,10 @@
         </Grid.ColumnDefinitions>
 
         <!--  Quick Timer Card 1  -->
-        <Border Grid.Column="0">
+        <Border
+            Grid.Column="0"
+            Width="250"
+            Height="120">
             <Border.Style>
                 <Style BasedOn="{StaticResource InfoCard}" TargetType="Border">
                     <Style.Triggers>
@@ -76,32 +133,159 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
-            <Grid>
-                <!--  Timer Content (visible when not null)  -->
-                <StackPanel d:Visibility="Visible" Visibility="{Binding QuickTimer1, Converter={StaticResource NullToCollapsedConverter}}">
-                    <TextBlock
-                        Margin="0,0,0,10"
-                        FontSize="18"
-                        FontWeight="Bold"
-                        Foreground="#F2F2F2"
-                        Text="{Binding QuickTimer1.Slot}" />
-                    <TextBlock
-                        FontSize="14"
-                        Foreground="#E3E3E3"
-                        Text="{Binding QuickTimer1.Slot}"
-                        TextWrapping="Wrap" />
 
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="DeleteButton1"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1.0"
+                                Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="EditButton1"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1.0"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="DeleteButton1"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="EditButton1"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <!--  Header mit Label  -->
+                <TextBlock
+                    Grid.Row="0"
+                    d:Visibility="Visible"
+                    Style="{StaticResource TimerLabel}"
+                    Text="QUICK TIMER 1"
+                    Visibility="{Binding QuickTimer1, Converter={StaticResource NullToCollapsedConverter}}" />
+
+                <!--  Timer Content  -->
+                <StackPanel
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    d:Visibility="Visible"
+                    Visibility="{Binding QuickTimer1, Converter={StaticResource NullToCollapsedConverter}}">
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <xctk:IntegerUpDown
+                            Width="70"
+                            Height="50"
+                            HorizontalContentAlignment="Right"
+                            AllowTextInput="False"
+                            Cursor="ScrollNS"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="40"
+                            FormatString="00"
+                            IsEnabled="{Binding Qt1CanEditTime}"
+                            Maximum="300"
+                            Minimum="0"
+                            Style="{StaticResource GradientIntegerUpDownTransparent}"
+                            ToolTip="Minutes (0-300)"
+                            Value="{Binding Qt1Minutes, Mode=TwoWay, FallbackValue=25, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock
+                            Margin="2,-8,0,0"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="48"
+                            FontWeight="Bold"
+                            Foreground="#F2F2F2"
+                            Text=":" />
+
+                        <xctk:IntegerUpDown
+                            Width="60"
+                            Height="50"
+                            HorizontalContentAlignment="Left"
+                            AllowTextInput="False"
+                            Cursor="ScrollNS"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="40"
+                            FormatString="00"
+                            IsEnabled="{Binding Qt1CanEditTime}"
+                            Maximum="59"
+                            Minimum="0"
+                            Style="{StaticResource GradientIntegerUpDownTransparent}"
+                            TextAlignment="Left"
+                            ToolTip="Seconds (0-59)"
+                            Value="{Binding Qt1Seconds, Mode=TwoWay, FallbackValue=0, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
                 </StackPanel>
 
-                <!--  Add Button (visible when null)  -->
+                <!--  Add Button  -->
                 <Button
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
                     Height="auto"
                     d:Visibility="Collapsed"
                     Command="{Binding AddQuickTimer1Command}"
                     CommandParameter="1"
                     Content="+"
+                    FontSize="48"
+                    FontWeight="Light"
+                    Foreground="#666"
                     Style="{StaticResource GradientButton}"
                     Visibility="{Binding QuickTimer1, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                <!--  Action Buttons  -->
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="0,8,4,0"
+                    HorizontalAlignment="Right"
+                    d:Visibility="Visible"
+                    Orientation="Horizontal"
+                    Visibility="{Binding QuickTimer1, Converter={StaticResource NullToCollapsedConverter}}">
+                    <Button
+                        x:Name="EditButton1"
+                        Width="25"
+                        Height="25"
+                        Margin="0,0,8,0"
+                        Command="{Binding EditQuickTimer1Command}"
+                        Style="{StaticResource GrayGradientButton}">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Foreground="#9CA3AF"
+                            Kind="Edit" />
+                    </Button>
+
+                    <Button
+                        x:Name="DeleteButton1"
+                        Width="25"
+                        Height="25"
+                        Command="{Binding DeleteQuickTimer1Command}"
+                        CommandParameter="1"
+                        Style="{StaticResource RedGradientButtonThinBorder}">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Foreground="#EF4444"
+                            Kind="DeleteOutline" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
 
@@ -116,30 +300,150 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
+
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="DeleteButton2"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1.0"
+                                Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="EditButton2"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1.0"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="DeleteButton2"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="EditButton2"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+
             <Grid>
-                <StackPanel Visibility="{Binding QuickTimer2, Converter={StaticResource NullToCollapsedConverter}}">
-                    <TextBlock
-                        Margin="0,0,0,10"
-                        FontSize="18"
-                        FontWeight="Bold"
-                        Foreground="#F2F2F2"
-                        Text="{Binding QuickTimer2.Name}" />
-                    <TextBlock
-                        FontSize="14"
-                        Foreground="#E3E3E3"
-                        Text="{Binding QuickTimer2.Description}"
-                        TextWrapping="Wrap" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Style="{StaticResource TimerLabel}"
+                    Text="QUICK TIMER 2"
+                    Visibility="{Binding QuickTimer2, Converter={StaticResource NullToCollapsedConverter}}" />
+
+                <StackPanel
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding QuickTimer2, Converter={StaticResource NullToCollapsedConverter}}">
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <xctk:IntegerUpDown
+                            Width="auto"
+                            Height="65"
+                            HorizontalContentAlignment="Right"
+                            AllowTextInput="False"
+                            Cursor="ScrollNS"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="40"
+                            FormatString="00"
+                            IsEnabled="{Binding Qt2CanEditTime}"
+                            Maximum="300"
+                            Minimum="0"
+                            Style="{StaticResource GradientIntegerUpDownTransparent}"
+                            ToolTip="Minutes (0-300)"
+                            Value="{Binding Qt2Minutes, Mode=TwoWay, FallbackValue=5, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock
+                            Margin="2,-8,2,0"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="48"
+                            FontWeight="Bold"
+                            Foreground="#F2F2F2"
+                            Text=":" />
+
+                        <xctk:IntegerUpDown
+                            Width="auto"
+                            Height="65"
+                            HorizontalContentAlignment="Left"
+                            AllowTextInput="False"
+                            Cursor="ScrollNS"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="40"
+                            FormatString="00"
+                            IsEnabled="{Binding Qt2CanEditTime}"
+                            Maximum="59"
+                            Minimum="0"
+                            Style="{StaticResource GradientIntegerUpDownTransparent}"
+                            TextAlignment="Left"
+                            ToolTip="Seconds (0-59)"
+                            Value="{Binding Qt2Seconds, Mode=TwoWay, FallbackValue=0, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
                 </StackPanel>
 
                 <Button
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
                     Height="auto"
                     Command="{Binding AddQuickTimer2Command}"
                     CommandParameter="2"
                     Content="+"
+                    FontSize="48"
+                    FontWeight="Light"
+                    Foreground="#666"
                     Style="{StaticResource GradientButton}"
                     Visibility="{Binding QuickTimer2, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Visibility="{Binding QuickTimer2, Converter={StaticResource NullToCollapsedConverter}}">
+                    <Button
+                        x:Name="EditButton2"
+                        Margin="0,0,8,0"
+                        Command="{Binding EditQuickTimer2Command}"
+                        Style="{StaticResource EditActionButton}">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Foreground="#9CA3AF"
+                            Kind="Edit" />
+                    </Button>
+
+                    <Button
+                        x:Name="DeleteButton2"
+                        Command="{Binding DeleteQuickTimer2Command}"
+                        CommandParameter="2"
+                        Style="{StaticResource DeleteActionButton}">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Foreground="#EF4444"
+                            Kind="DeleteOutline" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
+
         <!--  Quick Timer Card 3  -->
         <Border Grid.Column="4">
             <Border.Style>
@@ -151,30 +455,148 @@
                     </Style.Triggers>
                 </Style>
             </Border.Style>
+
+            <Border.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="DeleteButton3"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1.0"
+                                Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="EditButton3"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1.0"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="DeleteButton3"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.2" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="EditButton3"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Border.Triggers>
+
             <Grid>
-                <StackPanel Visibility="{Binding QuickTimer3, Converter={StaticResource NullToCollapsedConverter}}">
-                    <TextBlock
-                        Margin="0,0,0,10"
-                        FontSize="18"
-                        FontWeight="Bold"
-                        Foreground="#F2F2F2"
-                        Text="{Binding QuickTimer3.Name}" />
-                    <TextBlock
-                        FontSize="14"
-                        Foreground="#E3E3E3"
-                        Text="{Binding QuickTimer3.Description}"
-                        TextWrapping="Wrap" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Style="{StaticResource TimerLabel}"
+                    Text="QUICK TIMER 3"
+                    Visibility="{Binding QuickTimer3, Converter={StaticResource NullToCollapsedConverter}}" />
+
+                <StackPanel
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding QuickTimer3, Converter={StaticResource NullToCollapsedConverter}}">
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <xctk:IntegerUpDown
+                            Width="auto"
+                            Height="65"
+                            HorizontalContentAlignment="Right"
+                            AllowTextInput="False"
+                            Cursor="ScrollNS"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="40"
+                            FormatString="00"
+                            IsEnabled="{Binding Qt3CanEditTime}"
+                            Maximum="300"
+                            Minimum="0"
+                            Style="{StaticResource GradientIntegerUpDownTransparent}"
+                            ToolTip="Minutes (0-300)"
+                            Value="{Binding Qt3Minutes, Mode=TwoWay, FallbackValue=15, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock
+                            Margin="2,-8,2,0"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="48"
+                            FontWeight="Bold"
+                            Foreground="#F2F2F2"
+                            Text=":" />
+
+                        <xctk:IntegerUpDown
+                            Width="auto"
+                            Height="65"
+                            HorizontalContentAlignment="Left"
+                            AllowTextInput="False"
+                            Cursor="ScrollNS"
+                            FontFamily="Arial Rounded MT Bold"
+                            FontSize="40"
+                            FormatString="00"
+                            IsEnabled="{Binding Qt3CanEditTime}"
+                            Maximum="59"
+                            Minimum="0"
+                            Style="{StaticResource GradientIntegerUpDownTransparent}"
+                            TextAlignment="Left"
+                            ToolTip="Seconds (0-59)"
+                            Value="{Binding Qt3Seconds, Mode=TwoWay, FallbackValue=0, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
                 </StackPanel>
 
                 <Button
+                    Grid.Row="0"
+                    Grid.RowSpan="3"
                     Height="auto"
                     Command="{Binding AddQuickTimer3Command}"
                     CommandParameter="3"
                     Content="+"
+                    FontSize="48"
+                    FontWeight="Light"
+                    Foreground="#666"
                     Style="{StaticResource GradientButton}"
                     Visibility="{Binding QuickTimer3, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                <StackPanel
+                    Grid.Row="2"
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Visibility="{Binding QuickTimer3, Converter={StaticResource NullToCollapsedConverter}}">
+                    <Button
+                        x:Name="EditButton3"
+                        Margin="0,0,8,0"
+                        Command="{Binding EditQuickTimer3Command}"
+                        Style="{StaticResource EditActionButton}">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Foreground="#9CA3AF"
+                            Kind="Edit" />
+                    </Button>
+
+                    <Button
+                        x:Name="DeleteButton3"
+                        Command="{Binding DeleteQuickTimer3Command}"
+                        CommandParameter="3"
+                        Style="{StaticResource DeleteActionButton}">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Foreground="#EF4444"
+                            Kind="DeleteOutline" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Border>
-
     </Grid>
 </UserControl>
