@@ -34,6 +34,10 @@
 
             <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
             <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+            <converters:StringToColorConverter x:Key="StringToColorConverter" />
+            <converters:DoubleToTimeSpanConverter x:Key="DoubleToTimeSpanConverter" />
+
+            <!--  ###################################################################################  -->
 
 
 
@@ -89,7 +93,6 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="RadioButton">
                             <Grid Background="{TemplateBinding Background}">
-                                <!--  Aktive Linie als separates Element  -->
                                 <Border
                                     x:Name="ActiveLine"
                                     Width="230"
@@ -109,17 +112,14 @@
                                     </Border.Effect>
                                 </Border>
 
-                                <!--  Content bleibt unverändert  -->
                                 <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
                             </Grid>
                             <ControlTemplate.Triggers>
-                                <!--  Button Style on hover  -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" />
                                     <Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" />
                                     <Setter TargetName="ActiveLine" Property="Visibility" Value="Visible" />
                                 </Trigger>
-                                <!--  Activated button style  -->
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter Property="Foreground" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" />
                                     <Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}" />
@@ -244,7 +244,7 @@
             </Style>
 
 
-            <!--  Gradient Button Style - Passend zu MainWindow und AddSemesterView  -->
+            <!--  Gradient Button Style  -->
             <Style x:Key="GradientButton" TargetType="Button">
                 <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="Foreground" Value="White" />
@@ -468,8 +468,6 @@
             </Style>
 
 
-            <!--  Gradient TextBox Style - Nur Aussehen, keine Funktionalität ändern  -->
-            <!--  Gradient TextBox Style - use default control template from the toolkit  -->
             <Style x:Key="GradientTextBox" TargetType="xctk:WatermarkTextBox">
                 <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="Foreground" Value="White" />
@@ -574,7 +572,6 @@
 
 
 
-            <!--  Vereinfachter Gradient DatePicker Style  -->
             <Style x:Key="GradientDatePicker" TargetType="DatePicker">
                 <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="Foreground" Value="Black" />
@@ -595,7 +592,6 @@
                     </Setter.Value>
                 </Setter>
 
-                <!--  Nur Style-Anpassungen, kein komplettes Template  -->
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="#353842" />
@@ -664,7 +660,7 @@
 
 
 
-            <!--  Vereinfachte ComboBox - nur Border, blau und runde Ecken  -->
+            <!--  ComboBox  -->
             <Style x:Key="GradientComboBox" TargetType="ComboBox">
                 <Setter Property="BorderThickness" Value="2" />
                 <Setter Property="Foreground" Value="White" />
@@ -863,8 +859,6 @@
                 </Setter>
             </Style>
 
-
-            <!--  Add this style to your existing App.xaml ResourceDictionary, after the other converter/style definitions  -->
 
             <!--  Gradient IntegerUpDown Style  -->
             <Style x:Key="GradientIntegerUpDown" TargetType="xctk:IntegerUpDown">
@@ -1105,6 +1099,59 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+
+
+
+            <!--  Break Button Style  -->
+            <Style x:Key="BreakButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="#B0B3BA" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Height" Value="40" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="border"
+                                Padding="12,8"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!--  Hover Effect  -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#2A2D35" />
+                                </Trigger>
+
+                                <!--  Pressed Effect  -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#1F2024" />
+                                </Trigger>
+
+                                <!--  Disabled State  -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Foreground" Value="#4A4D55" />
+                                    <Setter Property="Cursor" Value="Arrow" />
+                                </Trigger>
+
+                                <!--  Active State (via Tag)  -->
+                                <Trigger Property="Tag" Value="Active">
+                                    <Setter TargetName="border" Property="Background" Value="#3A3D45" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

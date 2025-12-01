@@ -20,5 +20,12 @@ namespace AioStudy.Core.Util
             BE, //Sichtbar
             NB, // auto 5,0
         }
+
+        public enum TimerBreakType
+        {
+            Short,
+            Mid,
+            Long
+        }
     }
 }

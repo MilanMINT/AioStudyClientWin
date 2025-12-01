@@ -206,7 +206,7 @@
                                     <!--  Dropdown Arrow  -->
                                     <MaIc:MaterialIcon
                                         x:Name="DropdownArrow"
-                                        Grid.Column="2"
+                                        Grid.Column="1"
                                         Width="16"
                                         Height="16"
                                         HorizontalAlignment="Center"
@@ -386,7 +386,7 @@
                     Margin="0,30,0,0"
                     Panel.ZIndex="9999999"
                     Background="#1F2024"
-                    BorderThickness="1"
+                    BorderThickness="2"
                     CornerRadius="10">
 
                     <Border.Effect>
@@ -398,13 +398,52 @@
                             Color="#000000" />
                     </Border.Effect>
 
+                    <Border.Resources>
+                        <!--  Storyboard als Resource definieren  -->
+                        <Storyboard x:Key="ColorChangeStoryboard">
+                            <ColorAnimation
+                                Storyboard.TargetName="GradStop1"
+                                Storyboard.TargetProperty="Color"
+                                Duration="0:0:0.3">
+                                <ColorAnimation.EasingFunction>
+                                    <QuadraticEase EasingMode="EaseInOut" />
+                                </ColorAnimation.EasingFunction>
+                            </ColorAnimation>
+
+                            <ColorAnimation
+                                Storyboard.TargetName="GradStop2"
+                                Storyboard.TargetProperty="Color"
+                                Duration="0:0:0.3">
+                                <ColorAnimation.EasingFunction>
+                                    <QuadraticEase EasingMode="EaseInOut" />
+                                </ColorAnimation.EasingFunction>
+                            </ColorAnimation>
+
+                            <ColorAnimation
+                                Storyboard.TargetName="GradStop3"
+                                Storyboard.TargetProperty="Color"
+                                Duration="0:0:0.3">
+                                <ColorAnimation.EasingFunction>
+                                    <QuadraticEase EasingMode="EaseInOut" />
+                                </ColorAnimation.EasingFunction>
+                            </ColorAnimation>
+                        </Storyboard>
+                    </Border.Resources>
+
                     <Border.BorderBrush>
                         <LinearGradientBrush>
-                            <GradientStop Offset="0.0" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#608BC1}" />
-                            <GradientStop Offset="1.0" Color="#133E87" />
-                            <GradientStop Offset="0.5" Color="#a5bacc" />
+                            <GradientStop x:Name="GradStop1" Offset="0.0" Color="{Binding GradientColor1, Converter={StaticResource StringToColorConverter}, FallbackValue=#608BC1}" />
+                            <GradientStop x:Name="GradStop2" Offset="0.5" Color="{Binding GradientColor3, Converter={StaticResource StringToColorConverter}, FallbackValue=#a5bacc}" />
+                            <GradientStop x:Name="GradStop3" Offset="1.0" Color="{Binding GradientColor2, Converter={StaticResource StringToColorConverter}, FallbackValue=#133E87}" />
                         </LinearGradientBrush>
                     </Border.BorderBrush>
+
+                    <!--  Trigger für Animation  -->
+                    <Border.Triggers>
+                        <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                            <BeginStoryboard Storyboard="{StaticResource ColorChangeStoryboard}" />
+                        </EventTrigger>
+                    </Border.Triggers>
 
                     <Grid>
                         <Grid.RowDefinitions>
@@ -412,28 +451,6 @@
                             <RowDefinition Height="1" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="50" />
-                        </Grid.ColumnDefinitions>
-
-                        <Button
-                            Grid.Column="1"
-                            Width="30"
-                            Height="30"
-                            Margin="15,0,0,0"
-                            VerticalAlignment="Top"
-                            Cursor="Hand"
-                            Style="{StaticResource NoHoverButtonStyle}"
-                            ToolTip="Open Popout timer">
-                            <MaIc:MaterialIcon
-                                Width="20"
-                                Height="20"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="#3A3D45"
-                                Kind="OpenInNew" />
-                        </Button>
 
                         <!--  Separator  -->
                         <Border
@@ -454,13 +471,13 @@
 
                                 <xctk:IntegerUpDown
                                     Width="auto"
-                                    Height="80"
+                                    Height="110"
                                     HorizontalContentAlignment="Right"
                                     Panel.ZIndex="1"
                                     AllowTextInput="False"
                                     Cursor="ScrollNS"
                                     FontFamily="Arial Rounded MT Bold"
-                                    FontSize="60"
+                                    FontSize="90"
                                     FormatString="00"
                                     IsEnabled="{Binding CanChangeTime}"
                                     Maximum="300"
@@ -471,21 +488,21 @@
 
                                 <TextBlock
                                     Margin="0,-10,-10,0"
-                                    FontSize="65"
+                                    FontSize="80"
                                     FontWeight="Bold"
                                     Foreground="White"
                                     Text=":" />
 
                                 <xctk:IntegerUpDown
-                                    Width="85"
-                                    Height="80"
+                                    Width="auto"
+                                    Height="110"
                                     Margin="3,0,0,0"
                                     HorizontalContentAlignment="Left"
                                     Panel.ZIndex="1"
                                     AllowTextInput="False"
                                     Cursor="ScrollNS"
                                     FontFamily="Arial Rounded MT Bold"
-                                    FontSize="60"
+                                    FontSize="90"
                                     FormatString="00"
                                     IsEnabled="{Binding CanChangeTime}"
                                     Maximum="59"
@@ -496,42 +513,94 @@
                                     Value="{Binding Seconds, Mode=TwoWay, FallbackValue=12, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                             <TextBlock
-                                Margin="8,0,0,0"
+                                Margin="8,0,0,10"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="14"
                                 FontWeight="Bold"
                                 Foreground="#696969"
-                                Text="{Binding TimerFinishedTime, FallbackValue=10:22, StringFormat={}{0:hh\\:mm}, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding TimerFinishedTime, FallbackValue=10:22, StringFormat={}{0:HH\\:mm}, UpdateSourceTrigger=PropertyChanged}" />
 
                             <!--  Module Selector ComboBox  -->
                             <ComboBox
                                 x:Name="ModuleComboBox"
                                 Width="250"
                                 Height="40"
-                                Margin="0,10,0,0"
+                                Margin="0,15,0,0"
                                 IsEnabled="{Binding CanChangeModule}"
                                 ItemContainerStyle="{StaticResource ModuleComboBoxItemStyle}"
                                 ItemsSource="{Binding Modules}"
                                 SelectedItem="{Binding SelectedModule, Mode=TwoWay}"
                                 Style="{StaticResource ModuleComboBoxStyle}" />
+
+                            <!--  Breakbuttons  -->
+                            <DockPanel
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
+                                Margin="0,20,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                LastChildFill="False">
+
+                                <Button
+                                    Width="110"
+                                    Command="{Binding StartShortBreakCommand}"
+                                    Style="{StaticResource BreakButtonStyle}"
+                                    Tag="{Binding IsShortBreakActive}"
+                                    ToolTip="5 Minutes">
+                                    <TextBlock
+                                        FontSize="14"
+                                        FontWeight="SemiBold"
+                                        Text="Short Break" />
+                                </Button>
+
+                                <Button
+                                    Width="110"
+                                    Margin="10,0,0,0"
+                                    Command="{Binding StartMidBreakCommand}"
+                                    Style="{StaticResource BreakButtonStyle}"
+                                    Tag="{Binding IsMidBreakActive}"
+                                    ToolTip="15 Minutes">
+                                    <TextBlock
+                                        FontSize="14"
+                                        FontWeight="SemiBold"
+                                        Text="Mid Break" />
+                                </Button>
+
+                                <Button
+                                    Width="110"
+                                    Margin="10,0,0,0"
+                                    Command="{Binding StartLongBreakCommand}"
+                                    Style="{StaticResource BreakButtonStyle}"
+                                    Tag="{Binding IsLongBreakActive}"
+                                    ToolTip="30 Minutes">
+                                    <TextBlock
+                                        FontSize="14"
+                                        FontWeight="SemiBold"
+                                        Text="Long Break" />
+                                </Button>
+                            </DockPanel>
+
                         </StackPanel>
+
+
 
                         <!--  Control Buttons  -->
                         <DockPanel
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             LastChildFill="False">
 
                             <Button
-                                Width="60"
+                                Width="120"
+                                Height="50"
                                 Command="{Binding ControlTimerCommand}"
                                 Style="{StaticResource GradientButton}">
                                 <MaIc:MaterialIcon
-                                    Width="20"
-                                    Height="20"
+                                    Width="25"
+                                    Height="25"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Foreground="White">
@@ -544,17 +613,34 @@
                                 </MaIc:MaterialIcon>
                             </Button>
                             <Button
-                                Width="60"
+                                Width="90"
+                                Height="50"
                                 Margin="10,0,0,0"
                                 Command="{Binding ResetTimerCommand}"
                                 Style="{StaticResource GradientButton}">
                                 <MaIc:MaterialIcon
-                                    Width="20"
-                                    Height="20"
+                                    Width="25"
+                                    Height="25"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Foreground="White"
                                     Kind="Refresh" />
+                            </Button>
+                            <Button
+                                Width="90"
+                                Height="50"
+                                Margin="10,0,0,0"
+                                Command="{Binding EndBreakCommand}"
+                                Style="{StaticResource GradientButton}"
+                                ToolTip="Skip break and continue working!"
+                                Visibility="{Binding IsBreakActive, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <MaIc:MaterialIcon
+                                    Width="25"
+                                    Height="25"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="White"
+                                    Kind="SkipForwardOutline" />
                             </Button>
                         </DockPanel>
                     </Grid>

@@ -206,6 +206,8 @@ namespace AioStudy.UI.ViewModels
             _timerService.PausedStateChanged += TimerService_PausedStateChanged;
         }
 
+        
+
         private void OnPomodoroViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(PomodoroViewModel.IsRunning) ||
