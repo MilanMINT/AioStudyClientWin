@@ -14,11 +14,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Media;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -204,9 +207,45 @@ namespace AioStudy.UI.ViewModels
             _timerService.TimeChanged += TimerService_TimeChanged;
             _timerService.RunningStateChanged += TimerService_RunningStateChanged;
             _timerService.PausedStateChanged += TimerService_PausedStateChanged;
+            _timerService.TimerEnded += OnTimerCompleted;
         }
 
-        
+        private void OnTimerCompleted(object? sender, EventArgs e)
+        {
+            Application.Current?.Dispatcher.Invoke(async () =>
+            {
+                var mainWindow = Application.Current.MainWindow;
+                if (mainWindow != null)
+                {
+                    if (mainWindow.WindowState == WindowState.Minimized)
+                    {
+                        CurrentViewModel = _pomodoroViewModel;
+                        CurrentViewName = "Pomodoro";
+                        mainWindow.WindowState = WindowState.Normal;
+                    }
+                    
+
+                    mainWindow.Activate();
+                    mainWindow.Topmost = true;
+                    mainWindow.Topmost = false;
+
+                    SystemSounds.Exclamation.Play();
+
+                    FlashWindow(mainWindow);
+                    await ToastService.ShowSuccessAsync("Pomodoro Timer", "Your Pomodoro session has ended!");
+
+                }
+            });
+        }
+
+        [DllImport("user32.dll")]
+        private static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
+
+        private void FlashWindow(Window window)
+        {
+            var helper = new WindowInteropHelper(window);
+            FlashWindow(helper.Handle, true);
+        }
 
         private void OnPomodoroViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -339,6 +378,7 @@ namespace AioStudy.UI.ViewModels
             (_gradesViewModel as IDisposable)?.Dispose();
             _timerService.RunningStateChanged -= TimerService_RunningStateChanged;
             _timerService.PausedStateChanged -= TimerService_PausedStateChanged;
+            _timerService.TimeChanged -= TimerService_TimeChanged;
             // REST KOMMT NOCH
         }
 

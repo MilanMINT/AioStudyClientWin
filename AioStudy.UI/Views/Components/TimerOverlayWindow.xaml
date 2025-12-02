@@ -28,13 +28,47 @@
         CornerRadius="12"
         MouseLeftButtonDown="Border_MouseLeftButtonDown">
 
+        <Border.Resources>
+            <!--  Storyboard als Resource definieren  -->
+            <Storyboard x:Key="ColorChangeStoryboard">
+                <ColorAnimation
+                    Storyboard.TargetName="GradStop1"
+                    Storyboard.TargetProperty="Color"
+                    Duration="0:0:0.3">
+                    <ColorAnimation.EasingFunction>
+                        <QuadraticEase EasingMode="EaseInOut" />
+                    </ColorAnimation.EasingFunction>
+                </ColorAnimation>
+
+                <ColorAnimation
+                    Storyboard.TargetName="GradStop2"
+                    Storyboard.TargetProperty="Color"
+                    Duration="0:0:0.3">
+                    <ColorAnimation.EasingFunction>
+                        <QuadraticEase EasingMode="EaseInOut" />
+                    </ColorAnimation.EasingFunction>
+                </ColorAnimation>
+
+                <ColorAnimation
+                    Storyboard.TargetName="GradStop3"
+                    Storyboard.TargetProperty="Color"
+                    Duration="0:0:0.3">
+                    <ColorAnimation.EasingFunction>
+                        <QuadraticEase EasingMode="EaseInOut" />
+                    </ColorAnimation.EasingFunction>
+                </ColorAnimation>
+            </Storyboard>
+        </Border.Resources>
+
         <Border.BorderBrush>
             <LinearGradientBrush>
-                <GradientStop Offset="0.0" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#608BC1}" />
-                <GradientStop Offset="1.0" Color="#133E87" />
-                <GradientStop Offset="0.5" Color="#6A8BA8" />
+                <GradientStop x:Name="GradStop1" Offset="0.0" Color="{Binding GradientPopoutColor1, Converter={StaticResource StringToColorConverter}, FallbackValue=#608BC1}" />
+                <GradientStop x:Name="GradStop2" Offset="0.5" Color="{Binding GradientPopoutColor3, Converter={StaticResource StringToColorConverter}, FallbackValue=#a5bacc}" />
+                <GradientStop x:Name="GradStop3" Offset="1.0" Color="{Binding GradientPopoutColor2, Converter={StaticResource StringToColorConverter}, FallbackValue=#133E87}" />
             </LinearGradientBrush>
         </Border.BorderBrush>
+
+
 
         <Grid Margin="15">
             <Grid.RowDefinitions>

@@ -170,7 +170,7 @@ namespace AioStudy.UI
                 {
                     _pomodoroViewModel.ControlTimerCommand?.RaiseCanExecuteChanged();
 
-                    if (_pomodoroViewModel.ControlTimerCommand != null)
+                    if (_pomodoroViewModel.ControlTimerCommand != null && !_pomodoroViewModel.IsBreakActive)
                     {
                         Application.Current.Dispatcher.InvokeAsync(() =>
                         {

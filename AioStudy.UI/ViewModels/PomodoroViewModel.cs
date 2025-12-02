@@ -35,6 +35,7 @@ namespace AioStudy.UI.ViewModels
         private string _gradientColor2 = "#3A3D45"; // Blau 2
         private string _gradientColor3 = "#a5bacc"; // Blau 3
         private bool _isBreakActive = false;
+        private TimerOverlayViewModel _timerOverlayViewModel;
 
         public double GradientAnimationDuration
         {
@@ -101,7 +102,7 @@ namespace AioStudy.UI.ViewModels
         public string IsLongBreakActive => ActiveBreakButton == "Long" ? "Active" : "";
         public bool IsBreakActive
         {
-            get {  return !string.IsNullOrEmpty(ActiveBreakButton); }
+            get { return !string.IsNullOrEmpty(ActiveBreakButton); }
             set
             {
                 _isBreakActive = value;
@@ -211,11 +212,11 @@ namespace AioStudy.UI.ViewModels
             get { return _minutes; }
             set
             {
-            _minutes = value;
-            OnPropertyChanged(nameof(Minutes));
-            OnPropertyChanged(nameof(TimerFinishedTime));
-            UpdateTimerFinishedTime();
-            ControlTimerCommand?.RaiseCanExecuteChanged();
+                _minutes = value;
+                OnPropertyChanged(nameof(Minutes));
+                OnPropertyChanged(nameof(TimerFinishedTime));
+                UpdateTimerFinishedTime();
+                ControlTimerCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -310,25 +311,57 @@ namespace AioStudy.UI.ViewModels
             _ = LoadModulesAsync();
         }
 
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+        // TODO COLORS IN WINDOWS POPOUT TIMER
+
+        private void SetGradientColors(string color1, string color2, string color3)
+        {
+            GradientColor1 = color1;
+            GradientColor2 = color2;
+            GradientColor3 = color3;
+        }
+
+        private void ApplyGradientScheme(GradientColorSchemes.GradientColors colors)
+        {
+            GradientColorSchemes.ApplyColors(colors, SetGradientColors);
+        }
+
         private void OnLast10Seconds(object? sender, EventArgs e)
         {
             GradientAnimationDuration = 0.15;
 
-            if (Remaining.TotalSeconds % 4 == 0)
+            if (Remaining.TotalSeconds % 2 == 0)
             {
-                AnimateGradientToGreen();
+                ApplyGradientScheme(GradientColorSchemes.Timer.Red);
+                _timerOverlayViewModel.ApplyGradientScheme(GradientColorSchemes.Timer.Red);
             }
-            else if (Remaining.TotalSeconds % 4 == 1)
+            else if (Remaining.TotalSeconds % 2 == 1)
             {
-                AnimateGradientToBlue();
-            }
-            else if (Remaining.TotalSeconds % 4 == 2)
-            {
-                AnimateGradientToRed();
-            }
-            else
-            {
-                AnimateGradientToBlue();
+                ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
+                _timerOverlayViewModel.ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
             }
         }
 
@@ -337,59 +370,18 @@ namespace AioStudy.UI.ViewModels
             switch (e)
             {
                 case Enums.TimerBreakType.Short:
-                    AnimateGradientToYellow();
+                    ApplyGradientScheme(GradientColorSchemes.Timer.Yellow);
                     break;
                 case Enums.TimerBreakType.Mid:
-                    AnimateGradientToOrange();
+                    ApplyGradientScheme(GradientColorSchemes.Timer.Orange);
                     break;
                 case Enums.TimerBreakType.Long:
-                    AnimateGradientToGreen();
+                    ApplyGradientScheme(GradientColorSchemes.Timer.Green);
                     break;
                 default:
-                    AnimateGradientToBlue();
+                    ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
                     break;
             }
-        }
-        private void AnimateGradientToRed()
-        {
-            GradientColor1 = "#FF6B6B"; // Rot 1
-            GradientColor2 = "#C92A2A"; // Rot 2
-            GradientColor3 = "#FF8787"; // Rot 3
-        }
-
-        private void AnimateGradientToYellow()
-        {
-            GradientColor1 = "#FFEB3B"; // Gelb 1
-            GradientColor2 = "#FBC02D"; // Gelb 2
-            GradientColor3 = "#FFF176"; // Gelb 3
-        }
-
-        private void AnimateGradientToOrange()
-        {
-            GradientColor1 = "#FFA726"; // Orange 1
-            GradientColor2 = "#FB8C00"; // Orange 2
-            GradientColor3 = "#FFB74D"; // Orange 3
-        }
-
-        private void AnimateGradientToGreen()
-        {
-            GradientColor1 = "#66BB6A"; // Grün 1
-            GradientColor2 = "#43A047"; // Grün 2
-            GradientColor3 = "#81C784"; // Grün 3
-        }
-
-        private void AnimateGradientToBlue()
-        {
-            GradientColor1 = "#608BC1"; // Blau 1
-            GradientColor2 = "#133E87"; // Blau 2
-            GradientColor3 = "#a5bacc"; // Blau 3
-        }
-
-        private void AnimateGradientToStopped()
-        {
-            GradientColor1 = "#3A3D45"; // Grey 1
-            GradientColor2 = "#3A3D45"; // Grey 2
-            GradientColor3 = "#a5bacc"; // Grey 3
         }
 
         private void OnBreakEnded(object? sender, EventArgs e)
@@ -397,14 +389,15 @@ namespace AioStudy.UI.ViewModels
             Application.Current?.Dispatcher.Invoke(() =>
             {
                 ActiveBreakButton = "";
-                AnimateGradientToBlue();
+                ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
+                _timerOverlayViewModel?.ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
                 ControlTimerCommand?.RaiseCanExecuteChanged();
             });
         }
 
         private bool CanStartBreak(object? arg)
         {
-            if(!_isRunning)
+            if (!_isRunning)
             {
                 return false;
             }
@@ -434,8 +427,9 @@ namespace AioStudy.UI.ViewModels
             _timerService.EndBreak();
             ActiveBreakButton = "";
             IsBreakActive = false;
-            ControlTimerCommand?.RaiseCanExecuteChanged();  
+            ControlTimerCommand?.RaiseCanExecuteChanged();
         }
+
 
         private void OnQuickTimerSelected(object? sender, QuickTimer qt)
         {
@@ -504,7 +498,7 @@ namespace AioStudy.UI.ViewModels
                     CanChangeModule = true;
                     ControlTimerCommand?.RaiseCanExecuteChanged();
                     ActiveBreakButton = "";
-                    AnimateGradientToStopped();
+                    ApplyGradientScheme(GradientColorSchemes.Timer.Stopped);
                     GradientAnimationDuration = 1.0;
                 }
             });
@@ -542,14 +536,15 @@ namespace AioStudy.UI.ViewModels
         {
             _timerService.Resume();
             CanChangeModule = false;
-            AnimateGradientToBlue();
+            ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
+            _timerOverlayViewModel?.ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
         }
 
         private void PauseTimer(object? obj)
         {
             _timerService.Pause();
             CanChangeModule = false;
-            AnimateGradientToRed();
+            ApplyGradientScheme(GradientColorSchemes.Timer.Red);
         }
 
         private void StartTimer(object? obj)
@@ -558,7 +553,8 @@ namespace AioStudy.UI.ViewModels
             _timerService.Start(TimeSpan.FromSeconds(totalSeconds), _selectedModule);
             CanChangeModule = false;
             GradientAnimationDuration = 1.0;
-            AnimateGradientToBlue();
+            ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
+            _timerOverlayViewModel?.ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
 
         }
 
@@ -566,7 +562,7 @@ namespace AioStudy.UI.ViewModels
         {
             _timerService.Reset();
             CanChangeModule = true;
-            AnimateGradientToStopped();
+            ApplyGradientScheme(GradientColorSchemes.Timer.Stopped);
         }
 
         public void SetMainViewModel(MainViewModel mainViewModel)
@@ -596,6 +592,11 @@ namespace AioStudy.UI.ViewModels
             _timerService.PausedStateChanged -= OnPausedStateChanged;
             _timerService.RunningStateChanged -= OnRunningStateChanged;
             _timerService.BreakEnded -= OnBreakEnded;
+        }
+
+        public void SetTimerOverlayViewModel(TimerOverlayViewModel timerOverlayViewModel)
+        {
+            _timerOverlayViewModel = timerOverlayViewModel;
         }
     }
 }
