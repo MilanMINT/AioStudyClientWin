@@ -68,14 +68,14 @@ namespace AioStudy.UI
 
         private void BtnMaxApp_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowState == WindowState.Normal)
-            {
-                WindowState = WindowState.Maximized;
-            }
-            else
-            {
-                WindowState = WindowState.Normal;
-            }
+            //if (WindowState == WindowState.Normal)
+            //{
+            //    WindowState = WindowState.Maximized;
+            //}
+            //else
+            //{
+            //    WindowState = WindowState.Normal;
+            //}
         }
 
         private void BtnMinApp_Click(object sender, RoutedEventArgs e)

@@ -12,11 +12,9 @@
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     d:Background="#212226"
     d:DataContext="{d:DesignInstance Type=viewmodels:PomodoroViewModel}"
-    d:DesignHeight="750"
-    d:DesignWidth="1200"
+    d:Height="700"
+    d:Width="1100"
     mc:Ignorable="d">
-
-
 
 
     <UserControl.Resources>
@@ -74,7 +72,7 @@
 
         <!--  ComboBox Style für Module Selector  -->
         <Style x:Key="ModuleComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="BorderThickness" Value="1.5" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Height" Value="45" />
@@ -119,7 +117,7 @@
                                         x:Name="PlaceholderText"
                                         Grid.Column="0"
                                         Grid.ColumnSpan="3"
-                                        Margin="12,0,0,0"
+                                        Margin="-20,0,0,0"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Panel.ZIndex="1"
@@ -167,7 +165,7 @@
                                         Grid.Column="1"
                                         Width="20"
                                         Height="20"
-                                        Margin="0,0,-8,0"
+                                        Margin="0,0,-40,0"
                                         VerticalAlignment="Center"
                                         Panel.ZIndex="2"
                                         Background="Transparent"
@@ -289,9 +287,10 @@
                     <ControlTemplate TargetType="ComboBoxItem">
                         <Border
                             x:Name="border"
-                            Width="210"
+                            Width="250"
                             Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}">
+                            Background="{TemplateBinding Background}"
+                            Cursor="Hand">
                             <Grid Width="226">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="12" />
@@ -374,6 +373,23 @@
                     <RowDefinition Height="1" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition
+                        Width="*"
+                        MinWidth="280"
+                        MaxWidth="450" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    MaxWidth="700"
+                    MaxHeight="650"
+                    Margin="0,30,30,30"
+                    Panel.ZIndex="999"
+                    Background="Gray"
+                    CornerRadius="10" />
 
                 <!--  QuicktimerViewCOmponent  -->
                 <!--<components:QuickTimersView Margin="30,5,30,5" DataContext="{Binding QuickTimersViewModel}" />-->
@@ -381,9 +397,11 @@
                 <!--  Timer Display Border  -->
                 <Border
                     Grid.Row="1"
-                    Width="600"
-                    Height="400"
-                    Margin="0,30,0,0"
+                    MinWidth="600"
+                    MinHeight="350"
+                    MaxWidth="700"
+                    MaxHeight="650"
+                    Margin="30"
                     Panel.ZIndex="9999999"
                     Background="#1F2024"
                     BorderThickness="2"
@@ -447,6 +465,8 @@
 
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="90" />
+                            <RowDefinition Height="1" />
                             <RowDefinition Height="2*" />
                             <RowDefinition Height="1" />
                             <RowDefinition Height="*" />
@@ -460,12 +480,41 @@
                             Margin="30,0"
                             Background="#3A3D45" />
 
-                        <StackPanel
+                        <DockPanel LastChildFill="False">
+                            <MaIc:MaterialIcon
+                                Width="43"
+                                Height="43"
+                                Margin="25,5,0,0"
+                                Foreground="#7E8082"
+                                Kind="TimerOutline" />
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontSize="38"
+                                FontWeight="Bold"
+                                Foreground="#7E8082"
+                                Text="Timer" />
+                        </DockPanel>
+
+                        <!--  Separator  -->
+                        <Border
+                            Grid.Row="3"
                             Grid.ColumnSpan="2"
+                            Height="1"
+                            Margin="30,0"
+                            Background="#3A3D45" />
+
+                        <StackPanel
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            Margin="0,25,0,0"
                             Background="Transparent"
                             Orientation="Vertical">
                             <StackPanel
-                                Margin="0,0,0,-10"
+                                Margin="0,0,0,-5"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
 
@@ -587,15 +636,15 @@
 
                         <!--  Control Buttons  -->
                         <DockPanel
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             LastChildFill="False">
 
                             <Button
-                                Width="120"
-                                Height="50"
+                                Width="150"
+                                Height="60"
                                 Command="{Binding ControlTimerCommand}"
                                 Style="{StaticResource GradientButton}">
                                 <MaIc:MaterialIcon
@@ -613,9 +662,9 @@
                                 </MaIc:MaterialIcon>
                             </Button>
                             <Button
-                                Width="90"
-                                Height="50"
-                                Margin="10,0,0,0"
+                                Width="120"
+                                Height="60"
+                                Margin="20,0,0,0"
                                 Command="{Binding ResetTimerCommand}"
                                 Style="{StaticResource GradientButton}">
                                 <MaIc:MaterialIcon
@@ -627,9 +676,9 @@
                                     Kind="Refresh" />
                             </Button>
                             <Button
-                                Width="90"
-                                Height="50"
-                                Margin="10,0,0,0"
+                                Width="100"
+                                Height="60"
+                                Margin="20,0,0,0"
                                 Command="{Binding EndBreakCommand}"
                                 Style="{StaticResource GradientButton}"
                                 ToolTip="Skip break and continue working!"

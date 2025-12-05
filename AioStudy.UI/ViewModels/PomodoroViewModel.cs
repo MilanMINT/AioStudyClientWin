@@ -4,6 +4,7 @@ using AioStudy.Core.Util;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.ViewModels.Components;
+using AioStudy.UI.WpfServices;
 using NAudio.Wave;
 using System;
 using System.Collections.ObjectModel;
@@ -92,7 +93,11 @@ namespace AioStudy.UI.ViewModels
                 OnPropertyChanged(nameof(IsMidBreakActive));
                 OnPropertyChanged(nameof(IsLongBreakActive));
                 OnPropertyChanged(nameof(IsBreakActive));
-                ControlTimerCommand?.RaiseCanExecuteChanged();
+                Application.Current?.Dispatcher.BeginInvoke(() =>
+                {
+                    ControlTimerCommand?.RaiseCanExecuteChanged();
+                    CommandManager.InvalidateRequerySuggested();
+                });
 
             }
         }
@@ -299,6 +304,7 @@ namespace AioStudy.UI.ViewModels
             _timerService.BreakEnded += OnBreakEnded;
             _timerService.BreakStateChanged += OnBreakStateChanged;
             _timerService.Last10Seconds += OnLast10Seconds;
+            _timerService.TimerEnded += OnTimerEnded;
 
             // Clock Timer
             _clockTimer = new DispatcherTimer
@@ -311,31 +317,10 @@ namespace AioStudy.UI.ViewModels
             _ = LoadModulesAsync();
         }
 
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
-        // TODO COLORS IN WINDOWS POPOUT TIMER
+        private async void OnTimerEnded(object? sender, EventArgs e)
+        {
+            await ToastService.ShowSuccessAsync("Pomodoro Timer", "Your Pomodoro session has ended!");
+        }
 
         private void SetGradientColors(string color1, string color2, string color3)
         {
@@ -371,20 +356,24 @@ namespace AioStudy.UI.ViewModels
             {
                 case Enums.TimerBreakType.Short:
                     ApplyGradientScheme(GradientColorSchemes.Timer.Yellow);
+                    ControlTimerCommand?.RaiseCanExecuteChanged();
                     break;
                 case Enums.TimerBreakType.Mid:
                     ApplyGradientScheme(GradientColorSchemes.Timer.Orange);
+                    ControlTimerCommand?.RaiseCanExecuteChanged();
                     break;
                 case Enums.TimerBreakType.Long:
                     ApplyGradientScheme(GradientColorSchemes.Timer.Green);
+                    ControlTimerCommand?.RaiseCanExecuteChanged();
                     break;
                 default:
                     ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
+                    ControlTimerCommand?.RaiseCanExecuteChanged();
                     break;
             }
         }
 
-        private void OnBreakEnded(object? sender, EventArgs e)
+        private async void OnBreakEnded(object? sender, EventArgs e)
         {
             Application.Current?.Dispatcher.Invoke(() =>
             {
@@ -393,6 +382,7 @@ namespace AioStudy.UI.ViewModels
                 _timerOverlayViewModel?.ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
                 ControlTimerCommand?.RaiseCanExecuteChanged();
             });
+            await ToastService.ShowInfoAsync("Pomodoro Timer", "Your break has ended! Back to work!");
         }
 
         private bool CanStartBreak(object? arg)
@@ -404,30 +394,31 @@ namespace AioStudy.UI.ViewModels
             return true;
         }
 
-        private void StartShortBreak(object? obj)
+        private async void StartShortBreak(object? obj)
         {
             ActiveBreakButton = "Short";
             _timerService.StartBreak(Enums.TimerBreakType.Short);
+            await ToastService.ShowSuccessAsync("Pomodoro Timer", "Your short break has started!");
         }
 
-        private void StartMidBreak(object? obj)
+        private async void StartMidBreak(object? obj)
         {
             ActiveBreakButton = "Mid";
             _timerService.StartBreak(Enums.TimerBreakType.Mid);
+            await ToastService.ShowSuccessAsync("Pomodoro Timer", "Your mid break has started!");
         }
 
-        private void StartLongBreak(object? obj)
+        private async void StartLongBreak(object? obj)
         {
             ActiveBreakButton = "Long";
             _timerService.StartBreak(Enums.TimerBreakType.Long);
+            await ToastService.ShowSuccessAsync("Pomodoro Timer", "Your long break has started!");
         }
 
         private void EndBreak(object? obj)
         {
             _timerService.EndBreak();
             ActiveBreakButton = "";
-            IsBreakActive = false;
-            ControlTimerCommand?.RaiseCanExecuteChanged();
         }
 
 
@@ -525,29 +516,37 @@ namespace AioStudy.UI.ViewModels
 
         private bool CanStartTimer(object? arg)
         {
-            if (_minutes == 0 && _seconds == 0 || IsBreakActive)
+            if (_timerService.IsRunning)
+            {
+                return !_timerService.IsBreak;
+            }
+
+            if (_minutes == 0 && _seconds == 0)
             {
                 return false;
             }
+
             return true;
         }
 
-        private void ResumeTimer(object? obj)
+        private async void ResumeTimer(object? obj)
         {
             _timerService.Resume();
             CanChangeModule = false;
             ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
             _timerOverlayViewModel?.ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
+            await ToastService.ShowSuccessAsync("Pomodoro Timer", "Timer Resumed!");
         }
 
-        private void PauseTimer(object? obj)
+        private async void PauseTimer(object? obj)
         {
             _timerService.Pause();
             CanChangeModule = false;
             ApplyGradientScheme(GradientColorSchemes.Timer.Red);
+            await ToastService.ShowWarningAsync("Pomodoro Timer", "Timer Paused!");
         }
 
-        private void StartTimer(object? obj)
+        private async void StartTimer(object? obj)
         {
             int totalSeconds = (_minutes * 60) + _seconds;
             _timerService.Start(TimeSpan.FromSeconds(totalSeconds), _selectedModule);
@@ -555,14 +554,15 @@ namespace AioStudy.UI.ViewModels
             GradientAnimationDuration = 1.0;
             ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
             _timerOverlayViewModel?.ApplyGradientScheme(GradientColorSchemes.Timer.Blue);
-
+            await ToastService.ShowSuccessAsync("Pomodoro Timer", "Timer started! Lets grind!");
         }
 
-        private void ResetTimer(object? obj)
+        private async void ResetTimer(object? obj)
         {
             _timerService.Reset();
             CanChangeModule = true;
             ApplyGradientScheme(GradientColorSchemes.Timer.Stopped);
+            await ToastService.ShowWarningAsync("Pomodoro Timer", "Timer reseted! Session marked as \"not completed\"");
         }
 
         public void SetMainViewModel(MainViewModel mainViewModel)

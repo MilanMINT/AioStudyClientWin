@@ -68,6 +68,7 @@ namespace AioStudy.UI
             services.AddTransient<LearnSessionDbService>();
             services.AddTransient<DailyModuleStatsDbService>();
             services.AddTransient<QuickTimerDbService>();
+            services.AddTransient<SettingsManager>();
 
 
             //ViewModels
@@ -81,6 +82,7 @@ namespace AioStudy.UI
             services.AddSingleton<PomodoroViewModel>();
             services.AddSingleton<QuickTimersViewModel>();
             services.AddTransient<TimerOverlayViewModel>();
+            services.AddSingleton<TimerOverlayViewModel>();
 
             services.AddTransient<AddModuleViewModel>();
             services.AddTransient<CreateUsernameViewModel>();

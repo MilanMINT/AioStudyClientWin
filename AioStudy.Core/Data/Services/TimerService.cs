@@ -1,4 +1,5 @@
-﻿using AioStudy.Core.Services;
+﻿using AioStudy.Core.Manager.Settings;
+using AioStudy.Core.Services;
 using AioStudy.Core.Util;
 using AioStudy.Models;
 using System;
@@ -11,6 +12,8 @@ namespace AioStudy.Core.Data.Services
 {
     public class TimerService : ITimerService
     {
+        private readonly SettingsManager _settingsManager = SettingsManager.Instance;
+
         private DateTime _endTime;
         private DateTime _breakEndTime;
         private TimeSpan _remaining;
@@ -145,15 +148,15 @@ namespace AioStudy.Core.Data.Services
             switch (breakType)
             {
                 case Enums.TimerBreakType.Short:
-                    _breakDuration = TimeSpan.FromMinutes(5);
+                    _breakDuration = TimeSpan.FromMinutes(_settingsManager.Settings.BreakDurationsInMinutes[0]);
                     ExecuteBreak();
                     break;
                 case Enums.TimerBreakType.Mid:
-                    _breakDuration = TimeSpan.FromMinutes(15);
+                    _breakDuration = TimeSpan.FromMinutes(_settingsManager.Settings.BreakDurationsInMinutes[1]);
                     ExecuteBreak();
                     break;
                 case Enums.TimerBreakType.Long:
-                    _breakDuration = TimeSpan.FromMinutes(30);
+                    _breakDuration = TimeSpan.FromMinutes(_settingsManager.Settings.BreakDurationsInMinutes[2]);
                     ExecuteBreak();
                     break;
                 default:

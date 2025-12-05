@@ -84,7 +84,7 @@
                     FontSize="11"
                     FontWeight="SemiBold"
                     Foreground="#787C8E"
-                    Text="Timer läuft" />
+                    Text="{Binding TimerStatusString, FallbackValue='Timer running'}" />
 
                 <Button
                     Width="20"

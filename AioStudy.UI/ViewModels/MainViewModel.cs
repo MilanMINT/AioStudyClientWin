@@ -27,6 +27,8 @@ namespace AioStudy.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private readonly SettingsManager _settingsManager = SettingsManager.Instance;
+
         private readonly ITimerService _timerService;
         private readonly UserDbService _userDbService;
         private readonly SemesterDbService _semesterDbService;
@@ -39,10 +41,19 @@ namespace AioStudy.UI.ViewModels
         private SemesterViewModel _semesterViewModel;
         private ModulesViewModel _modulesViewModel;
 
+        private string _gradientColor1 = "#3A3D45"; // Blau 1
+        private string _gradientColor2 = "#3A3D45"; // Blau 2
+        private string _gradientColor3 = "#a5bacc"; // Blau 3
+
         private TimerOverlayViewModel _timerOverlayViewModel;
         private bool _isMainWindowMinimized;
 
         private string _currentViewName;
+        private bool _playSoundOnTimerEnd;
+
+        private double _timerProgress;
+        private double _timerMaximum;
+        private double _mainTimerMaximum;
 
         public RelayCommand Dark { get; }
         public RelayCommand Light { get; }
@@ -66,6 +77,66 @@ namespace AioStudy.UI.ViewModels
         private string _firstSecondLetterOfUsername;
         private string _username;
         private string _currentSemester;
+
+        public string GradientColor1
+        {
+            get => _gradientColor1;
+            set
+            {
+                _gradientColor1 = value;
+                OnPropertyChanged(nameof(GradientColor1));
+            }
+        }
+
+        public string GradientColor2
+        {
+            get => _gradientColor2;
+            set
+            {
+                _gradientColor2 = value;
+                OnPropertyChanged(nameof(GradientColor2));
+            }
+        }
+
+        public string GradientColor3
+        {
+            get => _gradientColor3;
+            set
+            {
+                _gradientColor3 = value;
+                OnPropertyChanged(nameof(GradientColor3));
+            }
+        }
+
+        public double TimerProgress
+        {
+            get => _timerProgress;
+            set
+            {
+                _timerProgress = value;
+                OnPropertyChanged(nameof(TimerProgress));
+            }
+        }
+
+        public double TimerMaximum
+        {
+            get => _timerMaximum;
+            set
+            {
+                _timerMaximum = value;
+                OnPropertyChanged(nameof(TimerMaximum));
+            }
+        }
+
+        public bool PlaySoundOnTimerEnd
+        {
+            get => _playSoundOnTimerEnd;
+            set
+            {
+                _playSoundOnTimerEnd = value;
+                OnPropertyChanged(nameof(PlaySoundOnTimerEnd));
+            }
+        }
 
         public string FirstSecondLetterOfUsername
         {
@@ -160,6 +231,7 @@ namespace AioStudy.UI.ViewModels
 
         public MainViewModel(ITimerService timerService, UserDbService userDbService, SemesterDbService semesterDbService)
         {
+
             _timerService = timerService;
             _userDbService = userDbService;
             _semesterDbService = semesterDbService;
@@ -198,6 +270,7 @@ namespace AioStudy.UI.ViewModels
             CurrentViewName = "Dashboard";
 
             ShowStatusBar = false;
+            PlaySoundOnTimerEnd = false;
 
             _pomodoroViewModel.PropertyChanged += OnPomodoroViewModelPropertyChanged;
 
@@ -208,11 +281,48 @@ namespace AioStudy.UI.ViewModels
             _timerService.RunningStateChanged += TimerService_RunningStateChanged;
             _timerService.PausedStateChanged += TimerService_PausedStateChanged;
             _timerService.TimerEnded += OnTimerCompleted;
+            _timerService.BreakStateChanged += OnBreakStateChanged;
+            _timerService.BreakEnded += OnBreakEnded;
+
+            ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
+        }
+
+        private void OnBreakEnded(object? sender, EventArgs e)
+        {
+            TimerMaximum = _mainTimerMaximum;
+            TimerProgress = _timerService.Remaining.TotalSeconds;
+            ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
+        }
+
+        private void OnBreakStateChanged(object? sender, Enums.TimerBreakType e)
+        {
+            switch(e)
+            {
+                case Enums.TimerBreakType.Short:
+                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[0]*60;
+                    TimerProgress = _timerService.Remaining.TotalSeconds;
+                    ApplyGradientScheme(GradientColorSchemes.TimerBar.ShortBreak);
+                    break;
+                case Enums.TimerBreakType.Long:
+                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[2]*60;
+                    TimerProgress = _timerService.Remaining.TotalSeconds;
+                    ApplyGradientScheme(GradientColorSchemes.TimerBar.LongBreak);
+                    break;
+                case Enums.TimerBreakType.Mid:
+                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[1]*60;
+                    TimerProgress = _timerService.Remaining.TotalSeconds;
+                    ApplyGradientScheme(GradientColorSchemes.TimerBar.MidBreak);
+                    break;
+                default:
+                    TimerMaximum = _timerService.Remaining.TotalSeconds;
+                    TimerProgress = _timerService.Remaining.TotalSeconds;
+                    break;
+            }
         }
 
         private void OnTimerCompleted(object? sender, EventArgs e)
         {
-            Application.Current?.Dispatcher.Invoke(async () =>
+            Application.Current?.Dispatcher.Invoke(() =>
             {
                 var mainWindow = Application.Current.MainWindow;
                 if (mainWindow != null)
@@ -223,18 +333,21 @@ namespace AioStudy.UI.ViewModels
                         CurrentViewName = "Pomodoro";
                         mainWindow.WindowState = WindowState.Normal;
                     }
-                    
+
 
                     mainWindow.Activate();
                     mainWindow.Topmost = true;
                     mainWindow.Topmost = false;
 
-                    SystemSounds.Exclamation.Play();
 
+                    if (PlaySoundOnTimerEnd)
+                    {
+                        SystemSounds.Exclamation.Play();
+                    }
                     FlashWindow(mainWindow);
-                    await ToastService.ShowSuccessAsync("Pomodoro Timer", "Your Pomodoro session has ended!");
-
                 }
+
+                return Task.CompletedTask;
             });
         }
 
@@ -245,6 +358,18 @@ namespace AioStudy.UI.ViewModels
         {
             var helper = new WindowInteropHelper(window);
             FlashWindow(helper.Handle, true);
+        }
+
+        private void SetGradientColors(string color1, string color2, string color3)
+        {
+            GradientColor1 = color1;
+            GradientColor2 = color2;
+            GradientColor3 = color3;
+        }
+
+        private void ApplyGradientScheme(GradientColorSchemes.GradientColors colors)
+        {
+            GradientColorSchemes.ApplyColors(colors, SetGradientColors);
         }
 
         private void OnPomodoroViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -267,18 +392,35 @@ namespace AioStudy.UI.ViewModels
         private void TimerService_TimeChanged(object? sender, TimeSpan e)
         {
             Time = e;
+            TimerProgress = e.TotalSeconds;
         }
 
         private void TimerService_PausedStateChanged(object? sender, bool e)
         {
             _isPaused = e;
             UpdateTimerStatusBarVisibility();
+            if (_timerService.IsPaused)
+            {
+                ApplyGradientScheme(GradientColorSchemes.TimerBar.Paused);
+            }
+            else
+            {
+                ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
+            }
         }
 
         private void TimerService_RunningStateChanged(object? sender, bool e)
         {
             _isRunning = e;
             UpdateTimerStatusBarVisibility();
+
+            if (e && _timerService.Remaining.TotalSeconds > 0)
+            {
+                _mainTimerMaximum = _timerService.Remaining.TotalSeconds;
+                TimerMaximum = _timerService.Remaining.TotalSeconds;
+                TimerProgress = _timerService.Remaining.TotalSeconds;
+
+            }
         }
 
         private void ExecuteShowModulesCommand(object? obj)
