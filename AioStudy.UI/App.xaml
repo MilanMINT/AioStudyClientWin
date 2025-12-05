@@ -36,6 +36,8 @@
             <converters:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
             <converters:StringToColorConverter x:Key="StringToColorConverter" />
             <converters:DoubleToTimeSpanConverter x:Key="DoubleToTimeSpanConverter" />
+            <converters:TimeAgoConverter x:Key="TimeAgoConverter" />
+            <converters:MinutesToDurationConverter x:Key="MinutesToDurationConverter" />
 
             <!--  ###################################################################################  -->
 

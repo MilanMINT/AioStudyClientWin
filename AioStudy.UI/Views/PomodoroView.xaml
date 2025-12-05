@@ -385,11 +385,151 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     MaxWidth="700"
-                    MaxHeight="650"
-                    Margin="0,30,30,30"
+                    MaxHeight="850"
+                    Margin="0,29,30,30"
                     Panel.ZIndex="999"
-                    Background="Gray"
-                    CornerRadius="10" />
+                    Background="#1F2024"
+                    BorderThickness="2"
+                    CornerRadius="10">
+
+                    <Border.Effect>
+                        <DropShadowEffect
+                            BlurRadius="20"
+                            Direction="270"
+                            Opacity="0.3"
+                            ShadowDepth="10"
+                            Color="#000000" />
+                    </Border.Effect>
+
+                    <Border.BorderBrush>
+                        <LinearGradientBrush>
+                            <GradientStop Offset="0.0" Color="#3A3D45" />
+                            <GradientStop Offset="0.5" Color="#a5bacc" />
+                            <GradientStop Offset="1.0" Color="#3A3D45" />
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="70" />
+                            <RowDefinition Height="1" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!--  Header  -->
+                        <DockPanel Grid.Row="0" LastChildFill="False">
+                            <MaIc:MaterialIcon
+                                Width="28"
+                                Height="28"
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="#4FD1C7"
+                                Kind="History" />
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                Text="Recent Sessions" />
+                        </DockPanel>
+
+                        <!--  Separator  -->
+                        <Border
+                            Grid.Row="1"
+                            Height="1"
+                            Margin="20,0"
+                            Background="#3A3D45" />
+
+                        <!--  Sessions List mit Empty State  -->
+                        <Grid Grid.Row="2" Margin="15">
+                            <!--  Sessions List  -->
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                <ScrollViewer.Resources>
+                                    <Style BasedOn="{StaticResource LocalScrollBar}" TargetType="ScrollBar" />
+                                </ScrollViewer.Resources>
+                                <ScrollViewer.Style>
+                                    <Style TargetType="ScrollViewer">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding RecentSessions.Count}" Value="0">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ScrollViewer.Style>
+
+                                <ItemsControl ItemsSource="{Binding RecentSessions}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                Margin="0,0,0,10"
+                                                Padding="15"
+                                                Background="#2A2D35"
+                                                CornerRadius="8">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!--  Icon  -->
+                                                    <Border
+                                                        Grid.Column="0"
+                                                        Width="40"
+                                                        Height="40"
+                                                        Margin="0,0,12,0"
+                                                        Background="#3A3D45"
+                                                        CornerRadius="20">
+                                                        <MaIc:MaterialIcon
+                                                            Width="20"
+                                                            Height="20"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            Foreground="#68D391"
+                                                            Kind="CheckCircle" />
+                                                    </Border>
+
+                                                    <!--  Session Info  -->
+                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                        <TextBlock
+                                                            FontSize="13"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="White"
+                                                            Text="{Binding LearnedModule.Name, FallbackValue='Study Session', TargetNullValue='Study Session'}"
+                                                            TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock
+                                                            Margin="0,2,0,0"
+                                                            FontSize="11"
+                                                            Foreground="#A0AEC0">
+                                                            <Run Text="{Binding EndTime, Converter={StaticResource TimeAgoConverter}, Mode=OneWay}" />
+                                                            <Run Text=" • " />
+                                                            <Run Text="{Binding CurrentLearnedMinutes, Converter={StaticResource MinutesToDurationConverter}, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+
+                                                    <!--  Duration  -->
+                                                    <Border
+                                                        Grid.Column="2"
+                                                        Padding="10,5"
+                                                        VerticalAlignment="Center"
+                                                        Background="#1F2024"
+                                                        CornerRadius="12">
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#4FD1C7"
+                                                            Text="{Binding CurrentLearnedMinutes, StringFormat={}{0} min}" />
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+                </Border>
 
                 <!--  QuicktimerViewCOmponent  -->
                 <!--<components:QuickTimersView Margin="30,5,30,5" DataContext="{Binding QuickTimersViewModel}" />-->
@@ -482,10 +622,10 @@
 
                         <DockPanel LastChildFill="False">
                             <MaIc:MaterialIcon
-                                Width="43"
-                                Height="43"
-                                Margin="25,5,0,0"
-                                Foreground="#7E8082"
+                                Width="32"
+                                Height="32"
+                                Margin="25,4,0,0"
+                                Foreground="#3d3e45"
                                 Kind="TimerOutline" />
 
                             <TextBlock
@@ -493,9 +633,9 @@
                                 Margin="10,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                FontSize="38"
+                                FontSize="30"
                                 FontWeight="Bold"
-                                Foreground="#7E8082"
+                                Foreground="#3d3e45"
                                 Text="Timer" />
                         </DockPanel>
 

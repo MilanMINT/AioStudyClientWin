@@ -26,7 +26,7 @@ namespace AioStudy.Core.Data.Services
                 var learnSession = new LearnSession
                 {
                     LearnedModuleId = module?.Id,
-                    StartTime = DateTime.UtcNow
+                    StartTime = DateTime.Now
                 };
                 return await _learnSessionRepository.CreateAsync(learnSession);
             }
@@ -62,12 +62,38 @@ namespace AioStudy.Core.Data.Services
             if (session == null) throw new ArgumentNullException(nameof(session));
 
             session.SessionCompleted = true;
-            session.EndTime = DateTime.UtcNow;
+            session.EndTime = DateTime.Now;
             await _learnSessionRepository.UpdateAsync(session);
-            //if (dailyModuleStats != null)
-            //{
-            //    await _dailyModuleStatsDbService.IncrementSessionCountAsync(dailyModuleStats);
-            //}
+        }
+
+        public async Task<List<LearnSession>> GetRecentSessionsAsync(int count = 5)
+        {
+            try
+            {
+                var sessions = await _learnSessionRepository.GetAllWithIncludesAsync("LearnedModule");
+                var sessionList = sessions.ToList();
+
+                System.Diagnostics.Debug.WriteLine($"[LearnSession] Total: {sessionList.Count}, Completed: {sessionList.Count(s => s.SessionCompleted)}");
+
+                return sessionList
+                    .OrderByDescending(s => s.EndTime ?? s.StartTime)
+                    .Take(count)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[LearnSession] ERROR: {ex.Message}");
+                return new List<LearnSession>();
+            }
+        }
+
+        public async Task CancelSessionAsync(LearnSession session)
+        {
+            if (session == null) throw new ArgumentNullException(nameof(session));
+
+            session.SessionCompleted = false;
+            session.EndTime = DateTime.Now;
+            await _learnSessionRepository.UpdateAsync(session);
         }
     }
 }

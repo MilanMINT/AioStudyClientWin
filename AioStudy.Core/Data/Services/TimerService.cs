@@ -106,8 +106,13 @@ namespace AioStudy.Core.Data.Services
             PausedStateChanged?.Invoke(this, true);
         }
 
-        public void Reset()
+        public async void Reset()
         {
+            if (_currentSession != null)
+            {
+                await _learnSessionDbService.CancelSessionAsync(_currentSession);
+            }
+
             _isRunning = false;
             _isBreak = false;
             Stop();

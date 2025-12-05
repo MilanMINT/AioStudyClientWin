@@ -57,5 +57,17 @@ namespace AioStudy.Data.Services
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<T>> GetAllWithIncludesAsync(params string[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }

@@ -38,6 +38,19 @@ namespace AioStudy.UI.ViewModels
         private bool _isBreakActive = false;
         private TimerOverlayViewModel _timerOverlayViewModel;
 
+        private readonly LearnSessionDbService _learnSessionDbService;
+        private ObservableCollection<LearnSession> _recentSessions = new();
+
+        public ObservableCollection<LearnSession> RecentSessions
+        {
+            get => _recentSessions;
+            set
+            {
+                _recentSessions = value;
+                OnPropertyChanged(nameof(RecentSessions));
+            }
+        }
+
         public double GradientAnimationDuration
         {
             get => _gradientAnimationDuration;
@@ -264,12 +277,13 @@ namespace AioStudy.UI.ViewModels
         WaveOutEvent output;
         AudioFileReader reader;
 
-        public PomodoroViewModel(ITimerService timerService, ModulesDbService modulesDbService, QuickTimersViewModel quickTimersViewModel)
+        public PomodoroViewModel(ITimerService timerService, ModulesDbService modulesDbService, QuickTimersViewModel quickTimersViewModel, LearnSessionDbService learnSessionDbService)
         {
             Text = "Initial Text";
             _timerService = timerService;
             _modulesDbService = modulesDbService;
             QuickTimersViewModel = quickTimersViewModel;
+            _learnSessionDbService = learnSessionDbService;
 
             IsPaused = false;
             IsRunning = false;
@@ -315,11 +329,32 @@ namespace AioStudy.UI.ViewModels
             _clockTimer.Start();
 
             _ = LoadModulesAsync();
+            _ = LoadRecentSessionsAsync();
+        }
+
+        public async Task LoadRecentSessionsAsync()
+        {
+            var sessions = await _learnSessionDbService.GetRecentSessionsAsync(6);
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                RecentSessions.Clear();
+                foreach (var session in sessions)
+                {
+                    RecentSessions.Add(session);
+                }
+            });
         }
 
         private async void OnTimerEnded(object? sender, EventArgs e)
         {
             await ToastService.ShowSuccessAsync("Pomodoro Timer", "Your Pomodoro session has ended!");
+            await Task.Delay(500);
+
+            await Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                await LoadRecentSessionsAsync();
+            });
         }
 
         private void SetGradientColors(string color1, string color2, string color3)
@@ -563,6 +598,7 @@ namespace AioStudy.UI.ViewModels
             CanChangeModule = true;
             ApplyGradientScheme(GradientColorSchemes.Timer.Stopped);
             await ToastService.ShowWarningAsync("Pomodoro Timer", "Timer reseted! Session marked as \"not completed\"");
+            _ = LoadRecentSessionsAsync();
         }
 
         public void SetMainViewModel(MainViewModel mainViewModel)
