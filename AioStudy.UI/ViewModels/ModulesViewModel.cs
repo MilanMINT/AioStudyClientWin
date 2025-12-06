@@ -22,8 +22,9 @@ namespace AioStudy.UI.ViewModels
     {
         private MainViewModel _mainViewModel;
         private readonly ModulesDbService _modulesDbService;
-
         private ObservableCollection<Module> _modules;
+        private List<Module> _allModules = new();
+        private string _searchQuery = string.Empty;
 
         public RelayCommand DeleteModuleCommand { get; }
         public RelayCommand CreateModuleCommand { get; }
@@ -33,6 +34,17 @@ namespace AioStudy.UI.ViewModels
         private string _semesterName;
 
         private Semester _selectedSemester;
+
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                _searchQuery = value;
+                OnPropertyChanged(nameof(SearchQuery));
+                FilterModules();
+            }
+        }
 
         public ObservableCollection<Module> Modules
         {
@@ -65,6 +77,32 @@ namespace AioStudy.UI.ViewModels
             _ = LoadModulesBySemesterAsync();
         }
 
+        private void FilterModules()
+        {
+            if (string.IsNullOrWhiteSpace(_searchQuery))
+            {
+                Modules.Clear();
+                foreach (var module in _allModules)
+                {
+                    Modules.Add(module);
+                }
+            }
+            else
+            {
+                var query = _searchQuery.ToLower();
+                var filtered = _allModules.Where(m =>
+                    m.Name.ToLower().Contains(query) ||
+                    (m.Semester?.Name?.ToLower().Contains(query) ?? false)
+                ).ToList();
+
+                Modules.Clear();
+                foreach (var module in filtered)
+                {
+                    Modules.Add(module);
+                }
+            }
+        }
+
         private async Task OpenModuleOverview(object? parameter)
         {
             if (parameter is Module module)
@@ -88,6 +126,7 @@ namespace AioStudy.UI.ViewModels
                 var semesterService = App.ServiceProvider.GetRequiredService<SemesterDbService>();
                 var allSemesters = await semesterService.GetAllSemestersAsync();
 
+                _allModules.Clear();
                 Modules.Clear();
                 foreach (var module in modules)
                 {
@@ -95,7 +134,13 @@ namespace AioStudy.UI.ViewModels
                     {
                         module.Semester = allSemesters.FirstOrDefault(s => s.Id == module.SemesterId.Value);
                     }
+                    _allModules.Add(module);
                     Modules.Add(module);
+                }
+
+                if (!string.IsNullOrWhiteSpace(_searchQuery))
+                {
+                    FilterModules();
                 }
             }
             catch (Exception)
@@ -114,6 +159,7 @@ namespace AioStudy.UI.ViewModels
                 {
                     await DeleteModuleAsync(module);
                     await ToastService.ShowSuccessAsync("Module Deleted!", $"The module '{module.Name}' has been successfully deleted.");
+                    await _mainViewModel._pomodoroViewModel.LoadRecentSessionsAsync();
                 }
             }
         }
@@ -131,6 +177,7 @@ namespace AioStudy.UI.ViewModels
                     if (success)
                     {
                         Modules.Remove(module);
+                        _allModules.Remove(module);
                     }
                 }
                 catch (Exception ex)

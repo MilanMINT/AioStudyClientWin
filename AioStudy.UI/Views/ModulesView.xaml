@@ -177,7 +177,7 @@
                     FontSize="14"
                     Foreground="White"
                     Style="{StaticResource GradientTextBox}"
-                    Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Watermark="Search Modules..." />
 
 

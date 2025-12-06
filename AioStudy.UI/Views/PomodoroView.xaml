@@ -403,9 +403,9 @@
 
                     <Border.BorderBrush>
                         <LinearGradientBrush>
-                            <GradientStop Offset="0.0" Color="#3A3D45" />
-                            <GradientStop Offset="0.5" Color="#a5bacc" />
-                            <GradientStop Offset="1.0" Color="#3A3D45" />
+                            <GradientStop Offset="0.0" Color="#a5bacc" />
+                            <GradientStop Offset="1.0" Color="#a5bacc" />
+                            <GradientStop Offset="0.5" Color="#3A3D45" />
                         </LinearGradientBrush>
                     </Border.BorderBrush>
 
@@ -421,16 +421,16 @@
                             <MaIc:MaterialIcon
                                 Width="28"
                                 Height="28"
-                                Margin="20,0,0,0"
+                                Margin="20,2,0,0"
                                 VerticalAlignment="Center"
-                                Foreground="#4FD1C7"
+                                Foreground="#E1E1E1"
                                 Kind="History" />
                             <TextBlock
-                                Margin="10,0,0,0"
+                                Margin="8,0,0,0"
                                 VerticalAlignment="Center"
                                 FontSize="20"
                                 FontWeight="Bold"
-                                Foreground="White"
+                                Foreground="#E1E1E1"
                                 Text="Recent Sessions" />
                         </DockPanel>
 
@@ -486,8 +486,8 @@
                                                             Height="20"
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
-                                                            Foreground="#68D391"
-                                                            Kind="CheckCircle" />
+                                                            Foreground="{Binding SessionCompleted, Converter={StaticResource SessionCompletedColorConverter}}"
+                                                            Kind="{Binding SessionCompleted, Converter={StaticResource PomodoroRecentSessionsIconConverter}}" />
                                                     </Border>
 
                                                     <!--  Session Info  -->
@@ -507,20 +507,6 @@
                                                             <Run Text="{Binding CurrentLearnedMinutes, Converter={StaticResource MinutesToDurationConverter}, Mode=OneWay}" />
                                                         </TextBlock>
                                                     </StackPanel>
-
-                                                    <!--  Duration  -->
-                                                    <Border
-                                                        Grid.Column="2"
-                                                        Padding="10,5"
-                                                        VerticalAlignment="Center"
-                                                        Background="#1F2024"
-                                                        CornerRadius="12">
-                                                        <TextBlock
-                                                            FontSize="12"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="#4FD1C7"
-                                                            Text="{Binding CurrentLearnedMinutes, StringFormat={}{0} min}" />
-                                                    </Border>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
@@ -605,7 +591,7 @@
 
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="90" />
+                            <RowDefinition Height="70" />
                             <RowDefinition Height="1" />
                             <RowDefinition Height="2*" />
                             <RowDefinition Height="1" />
@@ -622,20 +608,20 @@
 
                         <DockPanel LastChildFill="False">
                             <MaIc:MaterialIcon
-                                Width="32"
-                                Height="32"
-                                Margin="25,4,0,0"
-                                Foreground="#3d3e45"
+                                Width="30"
+                                Height="30"
+                                Margin="25,2,0,0"
+                                Foreground="#E1E1E1"
                                 Kind="TimerOutline" />
 
                             <TextBlock
                                 Grid.Row="0"
-                                Margin="10,0,0,0"
+                                Margin="6,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                FontSize="30"
+                                FontSize="25"
                                 FontWeight="Bold"
-                                Foreground="#3d3e45"
+                                Foreground="#E1E1E1"
                                 Text="Timer" />
                         </DockPanel>
 

@@ -39,6 +39,20 @@
             <converters:TimeAgoConverter x:Key="TimeAgoConverter" />
             <converters:MinutesToDurationConverter x:Key="MinutesToDurationConverter" />
 
+            <converters:BoolToIconConverterSingle
+                x:Key="PomodoroRecentSessionsIconConverter"
+                FalseIcon="CancelCircleOutline"
+                TrueIcon="CheckCircle" />
+
+            <converters:BoolToColorConverter x:Key="SessionCompletedColorConverter">
+                <converters:BoolToColorConverter.TrueColor>
+                    <SolidColorBrush Color="#68D391" />
+                </converters:BoolToColorConverter.TrueColor>
+                <converters:BoolToColorConverter.FalseColor>
+                    <SolidColorBrush Color="#FC8181" />
+                </converters:BoolToColorConverter.FalseColor>
+            </converters:BoolToColorConverter>
+
             <!--  ###################################################################################  -->
 
 

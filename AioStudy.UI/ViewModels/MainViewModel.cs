@@ -35,7 +35,7 @@ namespace AioStudy.UI.ViewModels
 
         private ViewModelBase _currentViewModel;
         private DashboardViewModel _dashboardViewModel;
-        private PomodoroViewModel _pomodoroViewModel;
+        public PomodoroViewModel _pomodoroViewModel;
         private SettingsViewModel _settingsViewModel;
         private GradesViewModel _gradesViewModel;
         private SemesterViewModel _semesterViewModel;
@@ -419,7 +419,6 @@ namespace AioStudy.UI.ViewModels
                 _mainTimerMaximum = _timerService.Remaining.TotalSeconds;
                 TimerMaximum = _timerService.Remaining.TotalSeconds;
                 TimerProgress = _timerService.Remaining.TotalSeconds;
-
             }
         }
 

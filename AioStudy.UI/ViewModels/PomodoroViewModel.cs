@@ -298,7 +298,7 @@ namespace AioStudy.UI.ViewModels
             StartTimerCommand = new RelayCommand(StartTimer);
             PauseTimerCommand = new RelayCommand(PauseTimer);
             ResumeTimerCommand = new RelayCommand(ResumeTimer);
-            ResetTimerCommand = new RelayCommand(ResetTimer);
+            ResetTimerCommand = new RelayCommand(ResetTimer, CanResetTimer);
             ControlTimerCommand = new RelayCommand(ControlTimer, CanStartTimer);
 
             EndBreakCommand = new RelayCommand(EndBreak);
@@ -332,13 +332,18 @@ namespace AioStudy.UI.ViewModels
             _ = LoadRecentSessionsAsync();
         }
 
+        private bool CanResetTimer(object? arg)
+        {
+            return _timerService.IsRunning;
+        }
+
         public async Task LoadRecentSessionsAsync()
         {
+            RecentSessions.Clear();
             var sessions = await _learnSessionDbService.GetRecentSessionsAsync(6);
 
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
-                RecentSessions.Clear();
                 foreach (var session in sessions)
                 {
                     RecentSessions.Add(session);

@@ -23,7 +23,6 @@ namespace AioStudy.Models
         public bool SessionCompleted { get; set; } = false;
         public int CurrentLearnedMinutes { get; set; } = 0;
 
-
         public LearnSession() { }
     }
 }

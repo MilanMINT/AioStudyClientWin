@@ -43,6 +43,18 @@ namespace AioStudy.Data.EF
                 .HasForeignKey(d => d.ModuleId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<LearnSession>()
+                .HasOne(l => l.LearnedModule)
+                .WithMany()
+                .HasForeignKey(l => l.LearnedModuleId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<QuickTimer>()
+                .HasOne(q => q.Module)
+                .WithMany()
+                .HasForeignKey(q => q.ModuleId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             base.OnModelCreating(modelBuilder);
         }
 

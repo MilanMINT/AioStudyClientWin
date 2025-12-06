@@ -175,7 +175,6 @@
             </Grid.ColumnDefinitions>
 
             <DockPanel Grid.ColumnSpan="2" LastChildFill="False">
-
                 <Border
                     Height="35"
                     Margin="0,0,10,0"
@@ -196,12 +195,12 @@
                 <TextBlock
                     Grid.Row="0"
                     Grid.Column="0"
-                    Margin="15,0,0,0"
+                    Margin="15,0,22,0"
                     VerticalAlignment="Center"
                     FontSize="23"
                     FontWeight="Bold"
                     Foreground="#E0E0E0"
-                    Text="{Binding Name, FallbackValue='Not set!'}"
+                    Text="{Binding Name, FallbackValue='Not sedqdq qdqwdqwdqwd qwdqwdqwdqwdt!'}"
                     TextTrimming="CharacterEllipsis"
                     ToolTip="{Binding Name}" />
             </DockPanel>
@@ -405,7 +404,7 @@
                     Command="{Binding DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Module, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     DockPanel.Dock="Right"
-                    Opacity="1"
+                    Opacity="0"
                     SnapsToDevicePixels="True"
                     Style="{StaticResource RedGradientButtonThinBorder}"
                     UseLayoutRounding="True">
@@ -435,7 +434,7 @@
                     Command="{Binding OpenModuleOverviewCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Module, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     DockPanel.Dock="Right"
-                    Opacity="1"
+                    Opacity="0"
                     SnapsToDevicePixels="True"
                     Style="{StaticResource GrayGradientButton}"
                     UseLayoutRounding="True">
