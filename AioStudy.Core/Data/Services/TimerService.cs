@@ -80,9 +80,11 @@ namespace AioStudy.Core.Data.Services
             _endTime = DateTime.UtcNow.Add(duration);
             _cts = new CancellationTokenSource();
             _isRunning = true;
+            _isPaused = false;
             _activeMinutesLogged = 0;
             _isBreak = false;
             RunningStateChanged?.Invoke(this, true);
+            PausedStateChanged?.Invoke(this, false);
             _currentSession = null;
             _currentModule = module;
             _currentSession = _learnSessionDbService.CreateLearnSessionAsync(module).GetAwaiter().GetResult() ?? throw new Exception("Failed to create learn session");

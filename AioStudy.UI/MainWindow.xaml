@@ -142,27 +142,85 @@
 
 
             <!--  ==================== Active TimerLine ====================  -->
+            <!--  ==================== Active TimerLine ====================  -->
             <Border
                 Grid.Row="1"
                 Panel.ZIndex="9999999"
                 Background="#191A1C"
                 Visibility="{Binding ShowStatusBar, Converter={StaticResource BoolToVisibilityConverter}, TargetNullValue=Collapsed}">
 
-
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="0,0,0,0"
-                        HorizontalAlignment="Center"
-                        FontSize="20"
-                        FontWeight="Bold"
-                        Foreground="White"
-                        Text="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss}, FallbackValue='00:00:00'}" />
+                    <Grid Grid.Row="0" Margin="10,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Links: Status Icon + Text  -->
+                        <StackPanel
+                            Grid.Column="0"
+                            Width="Auto"
+                            Margin="0,2,0,0"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+
+                            <!--  Status Icon (ändert sich je nach Zustand)  -->
+                            <Border
+                                Width="18"
+                                Height="18"
+                                Margin="0,1,8,0"
+                                Background="#2A2D35"
+                                CornerRadius="11">
+                                <MaIc:MaterialIcon
+                                    Width="12"
+                                    Height="12"
+                                    Margin="0,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{Binding StatusColor, FallbackValue=#6DBDEF}"
+                                    Kind="InformationOutline" />
+                            </Border>
+
+                            <!--  Status Text  -->
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                FontWeight="SemiBold"
+                                Foreground="#A0AEC0"
+                                Text="{Binding TimerStatusText, FallbackValue='Running'}" />
+
+                            <!--  Modul Name (optional)  -->
+                            <TextBlock
+                                Width="Auto"
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                FontSize="11"
+                                Foreground="#6B7280"
+                                Text="{Binding CurrentModuleName, FallbackValue=''}"
+                                Visibility="{Binding CurrentModuleName, Converter={StaticResource NullToVisibilityConverter}}" />
+                        </StackPanel>
+
+                        <!--  Mitte: Timer  -->
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="0,2,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="Consolas"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            Text="{Binding Time, StringFormat={}{0:hh\\:mm\\:ss}, FallbackValue='00:00:00'}" />
+
+                    </Grid>
+
+                    <!--  Progress Bar  -->
                     <ProgressBar
                         Grid.Row="1"
                         Height="3"
@@ -214,12 +272,41 @@
 
                     <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="60" />
+                            <RowDefinition Height="1" />
                             <RowDefinition Height="10*" />
                             <RowDefinition Height="1" />
                             <RowDefinition Height="65" />
                         </Grid.RowDefinitions>
 
-                        <StackPanel Margin="0,20,0,0" Orientation="Vertical">
+                        <DockPanel
+                            Grid.Row="0"
+                            Margin="50,0,0,0"
+                            LastChildFill="False">
+                            <Image
+                                Width="30"
+                                Height="30"
+                                Margin="0,15,10,15"
+                                VerticalAlignment="Center"
+                                Source="/Assets/AioStudyLogo.png" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="Bold"
+                                Foreground="White"
+                                Text="AioStudy" />
+                        </DockPanel>
+
+                        <Border
+                            Grid.Row="1"
+                            Height="1"
+                            Margin="20,0"
+                            Background="#3A3D45" />
+
+                        <StackPanel
+                            Grid.Row="2"
+                            Margin="0,20,0,0"
+                            Orientation="Vertical">
                             <RadioButton
                                 Command="{Binding ShowDashboardCMD}"
                                 IsChecked="true"
@@ -301,12 +388,12 @@
                         </StackPanel>
 
                         <Border
-                            Grid.Row="1"
+                            Grid.Row="3"
                             Height="1"
                             Margin="20,0"
                             Background="#3A3D45" />
 
-                        <DockPanel Grid.Row="2" LastChildFill="True">
+                        <DockPanel Grid.Row="4" LastChildFill="True">
                             <Border
                                 Width="40"
                                 Height="40"

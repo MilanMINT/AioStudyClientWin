@@ -261,6 +261,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand StartShortBreakCommand { get; }
         public RelayCommand StartMidBreakCommand { get; }
         public RelayCommand StartLongBreakCommand { get; }
+        public RelayCommand RefreshRecentListCommand { get; }
 
         private MainViewModel _mainViewModel;
 
@@ -306,6 +307,7 @@ namespace AioStudy.UI.ViewModels
             StartShortBreakCommand = new RelayCommand(StartShortBreak, CanStartBreak);
             StartMidBreakCommand = new RelayCommand(StartMidBreak, CanStartBreak);
             StartLongBreakCommand = new RelayCommand(StartLongBreak, CanStartBreak);
+            RefreshRecentListCommand = new RelayCommand(async _ => await LoadRecentSessionsAsync());
 
             ClearSelectionCommand = new RelayCommand(_ => SelectedModule = null);
 

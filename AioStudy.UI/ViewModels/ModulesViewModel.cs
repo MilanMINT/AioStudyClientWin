@@ -164,9 +164,6 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-
-
-
         private async Task DeleteModuleAsync(object parameter)
         {
             if (parameter is Module module)

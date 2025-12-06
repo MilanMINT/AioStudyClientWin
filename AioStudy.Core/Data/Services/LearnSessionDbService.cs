@@ -91,7 +91,7 @@ namespace AioStudy.Core.Data.Services
         {
             if (session == null) throw new ArgumentNullException(nameof(session));
 
-            session.SessionCompleted = false;
+            session.SessionCompleted = false; 
             session.EndTime = DateTime.Now;
             await _learnSessionRepository.UpdateAsync(session);
         }

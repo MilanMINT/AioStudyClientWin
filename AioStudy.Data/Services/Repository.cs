@@ -60,7 +60,7 @@ namespace AioStudy.Data.Services
 
         public async Task<IEnumerable<T>> GetAllWithIncludesAsync(params string[] includes)
         {
-            IQueryable<T> query = _dbSet;
+            IQueryable<T> query = _dbSet.AsNoTracking();
 
             foreach (var include in includes)
             {

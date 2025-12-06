@@ -49,6 +49,7 @@ namespace AioStudy.UI.ViewModels
         private bool _isMainWindowMinimized;
 
         private string _currentViewName;
+        private string _timerStatusText;
         private bool _playSoundOnTimerEnd;
 
         private double _timerProgress;
@@ -228,6 +229,23 @@ namespace AioStudy.UI.ViewModels
                 UpdateTimerOverlayVisibility();
             }
         }
+        public string TimerStatusText
+        {
+            get => _timerStatusText;
+            private set
+            {
+                if (_timerStatusText != value)
+                {
+                    _timerStatusText = value;
+                    OnPropertyChanged(nameof(TimerStatusText));
+                }
+            }
+        }
+
+
+        public bool IsTimerRunning => _timerService.IsRunning;
+        public bool IsTimerPaused => _timerService.IsPaused;
+        public string? CurrentModuleName => _pomodoroViewModel?.SelectedModule?.Name;
 
         public MainViewModel(ITimerService timerService, UserDbService userDbService, SemesterDbService semesterDbService)
         {
@@ -291,26 +309,30 @@ namespace AioStudy.UI.ViewModels
         {
             TimerMaximum = _mainTimerMaximum;
             TimerProgress = _timerService.Remaining.TotalSeconds;
+            TimerStatusText = "Running";
             ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
         }
 
         private void OnBreakStateChanged(object? sender, Enums.TimerBreakType e)
         {
-            switch(e)
+            switch (e)
             {
                 case Enums.TimerBreakType.Short:
-                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[0]*60;
+                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[0] * 60;
                     TimerProgress = _timerService.Remaining.TotalSeconds;
+                    TimerStatusText = "On Short Break";
                     ApplyGradientScheme(GradientColorSchemes.TimerBar.ShortBreak);
                     break;
                 case Enums.TimerBreakType.Long:
-                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[2]*60;
+                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[2] * 60;
                     TimerProgress = _timerService.Remaining.TotalSeconds;
+                    TimerStatusText = "On Long Break";
                     ApplyGradientScheme(GradientColorSchemes.TimerBar.LongBreak);
                     break;
                 case Enums.TimerBreakType.Mid:
-                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[1]*60;
+                    TimerMaximum = _settingsManager.Settings.BreakDurationsInMinutes[1] * 60;
                     TimerProgress = _timerService.Remaining.TotalSeconds;
+                    TimerStatusText = "On Mid Break";
                     ApplyGradientScheme(GradientColorSchemes.TimerBar.MidBreak);
                     break;
                 default:
@@ -379,6 +401,11 @@ namespace AioStudy.UI.ViewModels
             {
                 UpdateTimerOverlayVisibility();
             }
+
+            if (e.PropertyName == nameof(PomodoroViewModel.SelectedModule))
+            {
+                OnPropertyChanged(nameof(CurrentModuleName));
+            }
         }
 
         private void UpdateTimerOverlayVisibility()
@@ -399,6 +426,9 @@ namespace AioStudy.UI.ViewModels
         {
             _isPaused = e;
             UpdateTimerStatusBarVisibility();
+
+            TimerStatusText = e ? "Paused" : "Running";
+
             if (_timerService.IsPaused)
             {
                 ApplyGradientScheme(GradientColorSchemes.TimerBar.Paused);
@@ -413,6 +443,10 @@ namespace AioStudy.UI.ViewModels
         {
             _isRunning = e;
             UpdateTimerStatusBarVisibility();
+            TimerStatusText = e ? "Running" : "Stopped";
+            OnPropertyChanged(nameof(IsTimerRunning));
+            OnPropertyChanged(nameof(IsTimerPaused));
+            OnPropertyChanged(nameof(CurrentModuleName));
 
             if (e && _timerService.Remaining.TotalSeconds > 0)
             {
