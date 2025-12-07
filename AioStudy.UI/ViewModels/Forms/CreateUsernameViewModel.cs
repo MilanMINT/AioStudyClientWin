@@ -70,5 +70,3 @@ namespace AioStudy.UI.ViewModels.Forms
         }
     }
 }
-
-//await ToastService.ShowSuccessAsync("Success", $"Module with Name: '{ModuleName}' successfully created!");

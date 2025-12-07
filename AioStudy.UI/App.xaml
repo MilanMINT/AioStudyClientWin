@@ -38,6 +38,12 @@
             <converters:DoubleToTimeSpanConverter x:Key="DoubleToTimeSpanConverter" />
             <converters:TimeAgoConverter x:Key="TimeAgoConverter" />
             <converters:MinutesToDurationConverter x:Key="MinutesToDurationConverter" />
+            <converters:GradeToColorConverter x:Key="GradeToColorConverter" />
+            <converters:ExamStatusToGradeVisibilityConverter x:Key="ExamStatusToGradeVisibilityConverter" />
+            <converters:GradeToBackgroundConverter x:Key="GradeToBackgroundConverter" />
+            <converters:GradeToDisplayTextConverter x:Key="GradeToDisplayTextConverter" />
+
+
 
             <converters:BoolToIconConverterSingle
                 x:Key="PomodoroRecentSessionsIconConverter"
@@ -1166,6 +1172,240 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <Style x:Key="LocalScrollBarThumb" TargetType="Thumb">
+                <Setter Property="Background" Value="#4A4D55" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Thumb">
+                            <Border
+                                Background="#4A4D55"
+                                CornerRadius="3"
+                                Opacity="0.6" />
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="0.8" />
+                                </Trigger>
+                                <Trigger Property="IsDragging" Value="True">
+                                    <Setter Property="Opacity" Value="1" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="LocalScrollBar" TargetType="ScrollBar">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Width" Value="6" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid Width="6" Background="Transparent">
+                                <Track Name="PART_Track" IsDirectionReversed="true">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton
+                                            Background="Transparent"
+                                            Command="ScrollBar.PageUpCommand"
+                                            Opacity="0" />
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource LocalScrollBarThumb}" />
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton
+                                            Background="Transparent"
+                                            Command="ScrollBar.PageDownCommand"
+                                            Opacity="0" />
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+            <!--  Gradient CheckBox Style  -->
+            <Style x:Key="GradientCheckBox" TargetType="CheckBox">
+                <Setter Property="Foreground" Value="#E0E0E0" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="CheckBox">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!--  CheckBox Border  -->
+                                <Border
+                                    x:Name="checkBoxBorder"
+                                    Grid.Column="0"
+                                    Width="22"
+                                    Height="22"
+                                    Background="#2A2D35"
+                                    BorderThickness="1.5"
+                                    CornerRadius="4">
+                                    <Border.BorderBrush>
+                                        <LinearGradientBrush>
+                                            <GradientStop Offset="0.0" Color="#608BC1" />
+                                            <GradientStop Offset="1.0" Color="#133E87" />
+                                            <GradientStop Offset="0.7" Color="#a5bacc" />
+                                        </LinearGradientBrush>
+                                    </Border.BorderBrush>
+
+                                    <!--  Checkmark Icon  -->
+                                    <Grid>
+                                        <Path
+                                            x:Name="checkMark"
+                                            Width="12"
+                                            Height="12"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="M 2,6 L 5,9 L 10,3"
+                                            Opacity="0"
+                                            Stroke="#608BC1"
+                                            StrokeThickness="2" />
+
+                                        <!--  Indeterminate Indicator  -->
+                                        <Border
+                                            x:Name="indeterminateMark"
+                                            Width="10"
+                                            Height="3"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Background="#608BC1"
+                                            CornerRadius="1"
+                                            Opacity="0" />
+                                    </Grid>
+                                </Border>
+
+                                <!--  Content  -->
+                                <ContentPresenter
+                                    Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    RecognizesAccessKey="True" />
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <!--  Checked State  -->
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="checkMark" Property="Opacity" Value="1" />
+                                    <Setter TargetName="checkBoxBorder" Property="Background" Value="#1A2A3D" />
+                                </Trigger>
+
+                                <!--  Indeterminate State  -->
+                                <Trigger Property="IsChecked" Value="{x:Null}">
+                                    <Setter TargetName="indeterminateMark" Property="Opacity" Value="1" />
+                                    <Setter TargetName="checkBoxBorder" Property="Background" Value="#1A2A3D" />
+                                </Trigger>
+
+                                <!--  Hover State  -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="checkBoxBorder" Property="Background" Value="#353842" />
+                                    <Setter TargetName="checkBoxBorder" Property="BorderBrush">
+                                        <Setter.Value>
+                                            <LinearGradientBrush>
+                                                <GradientStop Offset="0.0" Color="#7BA3D3" />
+                                                <GradientStop Offset="1.0" Color="#1E4A99" />
+                                                <GradientStop Offset="0.7" Color="#B5C7DA" />
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+
+                                <!--  Disabled State  -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="checkBoxBorder" Property="Background" Value="#2D2D30" />
+                                    <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#4D4D50" />
+                                    <Setter TargetName="checkMark" Property="Stroke" Value="#6D6D70" />
+                                    <Setter Property="Foreground" Value="#808080" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!--  Kleine Variante  -->
+            <Style
+                x:Key="SmallGradientCheckBox"
+                BasedOn="{StaticResource GradientCheckBox}"
+                TargetType="CheckBox">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="CheckBox">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border
+                                    x:Name="checkBoxBorder"
+                                    Grid.Column="0"
+                                    Width="18"
+                                    Height="18"
+                                    Background="#2A2D35"
+                                    BorderThickness="1.5"
+                                    CornerRadius="3">
+                                    <Border.BorderBrush>
+                                        <LinearGradientBrush>
+                                            <GradientStop Offset="0.0" Color="#608BC1" />
+                                            <GradientStop Offset="1.0" Color="#133E87" />
+                                            <GradientStop Offset="0.7" Color="#a5bacc" />
+                                        </LinearGradientBrush>
+                                    </Border.BorderBrush>
+
+                                    <Path
+                                        x:Name="checkMark"
+                                        Width="10"
+                                        Height="10"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="M 2,5 L 4,7 L 8,2"
+                                        Opacity="0"
+                                        Stroke="#608BC1"
+                                        StrokeThickness="1.5" />
+                                </Border>
+
+                                <ContentPresenter
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    RecognizesAccessKey="True" />
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="checkMark" Property="Opacity" Value="1" />
+                                    <Setter TargetName="checkBoxBorder" Property="Background" Value="#1A2A3D" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="checkBoxBorder" Property="Background" Value="#353842" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="checkBoxBorder" Property="Background" Value="#2D2D30" />
+                                    <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#4D4D50" />
+                                    <Setter Property="Foreground" Value="#808080" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
+
 
 
 

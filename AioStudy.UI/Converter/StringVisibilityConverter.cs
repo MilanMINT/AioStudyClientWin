@@ -7,13 +7,11 @@ namespace AioStudy.UI.Converter
 {
     public class StringVisibilityConverter : IValueConverter
     {
-       
         public string VisibleValue { get; set; } = "Visible";
 
         public bool UseHidden { get; set; } = false;
 
         public bool IsInverted { get; set; } = false;
-
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -23,7 +21,17 @@ namespace AioStudy.UI.Converter
             string stringValue = value.ToString() ?? string.Empty;
             string targetValue = parameter?.ToString() ?? VisibleValue;
 
-            bool isMatch = string.Equals(stringValue, targetValue, StringComparison.OrdinalIgnoreCase);
+            var targetValues = targetValue.Split(new[] { '|', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+            bool isMatch = false;
+            foreach (var target in targetValues)
+            {
+                if (string.Equals(stringValue, target.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    isMatch = true;
+                    break;
+                }
+            }
 
             if (IsInverted)
                 isMatch = !isMatch;

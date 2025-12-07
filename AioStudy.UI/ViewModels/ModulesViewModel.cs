@@ -6,7 +6,6 @@ using AioStudy.UI.ViewModels.Overview;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,6 +20,7 @@ namespace AioStudy.UI.ViewModels
     public class ModulesViewModel : ViewModelBase
     {
         private MainViewModel _mainViewModel;
+        private GradesViewModel _gradesViewModel;
         private readonly ModulesDbService _modulesDbService;
         private ObservableCollection<Module> _modules;
         private List<Module> _allModules = new();
@@ -66,9 +66,10 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public ModulesViewModel(ModulesDbService modulesDbService)
+        public ModulesViewModel(ModulesDbService modulesDbService, GradesViewModel gradesViewModel)
         {
             _modulesDbService = modulesDbService;
+            _gradesViewModel = gradesViewModel;
             Modules = new ObservableCollection<Module>();
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithConfirmation(parameter)); 
             CreateModuleCommand = new RelayCommand(async _ => await CreateModule());
@@ -160,6 +161,7 @@ namespace AioStudy.UI.ViewModels
                     await DeleteModuleAsync(module);
                     await ToastService.ShowSuccessAsync("Module Deleted!", $"The module '{module.Name}' has been successfully deleted.");
                     await _mainViewModel._pomodoroViewModel.LoadRecentSessionsAsync();
+                    _gradesViewModel.DisplayHeaderData();
                 }
             }
         }

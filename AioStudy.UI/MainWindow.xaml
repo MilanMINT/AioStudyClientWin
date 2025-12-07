@@ -106,6 +106,7 @@
                     x:Name="btnMaxApp"
                     Click="BtnMaxApp_Click"
                     Style="{StaticResource controlButton}"
+                    Visibility="Collapsed"
                     WindowChrome.IsHitTestVisibleInChrome="True">
                     <MaIc:MaterialIcon Kind="WindowMaximize" Style="{StaticResource controlButtonIcon}" />
                 </Button>

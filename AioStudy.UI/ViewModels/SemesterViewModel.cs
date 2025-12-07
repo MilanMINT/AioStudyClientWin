@@ -1,15 +1,19 @@
 ﻿using AioStudy.Core.Data.Services;
 using AioStudy.Models;
+using AioStudy.UI.Commands;
+using AioStudy.UI.ViewModels.Forms;
+using AioStudy.UI.Views.Forms;
+using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using AioStudy.UI.Commands;
-using AioStudy.UI.Views.Forms;
-using AioStudy.UI.ViewModels.Forms;
-using System.Windows.Media.Animation;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace AioStudy.UI.ViewModels
 {
@@ -19,9 +23,22 @@ namespace AioStudy.UI.ViewModels
         private MainViewModel _mainViewModel;
         private ModulesViewModel _modulesViewModel;
         private readonly SemaphoreSlim _loadSemaphore = new SemaphoreSlim(1, 1);
+        private List<Semester> _allSemesters = new();
 
+        private string _searchQuery = string.Empty;
         private ObservableCollection<Semester> _semesters;
         private bool _isLoading;
+
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                _searchQuery = value;
+                OnPropertyChanged(nameof(SearchQuery));
+                FilterSemester();
+            }
+        }
 
         public ObservableCollection<Semester> Semesters
         {
@@ -56,11 +73,34 @@ namespace AioStudy.UI.ViewModels
             Semesters = new ObservableCollection<Semester>();
 
             LoadSemestersCommand = new RelayCommand(async _ => await LoadSemestersAsync());
-            AddSemesterCommand = new RelayCommand(async _ => await AddSampleSemesterAsync());
-            DeleteSemesterCommand = new RelayCommand(async param => await DeleteSemesterAsync(param));
+            AddSemesterCommand = new RelayCommand(async _ => await CreateSemesterAsync());
+            DeleteSemesterCommand = new RelayCommand(async param => await DeleteSemesterWithConfirmation(param));
             OpenSemesterOverviewCommand = new RelayCommand(_ => OpenSemesterOverview());
 
             _ = LoadSemestersAsync();
+        }
+
+        private void FilterSemester()
+        {
+            if (string.IsNullOrWhiteSpace(_searchQuery))
+            {
+                Semesters.Clear();
+                foreach (var semester in _allSemesters)
+                {
+                    Semesters.Add(semester);
+                }
+            }
+            else
+            {
+                var query = _searchQuery.ToLower();
+                var filtered = _allSemesters.Where(m => m.Name.Contains(query, StringComparison.CurrentCultureIgnoreCase)).ToList();
+
+                Semesters.Clear();
+                foreach (var semester in filtered)
+                {
+                    Semesters.Add(semester);
+                }
+            }
         }
 
         private void OpenSemesterOverview()
@@ -86,17 +126,24 @@ namespace AioStudy.UI.ViewModels
                 IsLoading = true;
                 
                 var semesters = await _semesterDbService.GetAllSemestersAsync();
-                
+
+                _allSemesters.Clear();
                 Semesters.Clear();
                 
                 foreach (var semester in semesters)
                 {
+                    _allSemesters.Add(semester);
                     Semesters.Add(semester);
                     
                     var modulesCount = await _semesterDbService.GetModulesCountForSemester(semester);
                     semester.ModulesCount = modulesCount;
                 }
-                
+
+                if (!string.IsNullOrWhiteSpace(_searchQuery))
+                {
+                    FilterSemester();
+                }
+
                 OnPropertyChanged(nameof(Semesters));
             }
             catch (Exception ex)
@@ -111,22 +158,28 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        private async Task AddSampleSemesterAsync()
+        private async Task CreateSemesterAsync()
         {
-            try
+            var addWindow = new AddSemesterView();
+            var viewModel = App.ServiceProvider.GetRequiredService<AddSemesterViewModel>();
+            addWindow.DataContext = viewModel;
+            addWindow.Owner = System.Windows.Application.Current.MainWindow;
+            addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+            addWindow.ShowDialog();
+        }
+
+        private async Task DeleteSemesterWithConfirmation(object parameter)
+        {
+            if (parameter is Semester semester)
             {
-                var newSemester = await _semesterDbService.CreateSemesterAsync(
-                    $"SemesterWiSe {DateTime.Now:yyyy-MM}",
-                    DateTime.Now.ToUniversalTime(),
-                    DateTime.Now.AddMonths(16).ToUniversalTime()
-                );
-                newSemester.LearnedSemesterMinutes = 183;
-                newSemester.Color = "#FF5733";
-                Semesters.Add(newSemester);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Fehler beim Erstellen des Semesters: {ex.Message}");
+                bool confirmed = ConfirmModalService.ShowDeleteConfirmation(semester.Name);
+
+                if (confirmed)
+                {
+                    await DeleteSemesterAsync(semester);
+                    await ToastService.ShowSuccessAsync("Semester Deleted!", $"The semester '{semester.Name}' has been successfully deleted.");
+                    await _mainViewModel._pomodoroViewModel.LoadRecentSessionsAsync();
+                }
             }
         }
 
@@ -140,6 +193,7 @@ namespace AioStudy.UI.ViewModels
                     if (success)
                     {
                         Semesters.Remove(semester);
+                        _allSemesters.Remove(semester);
                         await _modulesViewModel.LoadModulesBySemesterAsync();
                     }
                 }
@@ -149,5 +203,10 @@ namespace AioStudy.UI.ViewModels
                 }
             }
         }
+
+        public void RefreshSemesters()
+        {
+            _ = LoadSemestersAsync();
+        }   
     }
 }

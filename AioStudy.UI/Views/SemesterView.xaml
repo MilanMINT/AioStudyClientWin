@@ -75,13 +75,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="0.5" />
+            <RowDefinition Height="1" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  Verbesserter Header  -->
-        <Grid Grid.Row="0" Margin="30,10">
+        <!--  Header  -->
+        <Grid Grid.Row="0" Margin="30,0,30,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -90,13 +89,13 @@
             <!--  Titel Sektion  -->
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
                 <TextBlock
-                    Margin="0,0,0,2"
+                    Margin="0,0,0,4"
                     FontSize="32"
                     FontWeight="Bold"
-                    Foreground="#E6E5E5"
-                    Text="Semester Verwaltung" />
+                    Foreground="White"
+                    Text="Semester Overview" />
                 <TextBlock
-                    FontSize="13"
+                    FontSize="14"
                     Foreground="#B0B3BA"
                     Text="Manage your semesters" />
             </StackPanel>
@@ -115,30 +114,26 @@
                     FontSize="14"
                     Foreground="White"
                     Style="{StaticResource GradientTextBox}"
-                    Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Watermark="Search Semesters..." />
 
                 <!--  Aktualisieren Button  -->
                 <Button
-                    Width="70"
-                    Margin="0,0,10,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
+                    Width="45"
+                    Margin="0,0,15,0"
                     Command="{Binding LoadSemestersCommand}"
                     Foreground="White"
                     Style="{StaticResource GradientButton}"
                     ToolTip="Semester-Liste aktualisieren">
                     <MaIc:MaterialIcon
-                        Width="20"
-                        Height="20"
-                        Foreground="#E6E5E5"
+                        Width="22"
+                        Height="22"
                         Kind="Refresh" />
                 </Button>
 
                 <!--  Semester hinzufügen Button  -->
                 <Button
+                    Width="150"
                     Padding="28,8"
                     Command="{Binding AddSemesterCommand}"
                     Foreground="White"
@@ -146,8 +141,7 @@
                     ToolTip="Neues Semester hinzufügen">
                     <TextBlock
                         FontSize="14"
-                        FontWeight="Bold"
-                        Foreground="#E6E5E5"
+                        FontWeight="Medium"
                         Text="Add Semester" />
                 </Button>
             </StackPanel>
@@ -155,16 +149,16 @@
 
         <!--  Separator  -->
         <Border
-            Grid.Row="2"
+            Grid.Row="1"
             Height="1"
             Margin="30,0"
             Background="#3A3D45" />
 
         <!--  Semester List mit ScrollViewer  -->
         <ScrollViewer
-            Grid.Row="3"
-            Margin="15"
-            Padding="10,0,10,0"
+            Grid.Row="2"
+            Margin="30,20"
+            Padding="0,0,15,0"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
             <ScrollViewer.Resources>
@@ -182,5 +176,50 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
+
+        <!--  Empty State  -->
+        <Grid Grid.Row="2">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Semesters.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <MaIc:MaterialIcon
+                    Width="80"
+                    Height="80"
+                    Margin="0,0,0,20"
+                    Foreground="#4A4D55"
+                    Kind="CalendarBlankMultiple" />
+                <TextBlock
+                    Margin="0,0,0,8"
+                    HorizontalAlignment="Center"
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Foreground="#6B7280"
+                    Text="No semesters yet" />
+                <TextBlock
+                    Margin="0,0,0,20"
+                    HorizontalAlignment="Center"
+                    FontSize="14"
+                    Foreground="#8A8D95"
+                    Text="Create your first semester to get started" />
+                <Button
+                    Padding="20,10"
+                    Command="{Binding AddSemesterCommand}"
+                    Style="{StaticResource GradientButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Add First Semester" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
     </Grid>
 </UserControl>

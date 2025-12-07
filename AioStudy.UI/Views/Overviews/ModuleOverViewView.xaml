@@ -231,7 +231,7 @@
                         FontSize="36"
                         FontWeight="Bold"
                         Foreground="White"
-                        Text="{Binding ModuleName, FallbackValue='Advanced Programming and Data Structures'}" />
+                        Text="{Binding ModuleName, FallbackValue='Messtechnik'}" />
 
                     <!--  Module Subtitle  -->
                     <StackPanel Margin="0,0,0,10" Orientation="Horizontal">

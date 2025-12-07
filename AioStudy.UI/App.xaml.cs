@@ -11,6 +11,8 @@ using AioStudy.UI.ViewModels.Components;
 using AioStudy.UI.ViewModels.Forms;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
@@ -27,6 +29,10 @@ namespace AioStudy.UI
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            LiveCharts.Configure(config =>
+    config.AddDarkTheme()
+);
+
             SQLitePCL.Batteries.Init();
 
             var services = new ServiceCollection();
@@ -78,12 +84,12 @@ namespace AioStudy.UI
             services.AddSingleton<GradesViewModel>();
             services.AddSingleton<ModulesViewModel>();
             services.AddSingleton<MainViewModel>();
-            services.AddSingleton<AddSemesterViewModel>();
             services.AddSingleton<PomodoroViewModel>();
             services.AddSingleton<QuickTimersViewModel>();
             services.AddTransient<TimerOverlayViewModel>();
             services.AddSingleton<TimerOverlayViewModel>();
 
+            services.AddTransient<AddSemesterViewModel>();
             services.AddTransient<AddModuleViewModel>();
             services.AddTransient<CreateUsernameViewModel>();
 

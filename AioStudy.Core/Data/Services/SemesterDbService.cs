@@ -19,9 +19,8 @@ namespace AioStudy.Core.Data.Services
             _moduleRepository = moduleRepository;
         }
 
-        public async Task<Semester> CreateSemesterAsync(string name, DateTime startDate, DateTime endDate)
+        public async Task<Semester> CreateSemesterAsync(Semester semester)
         {
-            var semester = new Semester(name, startDate, endDate);
             return await _semesterRepository.CreateAsync(semester);
         }
 
@@ -71,9 +70,25 @@ namespace AioStudy.Core.Data.Services
             return await _semesterRepository.GetAllAsync();
         }
 
-        public async Task<List<Module>> GetModulesForSemester(Semester semester)
+        public async Task<IEnumerable<Module>> GetModulesForSemester(Semester? semester = null)
         {
             var modules = await _moduleRepository.GetAllAsync();
+
+            var allSemesters = await _semesterRepository.GetAllAsync();
+            var semesterDict = allSemesters.ToDictionary(s => s.Id);
+
+            foreach (var module in modules)
+            {
+                if (module.SemesterId.HasValue && semesterDict.TryGetValue(module.SemesterId.Value, out var sem))
+                {
+                    module.Semester = sem;
+                }
+            }
+
+            if (semester == null)
+            {
+                return modules;
+            }
             return modules.Where(m => m.SemesterId == semester.Id).ToList();
         }
 

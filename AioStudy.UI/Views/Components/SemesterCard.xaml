@@ -294,7 +294,7 @@
                     Command="{Binding OpenSemesterOverviewCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Semester, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Cursor="Hand"
-                    Opacity="1"
+                    Opacity="0"
                     Style="{StaticResource GrayGradientButton}"
                     ToolTip="Semester bearbeiten"
                     UseLayoutRounding="True">
@@ -320,7 +320,7 @@
                     Command="{Binding DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding Semester, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Cursor="Hand"
-                    Opacity="1"
+                    Opacity="0"
                     Style="{StaticResource RedGradientButtonThinBorder}"
                     ToolTip="Semester löschen"
                     UseLayoutRounding="True">

@@ -9,7 +9,6 @@ using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
-using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

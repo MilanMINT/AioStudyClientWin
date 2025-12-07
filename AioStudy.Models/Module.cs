@@ -32,6 +32,8 @@ namespace AioStudy.Models
         [AllowNull]
         public int? ModuleCredits { get; set; } = null;
         [AllowNull]
+        public bool IsKeyCompetence { get; set; } = false;
+        [AllowNull]
         public string? Color { get; set; } = null;
         [Required]
         public DateTime Created { get; set; } = DateTime.Now;

@@ -23,6 +23,7 @@ namespace AioStudy.UI.ViewModels.Forms
         private readonly ModulesViewModel _modulesViewModel;
         private readonly ModulesDbService _modulesDbService;
         private string _moduleName = string.Empty;
+        private bool _isKeyCompetenceBool = false;
         private string _moduleCredits = string.Empty;
         private DateTime? _moduleExamDate;
         private Color? _moduleColor;
@@ -38,6 +39,18 @@ namespace AioStudy.UI.ViewModels.Forms
 
         public RelayCommand CancelAddModuleCommand { get; }
         public RelayCommand AddModuleCommand { get; }
+
+        public bool IsKeyCompetenceBool         
+        {
+            get => _isKeyCompetenceBool;
+            set
+            {
+                _isKeyCompetenceBool = value;
+                ModuleGrade = null;
+                SelectedExamStatusOption = null;
+                OnPropertyChanged(nameof(IsKeyCompetenceBool));
+            }
+        }
 
         public string SelectedGradesStringListToChoose
         {
@@ -59,8 +72,7 @@ namespace AioStudy.UI.ViewModels.Forms
             }
         }
 
-
-        public string ModuleGrade
+        public string? ModuleGrade
         {
             get => _moduleGrade;
             set
@@ -150,7 +162,7 @@ namespace AioStudy.UI.ViewModels.Forms
             }
         }
 
-        public string SelectedExamStatusOption
+        public string? SelectedExamStatusOption
         {
             get => _selectedExamStatusOption;
             set
@@ -171,24 +183,27 @@ namespace AioStudy.UI.ViewModels.Forms
             }
         }
 
-        public AddModuleViewModel(ModulesViewModel modulesViewModel)
+        public AddModuleViewModel(ModulesViewModel modulesViewModel, GradesViewModel gradesViewModel)
         {
             _modulesViewModel = modulesViewModel;
             CancelAddModuleCommand = new RelayCommand(CancelAddModule);
             AddModuleCommand = new RelayCommand(AddModule);
             _modulesDbService = App.ServiceProvider.GetRequiredService<ModulesDbService>();
 
-            // Semester laden
             _ = LoadSemestersAsync();
 
             LoadExameOptions();
-            SelectedExamStatusOption = ExamStatusOptions.FirstOrDefault();
+            SelectedExamStatusOption = ExamStatusOptions.FirstOrDefault()!;
         }
 
         private void LoadExameOptions()
         {
             foreach (string status in Enum.GetNames(typeof(Enums.ModuleStatus)))
             {
+                if(status == Enums.ModuleStatus.KeyCompetence.ToString())
+                {
+                    continue;
+                }
                 ExamStatusOptions.Add(status);
             }
         }
@@ -223,36 +238,56 @@ namespace AioStudy.UI.ViewModels.Forms
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(ModuleName))
-                {
-                    await ToastService.ShowWarningAsync("Typo Error", "Please enter a Modulename");
-                    return;
-                }
-
                 float? gradeValue = null;
 
-                if (SelectedExamStatusOption.ToString() == Enums.ModuleStatus.Open.ToString())
+                if (string.IsNullOrWhiteSpace(ModuleName))
                 {
-                    gradeValue = null;
-                }
-                else if (SelectedExamStatusOption.ToString() == Enums.ModuleStatus.NB.ToString())
-                {
-                    gradeValue = 5.0f;
-                }
-                else
-                {
-                    if (string.IsNullOrWhiteSpace(SelectedGradesStringListToChoose))
-                    {
-                        await ToastService.ShowWarningAsync("Typo Error", "Please select a Grade");
-                        return;
-                    }
-                    gradeValue = _gradesFloatListToChoose[GradesStringListToChoose.IndexOf(SelectedGradesStringListToChoose)];
+                    await ToastService.ShowErrorAsync("Error", "Please enter a Modulename");
+                    return;
                 }
 
-                if (!string.IsNullOrWhiteSpace(ModuleCredits) && !int.TryParse(ModuleCredits, out _))
+                if (string.IsNullOrWhiteSpace(ModuleCredits))
                 {
-                    await ToastService.ShowWarningAsync("Typo Error", "Please enter valid Module Credits");
+                    await ToastService.ShowErrorAsync("Error", "Please enter valid Module Credits");
                     return;
+                }
+
+                if (!int.TryParse(ModuleCredits, out int credits))
+                {
+                    await ToastService.ShowErrorAsync("Error", "Please enter valid Module Credits");
+                    return;
+                }
+
+                if (!IsKeyCompetenceBool)
+                {
+                    if (string.IsNullOrEmpty(SelectedExamStatusOption))
+                    {
+                        await ToastService.ShowErrorAsync("Error", "Please select an Exam Status");
+                        return;
+                    }
+
+                    if (SelectedExamStatusOption == Enums.ModuleStatus.Open.ToString())
+                    {
+                        gradeValue = null;
+                    }
+                    else if (SelectedExamStatusOption == Enums.ModuleStatus.NB.ToString())
+                    {
+                        gradeValue = 5.0f;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrWhiteSpace(SelectedGradesStringListToChoose))
+                        {
+                            await ToastService.ShowErrorAsync("Error", "Please select a Grade");
+                            return;
+                        }
+
+                        var index = GradesStringListToChoose.IndexOf(SelectedGradesStringListToChoose);
+                        if (index >= 0 && index < _gradesFloatListToChoose.Count)
+                        {
+                            gradeValue = _gradesFloatListToChoose[index];
+                        }
+                    }
                 }
 
                 string? colorString = null;
@@ -266,9 +301,10 @@ namespace AioStudy.UI.ViewModels.Forms
                     ExamDate = ModuleExamDate,
                     Color = colorString,
                     SemesterId = SelectedSemester?.Id,
-                    ModuleCredits = int.TryParse(ModuleCredits, out int credits) ? credits : null,
-                    ExamStatus = SelectedExamStatusOption,
-                    Grade = gradeValue
+                    ModuleCredits = credits,
+                    ExamStatus = IsKeyCompetenceBool ? Enums.ModuleStatus.KeyCompetence.ToString() : SelectedExamStatusOption,
+                    Grade = gradeValue,
+                    IsKeyCompetence = IsKeyCompetenceBool
                 };
 
                 var res = await _modulesDbService.CreateModuleAsync(newModule);
@@ -278,8 +314,10 @@ namespace AioStudy.UI.ViewModels.Forms
                     await ToastService.ShowSuccessAsync("Success", $"Module with Name: '{ModuleName}' successfully created!");
                     _modulesViewModel.Modules.Add(res);
                     await _modulesViewModel.LoadModulesBySemesterAsync();
-                    var vm = App.ServiceProvider.GetRequiredService<PomodoroViewModel>();
-                    await vm.LoadModulesAsync();
+                    var pomodoroViewModel = App.ServiceProvider.GetRequiredService<PomodoroViewModel>();
+                    var gradesViewModel = App.ServiceProvider.GetRequiredService<GradesViewModel>();
+                    await pomodoroViewModel.LoadModulesAsync();
+                    gradesViewModel.DisplayHeaderData();
 
                     Application.Current.Windows.OfType<AddModuleView>().FirstOrDefault()?.Close();
                 }
