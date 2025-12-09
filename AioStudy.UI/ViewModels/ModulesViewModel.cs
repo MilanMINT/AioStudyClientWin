@@ -1,9 +1,11 @@
 ﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Services;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.ViewModels.Forms;
 using AioStudy.UI.ViewModels.Overview;
 using AioStudy.UI.Views.Forms;
+using AioStudy.UI.Views.Overviews;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -21,6 +23,7 @@ namespace AioStudy.UI.ViewModels
     {
         private MainViewModel _mainViewModel;
         private GradesViewModel _gradesViewModel;
+        private readonly LearnSessionDbService _learnSessionDbService;
         private readonly ModulesDbService _modulesDbService;
         private ObservableCollection<Module> _modules;
         private List<Module> _allModules = new();
@@ -30,6 +33,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand CreateModuleCommand { get; }
         public RelayCommand OpenModuleOverviewCommand { get; }
         public RelayCommand RefreshModulesCommand { get; }
+        public RelayCommand OpenAllModuleStatisticsCommand { get; }
 
         private string _semesterName;
 
@@ -66,15 +70,48 @@ namespace AioStudy.UI.ViewModels
             }
         }
 
-        public ModulesViewModel(ModulesDbService modulesDbService, GradesViewModel gradesViewModel)
+        public ModulesViewModel(ModulesDbService modulesDbService, GradesViewModel gradesViewModel, LearnSessionDbService learnSessionDbService, ITimerService timerService)
         {
             _modulesDbService = modulesDbService;
             _gradesViewModel = gradesViewModel;
+            _learnSessionDbService = learnSessionDbService;
             Modules = new ObservableCollection<Module>();
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithConfirmation(parameter)); 
             CreateModuleCommand = new RelayCommand(async _ => await CreateModule());
             OpenModuleOverviewCommand = new RelayCommand(async parameter => await OpenModuleOverview(parameter));
-            RefreshModulesCommand = new RelayCommand(async _ => await LoadModulesBySemesterAsync());
+            RefreshModulesCommand = new RelayCommand(RefreshModules);
+            OpenAllModuleStatisticsCommand = new RelayCommand(OpenAllModuleStatisticsPage);
+
+            _ = LoadModulesBySemesterAsync();
+
+            timerService.MinuteElapsed += OnMinuteElapsed;
+        }
+
+        private void OpenAllModuleStatisticsPage(object? obj)
+        {
+            //var statsWindow = new AllModulesStatisticsView();
+            var viewmodel = new AllModulesStatisticsViewViewModel();
+            _mainViewModel.CurrentViewModel = viewmodel;
+            _mainViewModel.CurrentViewName = $"Module Statistics";
+        }
+
+        private async void OnMinuteElapsed(object? sender, EventArgs e)
+        {
+            try
+            {
+                await Application.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    await LoadModulesBySemesterAsync();
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ModulesVM] Error refreshing modules: {ex.Message}");
+            }
+        }
+
+        private void RefreshModules(object? obj)
+        {
             _ = LoadModulesBySemesterAsync();
         }
 
@@ -109,8 +146,9 @@ namespace AioStudy.UI.ViewModels
             if (parameter is Module module)
             {
                 var editWindow = new AddModuleView();
-                var viewmodel = new ModuleOverViewViewModel(module, this, _mainViewModel, DeleteModuleCommand);
+                var viewmodel = new ModuleOverViewViewModel(module, this, _mainViewModel, DeleteModuleCommand, _learnSessionDbService);
                 _mainViewModel.CurrentViewModel = viewmodel;
+                _mainViewModel.CurrentViewName = $"{module.Name}´s Overview";
             }
         }
 

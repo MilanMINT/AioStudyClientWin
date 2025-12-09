@@ -1,4 +1,5 @@
 ﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Util.Modules;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.WpfServices;
@@ -16,11 +17,34 @@ namespace AioStudy.UI.ViewModels.Overview
     public class ModuleOverViewViewModel : ViewModelBase
     {
         private Module _module;
+        private readonly LearnSessionDbService _learnSessionDbService;
         private ModulesDbService _modulesDbService;
         private ModulesViewModel _modulesViewModel;
         private MainViewModel _mainViewModel;
         private string _dayTillExam;
         private string _learnTimeGoal;
+        private string _averageSessionTime;
+        private string _sessionCount;
+
+        public string AverageSessionTime
+        {
+            get { return _averageSessionTime; }
+            set
+            {
+                _averageSessionTime = value;
+                OnPropertyChanged(nameof(AverageSessionTime));
+            }
+        }
+
+        public string SessionCount
+        {
+            get { return _sessionCount; }
+            set
+            {
+                _sessionCount = value;
+                OnPropertyChanged(nameof(SessionCount));
+            }
+        }
 
         public string LearnTimeGoal
         {
@@ -135,55 +159,24 @@ namespace AioStudy.UI.ViewModels.Overview
         public RelayCommand BackCommand { get; }
         public RelayCommand DeleteModuleCommand { get; }
         public RelayCommand EditModuleCommand { get; }
-        public RelayCommand AddMin { get; }
 
-        public ModuleOverViewViewModel(Module module, ModulesViewModel modulesViewModel, MainViewModel mainViewModel, RelayCommand deleteModuleCommand)
+        public ModuleOverViewViewModel(
+            Module module, ModulesViewModel modulesViewModel, MainViewModel mainViewModel, 
+            RelayCommand deleteModuleCommand, LearnSessionDbService learnSessionDbService
+            )
         {
             Module = module;
             _modulesDbService = App.ServiceProvider.GetRequiredService<ModulesDbService>();
             _modulesViewModel = modulesViewModel;
             _mainViewModel = mainViewModel;
+            _learnSessionDbService = learnSessionDbService;
             
-            // Wrapper Command für Delete mit Navigation
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithNavigation(parameter));
-            AddMin = new RelayCommand(async parameter => await UpMin(parameter));
 
             // Commands
             BackCommand = new RelayCommand(ExecuteBackCommand);
-        }
 
-        private async Task UpMin(object parameter)
-        {
-            int minutesToAdd = 0;
-            if (parameter is int i)
-            {
-                minutesToAdd = i;
-            }
-            else if (parameter is string s && int.TryParse(s, out var parsed))
-            {
-                minutesToAdd = parsed;
-            }
-            else if (parameter != null && int.TryParse(parameter.ToString(), out parsed))
-            {
-                minutesToAdd = parsed;
-            }
-            else
-            {
-                return;
-            }
-
-            if (_module == null)
-                return;
-
-            _module.LearnedMinutes += minutesToAdd;
-
-            // Persistieren
-            var ok = await _modulesDbService.UpdateModuleAsync(_module);
-
-            OnPropertyChanged(nameof(Module));
-            OnPropertyChanged(nameof(TotalMinutesGoal));
-            OnPropertyChanged(nameof(LearnTimeGoal));
-            OnPropertyChanged(nameof(LearnedMinutes));
+            _ = UpdateSessionStats();
         }
 
         private async Task DeleteModuleWithNavigation(object? parameter)
@@ -199,13 +192,10 @@ namespace AioStudy.UI.ViewModels.Overview
                         bool success = await _modulesDbService.DeleteModule(module.Id);
                         if (success)
                         {
-                            // Remove from ModulesViewModel collection
                             _modulesViewModel.Modules.Remove(module);
                             
-                            // Show success message
                             await ToastService.ShowSuccessAsync("Module Deleted!", $"The module '{module.Name}' has been successfully deleted.");
                             
-                            // Navigate back to modules view
                             _mainViewModel.CurrentViewModel = _modulesViewModel;
                         }
                     }
@@ -217,9 +207,45 @@ namespace AioStudy.UI.ViewModels.Overview
             }
         }
 
+        private void LoadSessionsCountAsync(IEnumerable<LearnSession> sessions)
+        {
+            try
+            {
+                SessionCount = sessions.Count().ToString();
+            }
+            catch (Exception)
+            {
+                SessionCount = "0";
+            }
+        }
+
+        private void LoadAverageSessionTime(IEnumerable<LearnSession> sessions)
+        {
+            try
+            {
+                var avgTime = ModuleHelper.Math.CalculateAverageSessionTime(sessions);
+                int hours = (int)avgTime.TotalHours;
+                int minutes = avgTime.Minutes;
+                AverageSessionTime = $"{hours}h {minutes}m";
+            }
+            catch (Exception)
+            {
+                AverageSessionTime = "0h 0m";
+            }
+        }
+
+        public async Task UpdateSessionStats()
+        {
+            var sessions = await _learnSessionDbService.GetSessionsByModule(_module);
+
+            LoadSessionsCountAsync(sessions);
+            LoadAverageSessionTime(sessions);
+        }
+
         private void ExecuteBackCommand(object? obj)
         {
             _mainViewModel.CurrentViewModel = _modulesViewModel;
+            _mainViewModel.CurrentViewName = "Modules";
         }
     }
 }

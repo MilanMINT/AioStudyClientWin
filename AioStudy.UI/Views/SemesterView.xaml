@@ -215,7 +215,7 @@
                     Command="{Binding AddSemesterCommand}"
                     Style="{StaticResource GradientButton}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Add First Semester" />
+                        <TextBlock Text="Add Semester" />
                     </StackPanel>
                 </Button>
             </StackPanel>

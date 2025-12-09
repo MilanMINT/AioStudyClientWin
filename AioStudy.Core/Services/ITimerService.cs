@@ -32,5 +32,6 @@ namespace AioStudy.Core.Services
         event EventHandler BreakEnded;
         event EventHandler<Enums.TimerBreakType> BreakStateChanged;
         event EventHandler Last10Seconds;
+        event EventHandler MinuteElapsed;
     }
 }

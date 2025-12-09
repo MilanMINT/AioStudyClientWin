@@ -29,9 +29,7 @@ namespace AioStudy.UI
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            LiveCharts.Configure(config =>
-    config.AddDarkTheme()
-);
+            LiveCharts.Configure(config => config.AddDarkTheme());
 
             SQLitePCL.Batteries.Init();
 
@@ -57,6 +55,7 @@ namespace AioStudy.UI
 
         private void ConfigureServices(ServiceCollection services)
         {
+            //DB
             services.AddTransient<AppDbContext>();
 
             //Repositories
@@ -75,7 +74,6 @@ namespace AioStudy.UI
             services.AddTransient<DailyModuleStatsDbService>();
             services.AddTransient<QuickTimerDbService>();
             services.AddTransient<SettingsManager>();
-
 
             //ViewModels
             services.AddSingleton<SemesterViewModel>();

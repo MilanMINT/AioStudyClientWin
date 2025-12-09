@@ -494,15 +494,9 @@
                                     Value="{Binding Module.LearnedMinutes}" />
                             </Grid>
 
-                            <Button
-                                Height="40"
-                                Command="{Binding AddMin}"
-                                CommandParameter="15" />
-
                             <!--  Study Sessions  -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
@@ -510,23 +504,23 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Style="{StaticResource LabelText}" Text="Sessions" />
-                                    <TextBlock Style="{StaticResource ValueText}" Text="12" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding SessionCount, FallbackValue=5}" />
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Style="{StaticResource LabelText}" Text="Avg. Session" />
-                                    <TextBlock Style="{StaticResource ValueText}" Text="1h 15m" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding AverageSessionTime}" />
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="2" ToolTip="Time is calculated based on ECTS Points, minus a Lecture threshold of around 900min">
                                     <TextBlock Style="{StaticResource LabelText}" Text="Goal" />
-                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding LearnTimeGoal}" />
+                                    <TextBlock Style="{StaticResource ValueText}" Text="{Binding LearnTimeGoal, FallbackValue=12}" />
                                 </StackPanel>
 
-                                <StackPanel Grid.Column="3">
+                                <!--<StackPanel Grid.Column="3">
                                     <TextBlock Style="{StaticResource LabelText}" Text="Min. Learned" />
                                     <TextBlock Style="{StaticResource ValueText}" Text="{Binding LearnedMinutes}" />
-                                </StackPanel>
+                                </StackPanel>-->
                             </Grid>
                         </StackPanel>
                     </Border>

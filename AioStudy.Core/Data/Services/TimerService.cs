@@ -44,6 +44,7 @@ namespace AioStudy.Core.Data.Services
         public event EventHandler BreakEnded;
         public event EventHandler<Enums.TimerBreakType> BreakStateChanged;
         public event EventHandler Last10Seconds;
+        public event EventHandler MinuteElapsed;
 
         private DateTime _startTime;
         private TimeSpan _totalDuration;
@@ -112,7 +113,14 @@ namespace AioStudy.Core.Data.Services
         {
             if (_currentSession != null)
             {
-                await _learnSessionDbService.CancelSessionAsync(_currentSession);
+                try
+                {
+                    await _learnSessionDbService.CancelSessionAsync(_currentSession);
+                }
+                catch (Exception)
+                {
+                    System.Diagnostics.Debug.WriteLine("[TimerService]  (expected)");
+                }
             }
 
             _isRunning = false;
@@ -205,87 +213,98 @@ namespace AioStudy.Core.Data.Services
         {
             var lastSecond = -1;
 
-            while (!ct.IsCancellationRequested)
+            try
             {
-                bool paused;
-                bool isBreak;
-                lock (_sync)
+                while (!ct.IsCancellationRequested)
                 {
-                    paused = _isPaused;
-                    isBreak = _isBreak;
-                }
-
-                if (isBreak)
-                {
-                    var breakRemaining = _breakEndTime - DateTime.UtcNow;
-
-                    if (breakRemaining.TotalSeconds <= 0)
+                    bool paused;
+                    bool isBreak;
+                    lock (_sync)
                     {
-                        lock (_sync)
+                        paused = _isPaused;
+                        isBreak = _isBreak;
+                    }
+
+                    if (isBreak)
+                    {
+                        var breakRemaining = _breakEndTime - DateTime.UtcNow;
+
+                        if (breakRemaining.TotalSeconds <= 0)
                         {
-                            _breakRemaining = TimeSpan.Zero;
-                            _isBreak = false;
-                            _endTime = DateTime.UtcNow.Add(_remainingBeforeBreak);
-                            _remaining = _remainingBeforeBreak;
-                            BreakEnded?.Invoke(this, EventArgs.Empty);
+                            lock (_sync)
+                            {
+                                _breakRemaining = TimeSpan.Zero;
+                                _isBreak = false;
+                                _endTime = DateTime.UtcNow.Add(_remainingBeforeBreak);
+                                _remaining = _remainingBeforeBreak;
+                                BreakEnded?.Invoke(this, EventArgs.Empty);
+                            }
+
+                            TimeChanged?.Invoke(this, TimeSpan.Zero);
+                            await Task.Delay(100, ct);
+                            continue;
                         }
 
-                        TimeChanged?.Invoke(this, TimeSpan.Zero);
+                        var breakRoundedRemaining = TimeSpan.FromSeconds(Math.Ceiling(breakRemaining.TotalSeconds));
+                        lock (_sync)
+                        {
+                            _breakRemaining = breakRoundedRemaining;
+                        }
+
+                        TimeChanged?.Invoke(this, breakRoundedRemaining);
                         await Task.Delay(100, ct);
                         continue;
                     }
 
-                    var breakRoundedRemaining = TimeSpan.FromSeconds(Math.Ceiling(breakRemaining.TotalSeconds));
-                    lock (_sync)
+                    if (paused)
                     {
-                        _breakRemaining = breakRoundedRemaining;
+                        await Task.Delay(100, ct);
+                        continue;
                     }
 
-                    TimeChanged?.Invoke(this, breakRoundedRemaining);
-                    await Task.Delay(100, ct);
-                    continue;
-                }
+                    var remaining = _endTime - DateTime.UtcNow;
+                    var roundedRemaining = TimeSpan.FromSeconds(Math.Ceiling(remaining.TotalSeconds));
 
-                if (paused)
-                {
-                    await Task.Delay(100, ct);
-                    continue;
-                }
-
-                var remaining = _endTime - DateTime.UtcNow;
-                var roundedRemaining = TimeSpan.FromSeconds(Math.Ceiling(remaining.TotalSeconds));
-
-                lock (_sync)
-                {
-                    _remaining = roundedRemaining;
-                }
-
-                TimeChanged?.Invoke(this, roundedRemaining);
-
-                if (roundedRemaining.TotalSeconds <= 10 && roundedRemaining.TotalSeconds > 0)
-                {
-                    Last10Seconds?.Invoke(this, EventArgs.Empty);
-                }
-
-                var currentSecond = (int)roundedRemaining.TotalSeconds;
-                if (currentSecond != lastSecond)
-                {
-                    lastSecond = currentSecond;
-                    OnEverySecondActive(currentSecond);
-                }
-
-                if (DateTime.UtcNow >= _endTime)
-                {
                     lock (_sync)
                     {
-                        _remaining = TimeSpan.Zero;
+                        _remaining = roundedRemaining;
                     }
-                    CompleteSessionSuccessfully();
-                    Stop();
-                    break;
-                }
 
-                await Task.Delay(100, ct);
+                    TimeChanged?.Invoke(this, roundedRemaining);
+
+                    if (roundedRemaining.TotalSeconds <= 10 && roundedRemaining.TotalSeconds > 0)
+                    {
+                        Last10Seconds?.Invoke(this, EventArgs.Empty);
+                    }
+
+                    var currentSecond = (int)roundedRemaining.TotalSeconds;
+                    if (currentSecond != lastSecond)
+                    {
+                        lastSecond = currentSecond;
+                        OnEverySecondActive(currentSecond);
+                    }
+
+                    if (DateTime.UtcNow >= _endTime)
+                    {
+                        lock (_sync)
+                        {
+                            _remaining = TimeSpan.Zero;
+                        }
+                        CompleteSessionSuccessfully();
+                        Stop();
+                        break;
+                    }
+
+                    await Task.Delay(100, ct);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                System.Diagnostics.Debug.WriteLine("[TimerService] Timer loop cancelled (expected)");
+            }
+            catch (OperationCanceledException)
+            {
+                System.Diagnostics.Debug.WriteLine("[TimerService] Timer operation cancelled (expected)");
             }
         }
         // ------------------------------------------------------------------------------------
@@ -308,20 +327,27 @@ namespace AioStudy.Core.Data.Services
                 LogOneMinute();
             }
         }
-        private void LogOneMinute()
+        private async void LogOneMinute()
         {
-
-            _ = _learnSessionDbService.AddTimeToSessionAsync(_currentSession!, 1);
-            _ = _userDbService.AddTimeToUser(1);
+            var tasks = new List<Task>
+            {
+                _learnSessionDbService.AddTimeToSessionAsync(_currentSession!, 1),
+                _userDbService.AddTimeToUser(1)
+            };
 
             if (_currentModule != null)
             {
-                _ = _modulesDbService.AddTimeToModuleAsync(_currentModule, 1);
+                tasks.Add(_modulesDbService.AddTimeToModuleAsync(_currentModule, 1));
             }
+
             if (_currentDailyModuleStats != null)
             {
-                _ = _dailyModuleStatsDbService.AddLearnedMinutesAsync(_currentDailyModuleStats, 1);
+                tasks.Add(_dailyModuleStatsDbService.AddLearnedMinutesAsync(_currentDailyModuleStats, 1));
             }
+
+            await Task.WhenAll(tasks);
+
+            MinuteElapsed?.Invoke(this, EventArgs.Empty);
         }
 
         private async void CompleteSessionSuccessfully()

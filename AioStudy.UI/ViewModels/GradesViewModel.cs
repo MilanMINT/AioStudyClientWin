@@ -265,14 +265,21 @@ namespace AioStudy.UI.ViewModels
 
         private void DisplayModuleStats(List<Module> modules)
         {
-            var gradedModules = modules.Where(m => m.Grade.HasValue && m.Grade > 0).ToList();
+            var gradedModules = modules.Where(m => m.Grade.HasValue && m.Grade > 0);
 
-            TotalModules = gradedModules.Count;
-
-            if (gradedModules.Any())
+            if (!IncludeFailedBool)
             {
-                BestGrade = gradedModules.Min(m => m.Grade ?? 5.0);
-                WorstGrade = gradedModules.Max(m => m.Grade ?? 1.0);
+                gradedModules = gradedModules.Where(m => m.Grade <= 4.0);
+            }
+
+            var gradedModulesList = gradedModules.ToList();
+
+            TotalModules = gradedModulesList.Count;
+
+            if (gradedModulesList.Any())
+            {
+                BestGrade = gradedModulesList.Min(m => m.Grade ?? 5.0);
+                WorstGrade = gradedModulesList.Max(m => m.Grade ?? 1.0);
             }
             else
             {

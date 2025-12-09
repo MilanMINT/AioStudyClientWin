@@ -32,7 +32,6 @@ namespace AioStudy.Core.Data.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[LearnSession] Error creating session: {ex.Message}");
                 throw;
             }
         }
@@ -73,8 +72,6 @@ namespace AioStudy.Core.Data.Services
                 var sessions = await _learnSessionRepository.GetAllWithIncludesAsync("LearnedModule");
                 var sessionList = sessions.ToList();
 
-                System.Diagnostics.Debug.WriteLine($"[LearnSession] Total: {sessionList.Count}, Completed: {sessionList.Count(s => s.SessionCompleted)}");
-
                 return sessionList
                     .OrderByDescending(s => s.EndTime ?? s.StartTime)
                     .Take(count)
@@ -82,7 +79,6 @@ namespace AioStudy.Core.Data.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[LearnSession] ERROR: {ex.Message}");
                 return new List<LearnSession>();
             }
         }
@@ -94,6 +90,14 @@ namespace AioStudy.Core.Data.Services
             session.SessionCompleted = false; 
             session.EndTime = DateTime.Now;
             await _learnSessionRepository.UpdateAsync(session);
+        }
+
+        public async Task<IEnumerable<LearnSession>> GetSessionsByModule(Module module)
+        {
+            if (module == null) return Enumerable.Empty<LearnSession>();
+            var sessions = await _learnSessionRepository.GetAllAsync();
+            var moduleSessions = sessions.Where(s => s.LearnedModuleId == module.Id).ToList();
+            return moduleSessions;
         }
     }
 }

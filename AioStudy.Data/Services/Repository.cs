@@ -44,8 +44,9 @@ namespace AioStudy.Data.Services
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.AsNoTracking().ToListAsync();
         }
+
 
         public async Task<T?> GetByIdAsync(int id)
         {
@@ -54,6 +55,13 @@ namespace AioStudy.Data.Services
 
         public async Task UpdateAsync(T entity)
         {
+            var local = _dbSet.Local.FirstOrDefault(e => _context.Entry(e).Property("Id").CurrentValue!.Equals(_context.Entry(entity).Property("Id").CurrentValue));
+
+            if (local != null)
+            {
+                _context.Entry(local).State = EntityState.Detached;
+            }
+
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
