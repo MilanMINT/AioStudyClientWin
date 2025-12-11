@@ -1,7 +1,9 @@
 ﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Services;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.ViewModels.Forms;
+using AioStudy.UI.ViewModels.Overview;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,6 +67,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand DeleteSemesterCommand { get; }
         public RelayCommand OpenSpecificModulesViewCMD { get; }
         public RelayCommand OpenSemesterOverviewCommand { get; }
+        public RelayCommand OpenSemesterplanCommand { get; }
 
         public SemesterViewModel(SemesterDbService semesterDbService, ModulesViewModel modulesViewModel)
         {
@@ -76,8 +79,16 @@ namespace AioStudy.UI.ViewModels
             AddSemesterCommand = new RelayCommand(async _ => await CreateSemesterAsync());
             DeleteSemesterCommand = new RelayCommand(async param => await DeleteSemesterWithConfirmation(param));
             OpenSemesterOverviewCommand = new RelayCommand(_ => OpenSemesterOverview());
+            OpenSemesterplanCommand = new RelayCommand(ExecuteOpenSemesterplanCommand);
 
             _ = LoadSemestersAsync();
+        }
+
+        private void ExecuteOpenSemesterplanCommand(object? obj)
+        {
+            var viewmodel = new SemesterplanViewModel(this, _mainViewModel);
+            _mainViewModel.CurrentViewModel = viewmodel;
+            _mainViewModel.CurrentViewName = $"Semester Plan";
         }
 
         private void FilterSemester()

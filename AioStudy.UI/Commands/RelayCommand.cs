@@ -11,6 +11,7 @@ namespace AioStudy.UI.Commands
     {
         private Action<object?> execute;
         private Func<object?, bool>? canExecute;
+        private Action executeBackCommand;
 
         private event EventHandler? canExecuteChangedInternal;
 
@@ -24,6 +25,11 @@ namespace AioStudy.UI.Commands
         {
             this.execute = execute;
             this.canExecute = canexecute;
+        }
+
+        public RelayCommand(Action executeBackCommand)
+        {
+            this.executeBackCommand = executeBackCommand;
         }
 
         public bool CanExecute(object? parameter)

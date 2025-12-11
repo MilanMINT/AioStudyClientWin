@@ -10,7 +10,7 @@ namespace AioStudy.Core.Util.Modules
 {
     public static class ModuleHelper
     {
-        public static class Math
+        public static class Maths
         {
             public static TimeSpan CalculateAverageSessionTime(IEnumerable<LearnSession> sessions)
             {
@@ -18,8 +18,27 @@ namespace AioStudy.Core.Util.Modules
                 {
                     return TimeSpan.Zero;
                 }
-                double totalMinutes = sessions.Sum(s => s.CurrentLearnedMinutes);
-                double averageMinutes = totalMinutes / sessions.Count();
+
+                var validSessions = sessions
+                    .Where(s => s.CurrentLearnedMinutes > 0)
+                    .ToList();
+
+                if (!validSessions.Any())
+                {
+                    return TimeSpan.Zero;
+                }
+
+                double totalMinutes = validSessions.Sum(s =>
+                {
+                    if (s.CurrentLearnedMinutes > 0)
+                    {
+                        return s.CurrentLearnedMinutes;
+                    }
+
+                    return Math.Max(0, s.GetTotalDuration().TotalMinutes);
+                });
+
+                double averageMinutes = totalMinutes / validSessions.Count;
                 return TimeSpan.FromMinutes(averageMinutes);
             }
         }

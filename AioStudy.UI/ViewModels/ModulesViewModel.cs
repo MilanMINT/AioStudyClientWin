@@ -26,6 +26,7 @@ namespace AioStudy.UI.ViewModels
         private readonly LearnSessionDbService _learnSessionDbService;
         private readonly ModulesDbService _modulesDbService;
         private ObservableCollection<Module> _modules;
+        private readonly ITimerService _timerService;
         private List<Module> _allModules = new();
         private string _searchQuery = string.Empty;
 
@@ -75,6 +76,7 @@ namespace AioStudy.UI.ViewModels
             _modulesDbService = modulesDbService;
             _gradesViewModel = gradesViewModel;
             _learnSessionDbService = learnSessionDbService;
+            _timerService = timerService;
             Modules = new ObservableCollection<Module>();
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithConfirmation(parameter)); 
             CreateModuleCommand = new RelayCommand(async _ => await CreateModule());
@@ -84,7 +86,7 @@ namespace AioStudy.UI.ViewModels
 
             _ = LoadModulesBySemesterAsync();
 
-            timerService.MinuteElapsed += OnMinuteElapsed;
+            _timerService.MinuteElapsed += OnMinuteElapsed;
         }
 
         private void OpenAllModuleStatisticsPage(object? obj)
@@ -145,8 +147,7 @@ namespace AioStudy.UI.ViewModels
         {
             if (parameter is Module module)
             {
-                var editWindow = new AddModuleView();
-                var viewmodel = new ModuleOverViewViewModel(module, this, _mainViewModel, DeleteModuleCommand, _learnSessionDbService);
+                var viewmodel = new ModuleOverViewViewModel(module, this, _mainViewModel, _learnSessionDbService, _timerService);
                 _mainViewModel.CurrentViewModel = viewmodel;
                 _mainViewModel.CurrentViewName = $"{module.Name}´s Overview";
             }

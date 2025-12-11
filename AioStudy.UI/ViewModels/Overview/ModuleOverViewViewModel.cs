@@ -1,16 +1,12 @@
 ﻿using AioStudy.Core.Data.Services;
+using AioStudy.Core.Services;
 using AioStudy.Core.Util.Modules;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace AioStudy.UI.ViewModels.Overview
 {
@@ -18,6 +14,7 @@ namespace AioStudy.UI.ViewModels.Overview
     {
         private Module _module;
         private readonly LearnSessionDbService _learnSessionDbService;
+        private ObservableCollection<LearnSession> _recentSessions = new ObservableCollection<LearnSession>();
         private ModulesDbService _modulesDbService;
         private ModulesViewModel _modulesViewModel;
         private MainViewModel _mainViewModel;
@@ -25,6 +22,16 @@ namespace AioStudy.UI.ViewModels.Overview
         private string _learnTimeGoal;
         private string _averageSessionTime;
         private string _sessionCount;
+
+        public ObservableCollection<LearnSession> RecentSessions
+        {
+            get { return _recentSessions; }
+            set
+            {
+                _recentSessions = value;
+                OnPropertyChanged(nameof(RecentSessions));
+            }
+        }
 
         public string AverageSessionTime
         {
@@ -159,10 +166,11 @@ namespace AioStudy.UI.ViewModels.Overview
         public RelayCommand BackCommand { get; }
         public RelayCommand DeleteModuleCommand { get; }
         public RelayCommand EditModuleCommand { get; }
+        public RelayCommand OpenModuleStatisticsCommand { get; }
 
         public ModuleOverViewViewModel(
             Module module, ModulesViewModel modulesViewModel, MainViewModel mainViewModel, 
-            RelayCommand deleteModuleCommand, LearnSessionDbService learnSessionDbService
+            LearnSessionDbService learnSessionDbService, ITimerService timerService
             )
         {
             Module = module;
@@ -172,11 +180,40 @@ namespace AioStudy.UI.ViewModels.Overview
             _learnSessionDbService = learnSessionDbService;
             
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithNavigation(parameter));
+            OpenModuleStatisticsCommand = new RelayCommand(ExecuteOpenModuleStatisticsCommand);
 
             // Commands
             BackCommand = new RelayCommand(ExecuteBackCommand);
 
-            _ = UpdateSessionStats();
+            timerService.TimerEnded += OnTimerEndet;
+
+            RefreshAll();
+        }
+
+        private void ExecuteOpenModuleStatisticsCommand(object? obj)
+        {
+            var moduleStatisticsOverviewViewmodel = new ModuleStatisticsOverviewViewmodel(_module, this, _mainViewModel);
+            _mainViewModel.CurrentViewModel = moduleStatisticsOverviewViewmodel;
+            _mainViewModel.CurrentViewName = $"{_module.Name}´s Statistics";
+        }
+
+        private void OnTimerEndet(object? sender, EventArgs e)
+        {
+            RefreshAll();
+        }
+
+        public async Task LoadRecentSessionsAsync()
+        {
+            RecentSessions.Clear();
+            var sessions = await _learnSessionDbService.GetRecentSessionsAsync(3, _module);
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                foreach (var session in sessions)
+                {
+                    RecentSessions.Add(session);
+                }
+            });
         }
 
         private async Task DeleteModuleWithNavigation(object? parameter)
@@ -223,7 +260,7 @@ namespace AioStudy.UI.ViewModels.Overview
         {
             try
             {
-                var avgTime = ModuleHelper.Math.CalculateAverageSessionTime(sessions);
+                var avgTime = ModuleHelper.Maths.CalculateAverageSessionTime(sessions);
                 int hours = (int)avgTime.TotalHours;
                 int minutes = avgTime.Minutes;
                 AverageSessionTime = $"{hours}h {minutes}m";
@@ -234,9 +271,15 @@ namespace AioStudy.UI.ViewModels.Overview
             }
         }
 
-        public async Task UpdateSessionStats()
+        public void RefreshAll()
         {
-            var sessions = await _learnSessionDbService.GetSessionsByModule(_module);
+            _ = UpdateSessionStats();
+            _ = LoadRecentSessionsAsync();
+        }
+
+        private async Task UpdateSessionStats()
+        {
+            var sessions = await _learnSessionDbService.GetRecentSessionsAsync(-1, _module);
 
             LoadSessionsCountAsync(sessions);
             LoadAverageSessionTime(sessions);

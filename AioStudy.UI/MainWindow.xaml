@@ -63,6 +63,12 @@
         <DataTemplate DataType="{x:Type vm1:AllModulesStatisticsViewViewModel}">
             <views1:AllModulesStatisticsView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm1:ModuleStatisticsOverviewViewmodel}">
+            <views1:ModuleStatisticsOverviewView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm1:SemesterplanViewModel}">
+            <views1:SemesterplanView />
+        </DataTemplate>
     </Window.Resources>
 
 

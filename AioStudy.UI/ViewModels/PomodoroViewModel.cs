@@ -343,7 +343,6 @@ namespace AioStudy.UI.ViewModels
         {
             RecentSessions.Clear();
             var sessions = await _learnSessionDbService.GetRecentSessionsAsync(6);
-
             await Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 foreach (var session in sessions)

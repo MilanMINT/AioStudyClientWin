@@ -30,7 +30,7 @@ namespace AioStudy.Core.Data.Services
                 };
                 return await _learnSessionRepository.CreateAsync(learnSession);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -65,19 +65,39 @@ namespace AioStudy.Core.Data.Services
             await _learnSessionRepository.UpdateAsync(session);
         }
 
-        public async Task<List<LearnSession>> GetRecentSessionsAsync(int count = 5)
+        /// <summary>
+        /// Set count to -1 to get all sessions
+        /// </summary>
+        /// <param name="count"></param>
+        /// <param name="module"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<LearnSession>> GetRecentSessionsAsync(int count = 5, Module? module = null)
         {
             try
             {
                 var sessions = await _learnSessionRepository.GetAllWithIncludesAsync("LearnedModule");
                 var sessionList = sessions.ToList();
 
+                if (module != null)
+                {
+                    sessionList = sessionList
+                        .Where(s => s.LearnedModuleId == module.Id)
+                        .ToList();
+                }
+
+                if (count == -1)
+                {
+                    return sessionList
+                        .OrderByDescending(s => s.EndTime ?? s.StartTime)
+                        .ToList();
+                }
+
                 return sessionList
                     .OrderByDescending(s => s.EndTime ?? s.StartTime)
                     .Take(count)
                     .ToList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new List<LearnSession>();
             }
@@ -90,14 +110,6 @@ namespace AioStudy.Core.Data.Services
             session.SessionCompleted = false; 
             session.EndTime = DateTime.Now;
             await _learnSessionRepository.UpdateAsync(session);
-        }
-
-        public async Task<IEnumerable<LearnSession>> GetSessionsByModule(Module module)
-        {
-            if (module == null) return Enumerable.Empty<LearnSession>();
-            var sessions = await _learnSessionRepository.GetAllAsync();
-            var moduleSessions = sessions.Where(s => s.LearnedModuleId == module.Id).ToList();
-            return moduleSessions;
         }
     }
 }

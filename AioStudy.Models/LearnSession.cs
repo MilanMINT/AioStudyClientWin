@@ -24,5 +24,18 @@ namespace AioStudy.Models
         public int CurrentLearnedMinutes { get; set; } = 0;
 
         public LearnSession() { }
+
+        public TimeSpan GetTotalDuration()
+        {
+            if (EndTime.HasValue)
+            {
+                var duration = EndTime.Value - StartTime;
+                return duration;
+            }
+            else
+            {
+                return TimeSpan.Zero;
+            }
+        }
     }
 }

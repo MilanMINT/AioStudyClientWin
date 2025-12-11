@@ -7,7 +7,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:AioStudy.UI.ViewModels"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SemesterViewModel}"
     d:DesignHeight="750"
     d:DesignWidth="1200"
     Background="#212226"
@@ -105,6 +107,26 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
+
+                <Button
+                    Width="auto"
+                    Height="30"
+                    Margin="0,0,20,0"
+                    Command="{Binding OpenSemesterplanCommand}"
+                    Style="{StaticResource NoHoverButtonStyle}">
+                    <DockPanel>
+                        <TextBlock
+                            FontSize="18"
+                            Foreground="#CBCBCB"
+                            Text="Semesterplan" />
+                        <MaIc:MaterialIcon
+                            Width="18"
+                            Height="18"
+                            Margin="5,2,0,0"
+                            Foreground="#CBCBCB"
+                            Kind="OpenInNew" />
+                    </DockPanel>
+                </Button>
 
                 <xctk:WatermarkTextBox
                     Width="200"

@@ -75,6 +75,17 @@
             <Setter Property="Padding" Value="20" />
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="BorderBrush" Value="#3A3D45" />
+
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect
+                        BlurRadius="12"
+                        Opacity="0.36"
+                        ShadowDepth="3"
+                        Color="#000000" />
+                </Setter.Value>
+            </Setter>
+
         </Style>
 
         <!--  Metric Card Style  -->
@@ -88,14 +99,14 @@
                 <Setter.Value>
                     <DropShadowEffect
                         BlurRadius="6"
-                        Opacity="0.06"
-                        ShadowDepth="1"
+                        Opacity="0.36"
+                        ShadowDepth="2"
                         Color="#000000" />
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="BorderBrush" Value="#2B3651" />
+                    <Setter Property="BorderBrush" Value="#3A424C" />
                     <Setter Property="Effect">
                         <Setter.Value>
                             <DropShadowEffect
@@ -715,7 +726,7 @@
                     <Border
                         Grid.Row="1"
                         Grid.ColumnSpan="2"
-                        Margin="0,10,0,0"
+                        Margin="0,10,0,10"
                         Style="{StaticResource ChartCard}">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -821,7 +832,16 @@
                                                         FontSize="14"
                                                         FontWeight="Bold"
                                                         Foreground="White"
-                                                        Text="{Binding Grade, Converter={StaticResource GradeToDisplayTextConverter}, FallbackValue='N/A'}" />
+                                                        Text="{Binding Grade, Converter={StaticResource GradeToDisplayTextConverter}, FallbackValue='N/A'}">
+                                                        <TextBlock.Effect>
+                                                            <DropShadowEffect
+                                                                BlurRadius="6"
+                                                                Direction="270"
+                                                                Opacity="0.6"
+                                                                ShadowDepth="1"
+                                                                Color="#000000" />
+                                                        </TextBlock.Effect>
+                                                    </TextBlock>
                                                 </Border>
                                             </Grid>
                                         </Border>
