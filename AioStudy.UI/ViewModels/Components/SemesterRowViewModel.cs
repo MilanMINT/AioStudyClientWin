@@ -1,4 +1,7 @@
 ﻿using AioStudy.Models;
+using AioStudy.UI.Commands;
+using AioStudy.UI.ViewModels.Overview;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,5 +22,21 @@ namespace AioStudy.UI.ViewModels.Components
         public int ModulesContainerWidth { get; set; }
         public int SemesterInfoContainerWidth { get; set; }
         public int MarginCompensation { get; set; } = 8;
+        public bool IsCurrentSemester { get; set; } = false;
+
+        private RelayCommand? _openModuleCommand;
+        public RelayCommand OpenModuleCommand => _openModuleCommand ??= new RelayCommand(o =>
+        {
+            if (o is Module module)
+            {
+                var main = App.ServiceProvider.GetRequiredService<MainViewModel>();
+                var previous = main.CurrentViewModel;
+
+                var moduleOverviewVm = new ModuleOverViewViewModel(module, previous);
+
+                main.CurrentViewModel = moduleOverviewVm;
+                main.CurrentViewName = $"{module.Name} - Overview";
+            }
+        });
     }
 }

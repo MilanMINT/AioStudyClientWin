@@ -16,15 +16,46 @@
 
     <UserControl.Resources>
         <Style x:Key="ModuleBlockStyle" TargetType="Border">
-            <Setter Property="Background" Value="#E9CBD0" />
+            <Setter Property="Background" Value="#1F2024" />
             <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="BorderBrush" Value="#3A3D45" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Padding" Value="12" />
             <Setter Property="Height" Value="110" />
             <Setter Property="MinWidth" Value="48" />
             <Setter Property="Margin" Value="0,0,8,0" />
             <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect
+                        BlurRadius="4"
+                        Opacity="0.36"
+                        ShadowDepth="3"
+                        Color="#000000" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect
+                                BlurRadius="6"
+                                Opacity="0.36"
+                                ShadowDepth="4"
+                                Color="#000000" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="BorderBrush">
+                        <Setter.Value>
+                            <SolidColorBrush Color="#777777" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
+
+
 
     <Grid>
         <Grid.RowDefinitions>
@@ -94,20 +125,21 @@
                 <Style BasedOn="{StaticResource LocalScrollBar}" TargetType="ScrollBar" />
             </ScrollViewer.Resources>
 
-            <!--  erzwinge die feste Breite des Inhalts  -->
             <Border
                 Width="{Binding ParentContainerWidth}"
                 Margin="0,15,10,10"
-                Background="Transparent">
+                Background="Transparent"
+                ClipToBounds="False">
 
-                <!--  ItemsControl bekommt dieselbe Breite  -->
                 <ItemsControl
                     Width="{Binding ParentContainerWidth}"
                     HorizontalAlignment="Stretch"
+                    ClipToBounds="False"
                     ItemsSource="{Binding SemesterRows}">
                     <ItemsControl.ItemContainerStyle>
                         <Style TargetType="ContentPresenter">
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="ClipToBounds" Value="False" />
                         </Style>
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
@@ -119,39 +151,78 @@
                                     <ColumnDefinition Width="{Binding ModulesContainerWidth}" />
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel
-                                    Grid.Column="0"
-                                    Margin="0,0,12,0"
-                                    VerticalAlignment="Top">
-                                    <!--  ordinal above semester name  -->
-                                    <TextBlock
-                                        FontSize="12"
-                                        FontWeight="SemiBold"
-                                        Foreground="#9FA2A6"
-                                        Text="{Binding SemesterNumber, StringFormat={}{0}. Semester}" />
-                                    <TextBlock
-                                        Margin="0,5,0,0"
-                                        FontSize="14"
-                                        FontWeight="Bold"
-                                        Foreground="White"
-                                        Text="{Binding Semester.Name}" />
-                                    <TextBlock
-                                        Margin="0,47,0,0"
-                                        VerticalAlignment="Bottom"
-                                        FontSize="12"
-                                        Foreground="#B0B3BA"
-                                        Text="{Binding TotalCredits, StringFormat={}{0} Credits}" />
+                                <Grid Grid.Column="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
                                     <Border
-                                        Height="1"
-                                        Margin="0,6,0,0"
-                                        Background="#CFCFCF"
-                                        Opacity="0.15" />
-                                </StackPanel>
+                                        Grid.Column="0"
+                                        Width="3"
+                                        Height="110"
+                                        Margin="0,0,7,0"
+                                        Background="{Binding Semester.Color, Converter={StaticResource StringToBrushConverter}}"
+                                        CornerRadius="2" />
+
+                                    <StackPanel
+                                        Grid.Column="1"
+                                        Margin="0,0,12,0"
+                                        VerticalAlignment="Top">
+                                        <DockPanel LastChildFill="True">
+                                            <TextBlock
+                                                FontSize="12"
+                                                FontWeight="SemiBold"
+                                                Foreground="#9FA2A6"
+                                                Text="{Binding SemesterNumber, StringFormat={}{0}. Semester}" />
+                                            <Border
+                                                Width="42"
+                                                Height="16"
+                                                Padding="6,0"
+                                                Background="#DCAA09"
+                                                CornerRadius="4"
+                                                Visibility="{Binding IsCurrentSemester, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <TextBlock
+                                                    FontSize="11"
+                                                    FontWeight="Bold"
+                                                    Foreground="White"
+                                                    Text="CURR">
+                                                    <TextBlock.Effect>
+                                                        <DropShadowEffect
+                                                            BlurRadius="4"
+                                                            Direction="270"
+                                                            Opacity="0.6"
+                                                            ShadowDepth="1"
+                                                            Color="#000000" />
+                                                    </TextBlock.Effect>
+                                                </TextBlock>
+                                            </Border>
+                                        </DockPanel>
+                                        <TextBlock
+                                            Margin="0,5,0,0"
+                                            FontSize="14"
+                                            FontWeight="Bold"
+                                            Foreground="White"
+                                            Text="{Binding Semester.Name}" />
+                                        <TextBlock
+                                            Margin="0,47,0,0"
+                                            VerticalAlignment="Bottom"
+                                            FontSize="12"
+                                            Foreground="#B0B3BA"
+                                            Text="{Binding TotalCredits, StringFormat={}{0} Credits}" />
+                                        <Border
+                                            Height="1"
+                                            Margin="0,6,0,0"
+                                            Background="#CFCFCF"
+                                            Opacity="0.15" />
+                                    </StackPanel>
+                                </Grid>
 
 
                                 <Border
                                     Grid.Column="1"
                                     Width="{Binding ModulesContainerWidth}"
+                                    Height="115"
                                     Background="Transparent">
                                     <ItemsControl ItemsSource="{Binding Modules}">
                                         <ItemsControl.ItemsPanel>
@@ -162,38 +233,97 @@
 
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Style="{StaticResource ModuleBlockStyle}">
+                                                <Border x:Name="ModuleBorder">
                                                     <Border.Width>
                                                         <MultiBinding Converter="{StaticResource CreditsToWidthConverter}" ConverterParameter="8">
-                                                            <!--  1) Module.ModuleCredits (nullable -> fallback 0)  -->
                                                             <Binding Path="ModuleCredits" TargetNullValue="0" />
-                                                            <!--  2) TotalCredits from the parent SemesterRowViewModel (the inner ItemsControl hosts the modules)  -->
                                                             <Binding Path="DataContext.TotalCredits" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
-                                                            <!--  3) ModulesContainerWidth from the parent SemesterRowViewModel  -->
                                                             <Binding Path="DataContext.ModulesContainerWidth" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
                                                             <Binding Path="DataContext.ModulesCount" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
                                                         </MultiBinding>
                                                     </Border.Width>
 
+                                                    <Border.BorderBrush>
+                                                        <LinearGradientBrush>
+                                                            <GradientStop Offset="0.1" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#3A3D45}" />
+                                                            <GradientStop Offset="0.7" Color="#3A3D45" />
+                                                        </LinearGradientBrush>
+                                                    </Border.BorderBrush>
+
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="#202126" />
+                                                            <Setter Property="CornerRadius" Value="6" />
+                                                            <Setter Property="BorderBrush" Value="#3A3D45" />
+                                                            <Setter Property="BorderThickness" Value="1" />
+                                                            <Setter Property="Padding" Value="12" />
+                                                            <Setter Property="Height" Value="110" />
+                                                            <Setter Property="MinWidth" Value="48" />
+                                                            <Setter Property="Margin" Value="0,0,8,0" />
+                                                            <Setter Property="VerticalAlignment" Value="Top" />
+                                                            <Setter Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect
+                                                                        BlurRadius="4"
+                                                                        Opacity="0.36"
+                                                                        ShadowDepth="3"
+                                                                        Color="#000000" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Effect">
+                                                                        <Setter.Value>
+                                                                            <DropShadowEffect
+                                                                                BlurRadius="6"
+                                                                                Opacity="0.36"
+                                                                                ShadowDepth="4"
+                                                                                Color="#000000" />
+                                                                        </Setter.Value>
+                                                                    </Setter>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+
                                                     <Grid>
                                                         <Grid.RowDefinitions>
-                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="Auto" MaxHeight="60" />
                                                             <RowDefinition Height="*" />
                                                         </Grid.RowDefinitions>
+
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="18" />
+                                                        </Grid.ColumnDefinitions>
 
                                                         <!--  Module Name  -->
                                                         <TextBlock
                                                             FontSize="14"
                                                             FontWeight="Bold"
-                                                            Foreground="#212226"
+                                                            Foreground="White"
                                                             Text="{Binding Name}"
-                                                            TextWrapping="Wrap" />
+                                                            TextTrimming="CharacterEllipsis"
+                                                            ToolTip="{Binding Name}" />
+
+                                                        <Button
+                                                            Grid.Column="1"
+                                                            Command="{Binding DataContext.OpenModuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Style="{StaticResource NoHoverButtonStyle}">
+                                                            <MaIc:MaterialIcon
+                                                                Width="17"
+                                                                Height="17"
+                                                                Foreground="#B0B3BA"
+                                                                Kind="OpenInNew" />
+                                                        </Button>
+
                                                         <!--  Module Credits  -->
                                                         <TextBlock
                                                             Grid.Row="1"
                                                             VerticalAlignment="Bottom"
                                                             FontSize="12"
-                                                            Foreground="#4A4A4A"
+                                                            Foreground="#B0B3BA"
                                                             Text="{Binding ModuleCredits, StringFormat={}{0} Credits}" />
 
                                                     </Grid>

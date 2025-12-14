@@ -70,10 +70,6 @@ namespace AioStudy.UI.ViewModels
         private bool _isRunning;
         private bool _isPaused;
 
-        // FirstSecondLetterOfUsername
-        //Username
-        //CurrentSemester
-
         private string _firstSecondLetterOfUsername;
         private string _username;
         private string _currentSemester;
@@ -292,7 +288,7 @@ namespace AioStudy.UI.ViewModels
             _pomodoroViewModel.PropertyChanged += OnPomodoroViewModelPropertyChanged;
 
             CheckForExistingUser();
-            LoadUserBottomInfoPanel();
+            SetCurrentSemester();
 
             _timerService.TimeChanged += TimerService_TimeChanged;
             _timerService.RunningStateChanged += TimerService_RunningStateChanged;
@@ -303,6 +299,17 @@ namespace AioStudy.UI.ViewModels
 
             ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
         }
+
+        private async void SetCurrentSemester()
+        {
+            var currentSemester = await _semesterDbService.GetCurrentSemester();
+            if (currentSemester == null) return;
+            bool result = await _userDbService.SetCurrentSemester(currentSemester);
+            if (!result) return;
+            LoadUserBottomInfoPanel();
+        }
+
+
 
         private void OnBreakEnded(object? sender, EventArgs e)
         {

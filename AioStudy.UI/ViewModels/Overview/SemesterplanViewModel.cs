@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Windows.Threading;
 
 namespace AioStudy.UI.ViewModels.Overview
@@ -33,10 +34,13 @@ namespace AioStudy.UI.ViewModels.Overview
             }
         }
 
+
+
         public int ParentContainerWidth => _parentContainerWidth;
         public int SemesterInfoContainerWidth => _semesterInfoContainerWidth;
 
         public RelayCommand RefreshCommand => new RelayCommand(o => BuildSemesterplan());
+        public RelayCommand OpenModule { get; }
 
         public SemesterplanViewModel(SemesterViewModel semesterViewModel, MainViewModel mainViewModel, SemesterDbService semesterDbService, ModulesDbService modulesDbService)
         {
@@ -47,7 +51,19 @@ namespace AioStudy.UI.ViewModels.Overview
 
             SemesterRows = new ObservableCollection<SemesterRowViewModel>();
 
+            OpenModule = new RelayCommand(ExecuteBack);
+
             BuildSemesterplan();
+        }
+
+        private void ExecuteBack(object? obj)
+        {
+            if (obj is Module module)
+            {
+                var viewmodel = new ModuleOverViewViewModel(module, this);
+                _mainViewModel.CurrentViewModel = viewmodel;
+                _mainViewModel.CurrentViewName = $"{module.Name}´s Overview";
+            }
         }
 
         private async void BuildSemesterplan()
@@ -63,6 +79,8 @@ namespace AioStudy.UI.ViewModels.Overview
                 int __totalcredits = CalculateTotalCredits(__modulesBySemester);
                 int __modulesCount = __modulesBySemester.Count();
 
+                bool isCurrentSemester = await _semesterDbService.IsCurrentSemester(semester);
+
                 var semesterRowVM = new SemesterRowViewModel
                 {
                     Semester = semester,
@@ -72,7 +90,8 @@ namespace AioStudy.UI.ViewModels.Overview
                     ModulesCount = __modulesCount,
                     ParentWidth = _parentContainerWidth,
                     ModulesContainerWidth = _parentContainerWidth - _semesterInfoContainerWidth,
-                    SemesterInfoContainerWidth = _semesterInfoContainerWidth
+                    SemesterInfoContainerWidth = _semesterInfoContainerWidth,
+                    IsCurrentSemester = isCurrentSemester
                 };
                 SemesterRows.Add(semesterRowVM);
             }

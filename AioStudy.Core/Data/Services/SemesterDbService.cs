@@ -116,5 +116,20 @@ namespace AioStudy.Core.Data.Services
             var semesters = await _semesterRepository.GetAllAsync();
             return !semesters.Any(s => s.StartDate <= startDate && s.EndDate >= startDate);
         }
+
+        public async Task<Semester?> GetCurrentSemester()
+        {
+            var semesters = await _semesterRepository.GetAllAsync();
+            var currentDate = DateTime.Now;
+            return semesters.FirstOrDefault(s => s.StartDate <= currentDate && s.EndDate >= currentDate) ?? null;
+        }
+
+        public async Task<bool> IsCurrentSemester(Semester semester)
+        {
+            var currentSemester = await GetCurrentSemester();
+            if (currentSemester == null)
+                return false;
+            return currentSemester.Id == semester.Id;
+        }
     }
 }

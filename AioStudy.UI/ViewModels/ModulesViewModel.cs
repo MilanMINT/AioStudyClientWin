@@ -147,9 +147,9 @@ namespace AioStudy.UI.ViewModels
         {
             if (parameter is Module module)
             {
-                var viewmodel = new ModuleOverViewViewModel(module, this, _mainViewModel, _learnSessionDbService, _timerService);
+                var viewmodel = new ModuleOverViewViewModel(module, this);
                 _mainViewModel.CurrentViewModel = viewmodel;
-                _mainViewModel.CurrentViewName = $"{module.Name}´s Overview";
+                _mainViewModel.CurrentViewName = $"{module.Name} - Overview";
             }
         }
 

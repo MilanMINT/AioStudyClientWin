@@ -176,8 +176,8 @@ namespace AioStudy.UI.ViewModels
             var addWindow = new AddSemesterView();
             var viewModel = App.ServiceProvider.GetRequiredService<AddSemesterViewModel>();
             addWindow.DataContext = viewModel;
-            addWindow.Owner = System.Windows.Application.Current.MainWindow;
-            addWindow.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+            addWindow.Owner = Application.Current.MainWindow;
+            addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             addWindow.ShowDialog();
         }
 
@@ -216,7 +216,6 @@ namespace AioStudy.UI.ViewModels
                 }
             }
         }
-
         public void RefreshSemesters()
         {
             _ = LoadSemestersAsync();

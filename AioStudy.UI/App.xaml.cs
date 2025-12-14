@@ -52,6 +52,8 @@ namespace AioStudy.UI
                 Shutdown();
                 return;
             }
+
+
         }
 
         private void ConfigureServices(ServiceCollection services)
@@ -75,6 +77,8 @@ namespace AioStudy.UI
             services.AddTransient<DailyModuleStatsDbService>();
             services.AddTransient<QuickTimerDbService>();
             services.AddTransient<SettingsManager>();
+
+            services.AddTransient<ModuleOverViewViewModel>();
 
             //ViewModels
             services.AddSingleton<SemesterViewModel>();

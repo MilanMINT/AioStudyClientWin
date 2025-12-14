@@ -13,15 +13,18 @@ namespace AioStudy.UI.ViewModels.Overview
     public class ModuleOverViewViewModel : ViewModelBase
     {
         private Module _module;
+        private readonly ITimerService _timerService;
         private readonly LearnSessionDbService _learnSessionDbService;
+        private readonly ModulesDbService _modulesDbService;
         private ObservableCollection<LearnSession> _recentSessions = new ObservableCollection<LearnSession>();
-        private ModulesDbService _modulesDbService;
         private ModulesViewModel _modulesViewModel;
         private MainViewModel _mainViewModel;
+        private ViewModelBase _previousViewModel;
         private string _dayTillExam;
         private string _learnTimeGoal;
         private string _averageSessionTime;
         private string _sessionCount;
+        private string _backToString;
 
         public ObservableCollection<LearnSession> RecentSessions
         {
@@ -30,6 +33,16 @@ namespace AioStudy.UI.ViewModels.Overview
             {
                 _recentSessions = value;
                 OnPropertyChanged(nameof(RecentSessions));
+            }
+        }
+
+        public string BackToString
+        {
+            get { return _backToString; }
+            set
+            {
+                _backToString = value;
+                OnPropertyChanged(nameof(BackToString));
             }
         }
 
@@ -168,27 +181,57 @@ namespace AioStudy.UI.ViewModels.Overview
         public RelayCommand EditModuleCommand { get; }
         public RelayCommand OpenModuleStatisticsCommand { get; }
 
-        public ModuleOverViewViewModel(
-            Module module, ModulesViewModel modulesViewModel, MainViewModel mainViewModel, 
-            LearnSessionDbService learnSessionDbService, ITimerService timerService
-            )
+        public ModuleOverViewViewModel(Module module, ViewModelBase previousViewModel)
         {
             Module = module;
             _modulesDbService = App.ServiceProvider.GetRequiredService<ModulesDbService>();
-            _modulesViewModel = modulesViewModel;
-            _mainViewModel = mainViewModel;
-            _learnSessionDbService = learnSessionDbService;
-            
+            _modulesViewModel = App.ServiceProvider.GetRequiredService<ModulesViewModel>();
+            _mainViewModel = App.ServiceProvider.GetRequiredService<MainViewModel>();
+            _learnSessionDbService = App.ServiceProvider.GetRequiredService<LearnSessionDbService>();
+            _previousViewModel = previousViewModel;
+
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithNavigation(parameter));
             OpenModuleStatisticsCommand = new RelayCommand(ExecuteOpenModuleStatisticsCommand);
 
             // Commands
             BackCommand = new RelayCommand(ExecuteBackCommand);
 
-            timerService.TimerEnded += OnTimerEndet;
+            _timerService = App.ServiceProvider.GetRequiredService<ITimerService>();
+            _timerService.TimerEnded += OnTimerEndet;
+
+            SetBackToString();
 
             RefreshAll();
         }
+
+        private void SetBackToString()
+        {
+            switch (_previousViewModel)
+            {
+                case ModulesViewModel:
+                    BackToString = "Modules";
+                    break;
+                case DashboardViewModel:
+                    BackToString = "Dashboard";
+                    break;
+                case GradesViewModel:
+                    BackToString = "Grades";
+                    break;
+                case SemesterViewModel:
+                    BackToString = "Semester";
+                    break;
+                case ModuleStatisticsOverviewViewmodel:
+                    BackToString = "Statistics Overview";
+                    break;
+                case SemesterplanViewModel:
+                    BackToString = "Semesterplan";
+                    break;
+                // fallback
+                default:
+                    BackToString = "Modules";
+                    break;
+            }
+        }   
 
         private void ExecuteOpenModuleStatisticsCommand(object? obj)
         {
@@ -287,8 +330,37 @@ namespace AioStudy.UI.ViewModels.Overview
 
         private void ExecuteBackCommand(object? obj)
         {
-            _mainViewModel.CurrentViewModel = _modulesViewModel;
-            _mainViewModel.CurrentViewName = "Modules";
+            _mainViewModel.CurrentViewModel = _previousViewModel;
+
+            switch (_previousViewModel)
+            {
+                case ModulesViewModel:
+                    _mainViewModel.CurrentViewName = "Modules";
+                    break;
+
+                case DashboardViewModel:
+                    _mainViewModel.CurrentViewName = "Dashboard";
+                    break;
+
+                case GradesViewModel:
+                    _mainViewModel.CurrentViewName = "Grades";
+                    break;
+
+                case SemesterViewModel:
+                    _mainViewModel.CurrentViewName = "Semester";
+                    break;
+                case SemesterplanViewModel:
+                    _mainViewModel.CurrentViewName = "Semesterplan";
+                    break;
+                case ModuleStatisticsOverviewViewmodel:
+                    _mainViewModel.CurrentViewName = $"{_module.Name}´s Statistics";
+                    break;
+
+                // fallback
+                default:
+                    _mainViewModel.CurrentViewName = "Modules";
+                    break;
+            }
         }
     }
 }

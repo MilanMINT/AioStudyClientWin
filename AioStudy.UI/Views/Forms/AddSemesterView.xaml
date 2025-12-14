@@ -77,7 +77,7 @@
                         Margin="0,5"
                         Style="{StaticResource GradientTextBox}"
                         Text="{Binding SemesterName, UpdateSourceTrigger=PropertyChanged}"
-                        Watermark="Enter name..." />
+                        Watermark="Enter name... (WiSe24/25)" />
                 </StackPanel>
 
                 <!--  DatePicker Sektion - Nebeneinander  -->

@@ -19,7 +19,7 @@ namespace AioStudy.Core.Data.Services
 
         public async Task<User?> GetUser()
         {
-            var users = await _userRepository.GetAllAsync();
+            var users = await _userRepository.GetAllWithIncludesAsync(nameof(User.CurrentSemester));
             return users.FirstOrDefault();
         }
 
@@ -54,6 +54,19 @@ namespace AioStudy.Core.Data.Services
                 user.LearnedMinutes += minutes;
                 await _userRepository.UpdateAsync(user);
             }
+        }
+
+        public async Task<bool> SetCurrentSemester(Semester semester)
+        {
+            var users = await _userRepository.GetAllAsync();
+            var user = users.FirstOrDefault();
+            if (user != null)
+            {
+                user.CurrentSemester = semester;
+                await _userRepository.UpdateAsync(user);
+                return true;
+            }
+            return false;
         }
     }
 }
