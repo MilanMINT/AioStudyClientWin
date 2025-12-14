@@ -108,6 +108,12 @@ namespace AioStudy.UI.ViewModels.Forms
                     return;
                 }
 
+                if (!await _semesterDbService.IsValidStartDate(StartDate))
+                {
+                    await ToastService.ShowErrorAsync("Error", "Semesters cannot overlap.");
+                    return;
+                }
+
                 var newSemester = new Semester
                 {
                     Name = SemesterName,

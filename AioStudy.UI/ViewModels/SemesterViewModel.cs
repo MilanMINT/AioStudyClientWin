@@ -22,6 +22,7 @@ namespace AioStudy.UI.ViewModels
     public class SemesterViewModel : ViewModelBase
     {
         private readonly SemesterDbService _semesterDbService;
+        private readonly ModulesDbService _modulesDbService;
         private MainViewModel _mainViewModel;
         private ModulesViewModel _modulesViewModel;
         private readonly SemaphoreSlim _loadSemaphore = new SemaphoreSlim(1, 1);
@@ -69,10 +70,11 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand OpenSemesterOverviewCommand { get; }
         public RelayCommand OpenSemesterplanCommand { get; }
 
-        public SemesterViewModel(SemesterDbService semesterDbService, ModulesViewModel modulesViewModel)
+        public SemesterViewModel(SemesterDbService semesterDbService, ModulesViewModel modulesViewModel, ModulesDbService modulesDbService)
         {
             _semesterDbService = semesterDbService;
             _modulesViewModel = modulesViewModel;
+            _modulesDbService = modulesDbService;
             Semesters = new ObservableCollection<Semester>();
 
             LoadSemestersCommand = new RelayCommand(async _ => await LoadSemestersAsync());
@@ -86,7 +88,7 @@ namespace AioStudy.UI.ViewModels
 
         private void ExecuteOpenSemesterplanCommand(object? obj)
         {
-            var viewmodel = new SemesterplanViewModel(this, _mainViewModel);
+            var viewmodel = new SemesterplanViewModel(this, _mainViewModel, _semesterDbService, _modulesDbService);
             _mainViewModel.CurrentViewModel = viewmodel;
             _mainViewModel.CurrentViewName = $"Semester Plan";
         }

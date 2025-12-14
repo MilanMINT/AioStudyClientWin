@@ -543,7 +543,6 @@
                     </Border.Effect>
 
                     <Border.Resources>
-                        <!--  Storyboard als Resource definieren  -->
                         <Storyboard x:Key="ColorChangeStoryboard">
                             <ColorAnimation
                                 Storyboard.TargetName="GradStop1"
@@ -593,7 +592,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="70" />
                             <RowDefinition Height="1" />
-                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="3*" />
                             <RowDefinition Height="1" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>

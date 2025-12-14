@@ -6,10 +6,25 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views.Overviews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:overview="clr-namespace:AioStudy.UI.ViewModels.Overview"
+    xmlns:vm="clr-namespace:AioStudy.UI.ViewModels.Components"
+    d:DataContext="{d:DesignInstance Type=overview:SemesterplanViewModel}"
     d:DesignHeight="750"
-    d:DesignWidth="1200"
+    d:DesignWidth="1090"
     Background="#212226"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="ModuleBlockStyle" TargetType="Border">
+            <Setter Property="Background" Value="#E9CBD0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="Height" Value="110" />
+            <Setter Property="MinWidth" Value="48" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -59,7 +74,7 @@
             </StackPanel>
         </Grid>
 
-        <!--  Separator (fixiert)  -->
+        <!--  Separator  -->
         <Border
             Grid.Row="1"
             Height="1"
@@ -67,7 +82,131 @@
             Background="#3A3D45" />
 
 
+        <!--  CONTENT  -->
+        <ScrollViewer
+            Grid.Row="2"
+            Margin="30,0,10,20"
+            HorizontalAlignment="Left"
+            CanContentScroll="False"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <ScrollViewer.Resources>
+                <Style BasedOn="{StaticResource LocalScrollBar}" TargetType="ScrollBar" />
+            </ScrollViewer.Resources>
+
+            <!--  erzwinge die feste Breite des Inhalts  -->
+            <Border
+                Width="{Binding ParentContainerWidth}"
+                Margin="0,15,10,10"
+                Background="Transparent">
+
+                <!--  ItemsControl bekommt dieselbe Breite  -->
+                <ItemsControl
+                    Width="{Binding ParentContainerWidth}"
+                    HorizontalAlignment="Stretch"
+                    ItemsSource="{Binding SemesterRows}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:SemesterRowViewModel}">
+                            <Grid Margin="0,15,0,0">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{Binding SemesterInfoContainerWidth}" />
+                                    <ColumnDefinition Width="{Binding ModulesContainerWidth}" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel
+                                    Grid.Column="0"
+                                    Margin="0,0,12,0"
+                                    VerticalAlignment="Top">
+                                    <!--  ordinal above semester name  -->
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontWeight="SemiBold"
+                                        Foreground="#9FA2A6"
+                                        Text="{Binding SemesterNumber, StringFormat={}{0}. Semester}" />
+                                    <TextBlock
+                                        Margin="0,5,0,0"
+                                        FontSize="14"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="{Binding Semester.Name}" />
+                                    <TextBlock
+                                        Margin="0,47,0,0"
+                                        VerticalAlignment="Bottom"
+                                        FontSize="12"
+                                        Foreground="#B0B3BA"
+                                        Text="{Binding TotalCredits, StringFormat={}{0} Credits}" />
+                                    <Border
+                                        Height="1"
+                                        Margin="0,6,0,0"
+                                        Background="#CFCFCF"
+                                        Opacity="0.15" />
+                                </StackPanel>
+
+
+                                <Border
+                                    Grid.Column="1"
+                                    Width="{Binding ModulesContainerWidth}"
+                                    Background="Transparent">
+                                    <ItemsControl ItemsSource="{Binding Modules}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Style="{StaticResource ModuleBlockStyle}">
+                                                    <Border.Width>
+                                                        <MultiBinding Converter="{StaticResource CreditsToWidthConverter}" ConverterParameter="8">
+                                                            <!--  1) Module.ModuleCredits (nullable -> fallback 0)  -->
+                                                            <Binding Path="ModuleCredits" TargetNullValue="0" />
+                                                            <!--  2) TotalCredits from the parent SemesterRowViewModel (the inner ItemsControl hosts the modules)  -->
+                                                            <Binding Path="DataContext.TotalCredits" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                            <!--  3) ModulesContainerWidth from the parent SemesterRowViewModel  -->
+                                                            <Binding Path="DataContext.ModulesContainerWidth" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                            <Binding Path="DataContext.ModulesCount" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                        </MultiBinding>
+                                                    </Border.Width>
+
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+
+                                                        <!--  Module Name  -->
+                                                        <TextBlock
+                                                            FontSize="14"
+                                                            FontWeight="Bold"
+                                                            Foreground="#212226"
+                                                            Text="{Binding Name}"
+                                                            TextWrapping="Wrap" />
+                                                        <!--  Module Credits  -->
+                                                        <TextBlock
+                                                            Grid.Row="1"
+                                                            VerticalAlignment="Bottom"
+                                                            FontSize="12"
+                                                            Foreground="#4A4A4A"
+                                                            Text="{Binding ModuleCredits, StringFormat={}{0} Credits}" />
+
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+        </ScrollViewer>
     </Grid>
-
-
 </UserControl>

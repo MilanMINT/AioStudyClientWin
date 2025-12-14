@@ -105,5 +105,16 @@ namespace AioStudy.Core.Data.Services
                 return 0;
             return modules.Where(m => m.SemesterId == semester.Id).Sum(m => m.LearnedMinutes);
         }
+
+        /// <summary>
+        /// Chekc if the start date is valid (not overlapping with existing semesters)
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <returns></returns>
+        public async Task<bool> IsValidStartDate(DateTime startDate)
+        {
+            var semesters = await _semesterRepository.GetAllAsync();
+            return !semesters.Any(s => s.StartDate <= startDate && s.EndDate >= startDate);
+        }
     }
 }

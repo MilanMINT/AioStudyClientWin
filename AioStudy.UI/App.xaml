@@ -42,6 +42,7 @@
             <converters:ExamStatusToGradeVisibilityConverter x:Key="ExamStatusToGradeVisibilityConverter" />
             <converters:GradeToBackgroundConverter x:Key="GradeToBackgroundConverter" />
             <converters:GradeToDisplayTextConverter x:Key="GradeToDisplayTextConverter" />
+            <converters:CreditsToWidthMultiConverter x:Key="CreditsToWidthConverter" />
 
 
 

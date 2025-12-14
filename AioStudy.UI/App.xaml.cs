@@ -9,6 +9,7 @@ using AioStudy.Models;
 using AioStudy.UI.ViewModels;
 using AioStudy.UI.ViewModels.Components;
 using AioStudy.UI.ViewModels.Forms;
+using AioStudy.UI.ViewModels.Overview;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
 using LiveChartsCore;
@@ -84,9 +85,9 @@ namespace AioStudy.UI
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<PomodoroViewModel>();
             services.AddSingleton<QuickTimersViewModel>();
-            services.AddTransient<TimerOverlayViewModel>();
             services.AddSingleton<TimerOverlayViewModel>();
 
+            services.AddTransient<TimerOverlayViewModel>();
             services.AddTransient<AddSemesterViewModel>();
             services.AddTransient<AddModuleViewModel>();
             services.AddTransient<CreateUsernameViewModel>();

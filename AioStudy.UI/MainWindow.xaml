@@ -16,7 +16,7 @@
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     Title="AioStudy"
     Width="1300"
-    Height="800"
+    Height="860"
     MinWidth="800"
     MinHeight="650"
     AllowsTransparency="True"
@@ -152,7 +152,6 @@
 
 
             <!--  ==================== Active TimerLine ====================  -->
-            <!--  ==================== Active TimerLine ====================  -->
             <Border
                 Grid.Row="1"
                 Panel.ZIndex="9999999"
@@ -167,12 +166,12 @@
 
                     <Grid Grid.Row="0" Margin="10,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <!--  Links: Status Icon + Text  -->
+                        <!--  Links:  -->
                         <StackPanel
                             Grid.Column="0"
                             Width="Auto"
@@ -180,7 +179,7 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
 
-                            <!--  Status Icon (ändert sich je nach Zustand)  -->
+                            <!--  Status Icon  -->
                             <Border
                                 Width="18"
                                 Height="18"
@@ -205,7 +204,7 @@
                                 Foreground="#A0AEC0"
                                 Text="{Binding TimerStatusText, FallbackValue='Running'}" />
 
-                            <!--  Modul Name (optional)  -->
+                            <!--  Modul Name  -->
                             <TextBlock
                                 Width="Auto"
                                 Margin="8,0,0,0"
@@ -219,7 +218,7 @@
                         <!--  Mitte: Timer  -->
                         <TextBlock
                             Grid.Column="1"
-                            Margin="0,2,0,0"
+                            Margin="0,2,100,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontFamily="Consolas"
@@ -445,7 +444,7 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Column="1">
+                <Border Grid.Column="1" Margin="0,20,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="120" />
@@ -455,6 +454,7 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
+
                         <ContentControl
                             Grid.RowSpan="2"
                             Grid.ColumnSpan="2"
