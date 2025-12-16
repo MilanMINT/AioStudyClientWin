@@ -24,6 +24,7 @@ namespace AioStudy.UI.ViewModels.Components
         public int MarginCompensation { get; set; } = 8;
         public bool IsCurrentSemester { get; set; } = false;
 
+
         private RelayCommand? _openModuleCommand;
         public RelayCommand OpenModuleCommand => _openModuleCommand ??= new RelayCommand(o =>
         {

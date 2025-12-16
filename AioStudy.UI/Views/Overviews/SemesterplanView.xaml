@@ -116,7 +116,7 @@
         <!--  CONTENT  -->
         <ScrollViewer
             Grid.Row="2"
-            Margin="30,0,10,20"
+            Margin="30,10,0,20"
             HorizontalAlignment="Left"
             CanContentScroll="False"
             HorizontalScrollBarVisibility="Disabled"
@@ -292,39 +292,71 @@
                                                             <RowDefinition Height="*" />
                                                         </Grid.RowDefinitions>
 
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="*" />
-                                                            <ColumnDefinition Width="18" />
-                                                        </Grid.ColumnDefinitions>
+                                                        <StackPanel Grid.Row="0">
+                                                            <!--  Module Name  -->
+                                                            <TextBlock
+                                                                Grid.Row="0"
+                                                                Grid.Column="0"
+                                                                Margin="0,0,0,2"
+                                                                FontSize="14"
+                                                                FontWeight="Bold"
+                                                                Foreground="White"
+                                                                Text="{Binding Name}"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTip="{Binding Name}" />
 
-                                                        <!--  Module Name  -->
-                                                        <TextBlock
-                                                            FontSize="14"
-                                                            FontWeight="Bold"
-                                                            Foreground="White"
-                                                            Text="{Binding Name}"
-                                                            TextTrimming="CharacterEllipsis"
-                                                            ToolTip="{Binding Name}" />
+                                                            <Border
+                                                                Margin="0,0,0,0"
+                                                                Padding="3"
+                                                                HorizontalAlignment="Left"
+                                                                Background="{Binding Grade, Converter={StaticResource GradeToBackgroundConverter}, FallbackValue=#9F7AEA}"
+                                                                CornerRadius="4"
+                                                                DockPanel.Dock="Right">
+                                                                <TextBlock
+                                                                    FontSize="10"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="White"
+                                                                    Text="{Binding Grade, Converter={StaticResource GradeToDisplayTextConverter}}">
+                                                                    <TextBlock.Effect>
+                                                                        <DropShadowEffect
+                                                                            BlurRadius="3"
+                                                                            Direction="270"
+                                                                            Opacity="0.9"
+                                                                            ShadowDepth="2"
+                                                                            Color="#000000" />
+                                                                    </TextBlock.Effect>
+                                                                </TextBlock>
 
-                                                        <Button
-                                                            Grid.Column="1"
-                                                            Command="{Binding DataContext.OpenModuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                            CommandParameter="{Binding}"
-                                                            Style="{StaticResource NoHoverButtonStyle}">
-                                                            <MaIc:MaterialIcon
-                                                                Width="17"
-                                                                Height="17"
-                                                                Foreground="#B0B3BA"
-                                                                Kind="OpenInNew" />
-                                                        </Button>
+                                                            </Border>
+                                                        </StackPanel>
 
-                                                        <!--  Module Credits  -->
-                                                        <TextBlock
+
+                                                        <DockPanel
                                                             Grid.Row="1"
-                                                            VerticalAlignment="Bottom"
-                                                            FontSize="12"
-                                                            Foreground="#B0B3BA"
-                                                            Text="{Binding ModuleCredits, StringFormat={}{0} Credits}" />
+                                                            Grid.ColumnSpan="2"
+                                                            LastChildFill="True">
+                                                            <!--  Module Credits  -->
+                                                            <TextBlock
+                                                                Grid.Row="1"
+                                                                VerticalAlignment="Bottom"
+                                                                FontSize="12"
+                                                                Foreground="#B0B3BA"
+                                                                Text="{Binding ModuleCredits, StringFormat={}{0} Credits}" />
+
+                                                            <Button
+                                                                Margin="0,0,0,-2"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Bottom"
+                                                                Command="{Binding DataContext.OpenModuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{StaticResource NoHoverButtonStyle}">
+                                                                <MaIc:MaterialIcon
+                                                                    Width="17"
+                                                                    Height="17"
+                                                                    Foreground="#B0B3BA"
+                                                                    Kind="OpenInNew" />
+                                                            </Button>
+                                                        </DockPanel>
 
                                                     </Grid>
                                                 </Border>

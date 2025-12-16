@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views.Components"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Width="450"
+    Width="510"
     Height="250"
     d:DesignHeight="250"
     d:DesignWidth="450"

@@ -434,7 +434,7 @@ namespace AioStudy.UI.ViewModels
                 {
                     var gradeValue = GradeSteps[i];
                     var gradeLabel = gradeValue.ToString("F1").Replace(".", ",");
-                    var color = GetGradeColor(gradeValue);
+                    var color = GradeHelper.GetGradeColor(gradeValue);
 
                     series.Add(new PieSeries<int>
                     {

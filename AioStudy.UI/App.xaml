@@ -1147,23 +1147,19 @@
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
                             <ControlTemplate.Triggers>
-                                <!--  Hover Effect  -->
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="#2A2D35" />
                                 </Trigger>
 
-                                <!--  Pressed Effect  -->
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="#1F2024" />
                                 </Trigger>
 
-                                <!--  Disabled State  -->
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter Property="Foreground" Value="#4A4D55" />
                                     <Setter Property="Cursor" Value="Arrow" />
                                 </Trigger>
 
-                                <!--  Active State (via Tag)  -->
                                 <Trigger Property="Tag" Value="Active">
                                     <Setter TargetName="border" Property="Background" Value="#3A3D45" />
                                     <Setter Property="Foreground" Value="White" />

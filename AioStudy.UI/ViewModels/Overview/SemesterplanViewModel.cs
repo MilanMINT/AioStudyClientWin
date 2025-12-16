@@ -20,7 +20,7 @@ namespace AioStudy.UI.ViewModels.Overview
         private readonly SemesterDbService _semesterDbService;
         private readonly ModulesDbService _moduleDbService;
 
-        private const int _parentContainerWidth = 970;
+        private const int _parentContainerWidth = 1070;
         private const int _semesterInfoContainerWidth = 150;
 
         private ObservableCollection<SemesterRowViewModel> _semestersRows;

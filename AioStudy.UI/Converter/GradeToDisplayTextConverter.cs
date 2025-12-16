@@ -14,11 +14,15 @@ namespace AioStudy.UI.Converter
         {
             if (value == null)
             {
-                return "BE";
+                return "Open";
             }
 
             if (value is float grade)
             {
+                if (grade == 5.0f)
+                {
+                    return "NB";
+                }
                 return grade.ToString("F1").Replace(".", ",");
             }
 
