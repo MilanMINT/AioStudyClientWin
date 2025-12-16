@@ -19,7 +19,7 @@ namespace AioStudy.Core.Util
             Open, //Nicht sichtbar
             BE, //Sichtbar
             NB, // auto 5,0
-            KeyCompetence // auto 4,0
+            Key // auto 4,0
         }
 
         public enum TimerBreakType

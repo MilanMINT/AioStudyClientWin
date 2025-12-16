@@ -200,7 +200,7 @@ namespace AioStudy.UI.ViewModels.Forms
         {
             foreach (string status in Enum.GetNames(typeof(Enums.ModuleStatus)))
             {
-                if(status == Enums.ModuleStatus.KeyCompetence.ToString())
+                if(status == Enums.ModuleStatus.Key.ToString())
                 {
                     continue;
                 }
@@ -302,7 +302,7 @@ namespace AioStudy.UI.ViewModels.Forms
                     Color = colorString,
                     SemesterId = SelectedSemester?.Id,
                     ModuleCredits = credits,
-                    ExamStatus = IsKeyCompetenceBool ? Enums.ModuleStatus.KeyCompetence.ToString() : SelectedExamStatusOption,
+                    ExamStatus = IsKeyCompetenceBool ? Enums.ModuleStatus.Key.ToString() : SelectedExamStatusOption,
                     Grade = gradeValue,
                     IsKeyCompetence = IsKeyCompetenceBool
                 };

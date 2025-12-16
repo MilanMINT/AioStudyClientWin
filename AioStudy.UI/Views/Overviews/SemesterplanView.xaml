@@ -309,14 +309,14 @@
                                                                 Margin="0,0,0,0"
                                                                 Padding="3"
                                                                 HorizontalAlignment="Left"
-                                                                Background="{Binding Grade, Converter={StaticResource GradeToBackgroundConverter}, FallbackValue=#9F7AEA}"
+                                                                Background="{Binding Converter={StaticResource GradeToBackgroundConverter}, FallbackValue=#9F7AEA}"
                                                                 CornerRadius="4"
                                                                 DockPanel.Dock="Right">
                                                                 <TextBlock
                                                                     FontSize="10"
                                                                     FontWeight="Bold"
                                                                     Foreground="White"
-                                                                    Text="{Binding Grade, Converter={StaticResource GradeToDisplayTextConverter}}">
+                                                                    Text="{Binding Converter={StaticResource GradeToDisplayTextConverter}}">
                                                                     <TextBlock.Effect>
                                                                         <DropShadowEffect
                                                                             BlurRadius="3"
