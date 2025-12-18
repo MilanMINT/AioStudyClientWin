@@ -21,6 +21,7 @@
     MinHeight="650"
     MaxWidth="1400"
     MaxHeight="260"
+    d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     AllowsTransparency="True"
     Background="Transparent"
     ResizeMode="CanResize"
@@ -70,6 +71,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm1:SemesterplanViewModel}">
             <views1:SemesterplanView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DailyPlannerViewModel}">
+            <views:DailyPlannerView />
         </DataTemplate>
     </Window.Resources>
 
@@ -381,6 +385,19 @@
                                         Kind="Grade"
                                         Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Grades" />
+                                </StackPanel>
+                            </RadioButton>
+
+                            <RadioButton
+                                Command="{Binding ShowDailyPlannerCMD}"
+                                Style="{StaticResource menuButton}"
+                                Tag="white">
+                                <StackPanel Orientation="Horizontal">
+                                    <MaIc:MaterialIcon
+                                        Foreground="#a3a3a3"
+                                        Kind="ToDo"
+                                        Style="{StaticResource menuButtonIcon}" />
+                                    <TextBlock Style="{StaticResource menuButtonText}" Text="Daily planner" />
                                 </StackPanel>
                             </RadioButton>
 

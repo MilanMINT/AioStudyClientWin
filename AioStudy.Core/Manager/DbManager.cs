@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
 using System.Threading.Tasks;
+using AioStudy.Core.Data.Services;
 using AioStudy.Data.EF;
 
 namespace AioStudy.Core.Manager

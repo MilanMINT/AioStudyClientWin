@@ -6,6 +6,7 @@ using AioStudy.Data.EF;
 using AioStudy.Data.Interfaces;
 using AioStudy.Data.Services;
 using AioStudy.Models;
+using AioStudy.Models.DailyPlannerModels;
 using AioStudy.UI.ViewModels;
 using AioStudy.UI.ViewModels.Components;
 using AioStudy.UI.ViewModels.Forms;
@@ -53,7 +54,8 @@ namespace AioStudy.UI
                 return;
             }
 
-
+            DailyPlanDbService dailyPlanDbService = ServiceProvider.GetRequiredService<DailyPlanDbService>();
+            dailyPlanDbService.InitDailyPlan().Wait();
         }
 
         private void ConfigureServices(ServiceCollection services)
@@ -68,6 +70,9 @@ namespace AioStudy.UI
             services.AddTransient<IRepository<DailyModuleStats>, Repository<DailyModuleStats>>();
             services.AddTransient<IRepository<LearnSession>, Repository<LearnSession>>();
             services.AddTransient<IRepository<QuickTimer>, Repository<QuickTimer>>();
+            services.AddTransient<IRepository<DailyPlan>, Repository<DailyPlan>>();
+            services.AddTransient<IRepository<DailyTask>, Repository<DailyTask>>();
+            services.AddTransient<IRepository<DailySubTask>, Repository<DailySubTask>>();
 
             //Services
             services.AddTransient<SemesterDbService>();
@@ -77,6 +82,7 @@ namespace AioStudy.UI
             services.AddTransient<DailyModuleStatsDbService>();
             services.AddTransient<QuickTimerDbService>();
             services.AddTransient<SettingsManager>();
+            services.AddTransient<DailyPlanDbService>();
 
             services.AddTransient<ModuleOverViewViewModel>();
 
@@ -90,6 +96,7 @@ namespace AioStudy.UI
             services.AddSingleton<PomodoroViewModel>();
             services.AddSingleton<QuickTimersViewModel>();
             services.AddSingleton<TimerOverlayViewModel>();
+            services.AddSingleton<DailyPlannerViewModel>();
 
             services.AddTransient<TimerOverlayViewModel>();
             services.AddTransient<AddSemesterViewModel>();

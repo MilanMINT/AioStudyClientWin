@@ -39,6 +39,7 @@ namespace AioStudy.UI.ViewModels
         private GradesViewModel _gradesViewModel;
         private SemesterViewModel _semesterViewModel;
         private ModulesViewModel _modulesViewModel;
+        private DailyPlannerViewModel _dailyPlannerViewModel;
 
         private string _gradientColor1 = "#3A3D45"; // Blau 1
         private string _gradientColor2 = "#3A3D45"; // Blau 2
@@ -63,6 +64,7 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand ShowPomodoroCMD { get; }
         public RelayCommand ShowGradesCMD { get; }
         public RelayCommand ShowModulesCMD { get; }
+        public RelayCommand ShowDailyPlannerCMD { get; }
 
         private TimeSpan _time;
 
@@ -258,6 +260,7 @@ namespace AioStudy.UI.ViewModels
             ShowPomodoroCMD = new RelayCommand(ExecuteShowPomodoroCommand);
             ShowGradesCMD = new RelayCommand(ExecuteShowGradesCommand);
             ShowModulesCMD = new RelayCommand(ExecuteShowModulesCommand);
+            ShowDailyPlannerCMD = new RelayCommand(ExecuteShowDailyPlannerCommand);
 
             TimerOverlayViewModel = App.ServiceProvider.GetRequiredService<TimerOverlayViewModel>();
 
@@ -278,6 +281,9 @@ namespace AioStudy.UI.ViewModels
 
             _gradesViewModel = App.ServiceProvider.GetRequiredService<GradesViewModel>();
             _gradesViewModel.SetMainViewModel(this);
+
+            _dailyPlannerViewModel = App.ServiceProvider.GetRequiredService<DailyPlannerViewModel>();
+            _dailyPlannerViewModel.SetMainViewModel(this);
 
             CurrentViewModel = _dashboardViewModel;
             CurrentViewName = "Dashboard";
@@ -300,13 +306,19 @@ namespace AioStudy.UI.ViewModels
             ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
         }
 
+        private void ExecuteShowDailyPlannerCommand(object? obj)
+        {
+            CurrentViewModel = _dailyPlannerViewModel;
+            CurrentViewName = "Daily planner";
+        }
+
         private async void SetCurrentSemester()
         {
+            LoadUserBottomInfoPanel();
             var currentSemester = await _semesterDbService.GetCurrentSemester();
             if (currentSemester == null) return;
             bool result = await _userDbService.SetCurrentSemester(currentSemester);
             if (!result) return;
-            LoadUserBottomInfoPanel();
         }
 
 
@@ -571,10 +583,12 @@ namespace AioStudy.UI.ViewModels
         public async void LoadUserBottomInfoPanel()
         {
             var user = await _userDbService.GetUser()!;
-            var firstSecondLetter = StringUtils.GetFirstSecondLetter(user?.Username);
-            FirstSecondLetterOfUsername = firstSecondLetter?.ToUpper() ?? "??";
-            CurrentSemester = user?.CurrentSemester?.Name ?? "Current semester not set!";
-            Username = user?.Username ?? "Username not set!";
+            Application.Current?.Dispatcher.Invoke(() =>
+            {
+                FirstSecondLetterOfUsername = StringUtils.GetFirstSecondLetter(user?.Username)?.ToUpper() ?? "??";
+                CurrentSemester = user?.CurrentSemester?.Name ?? "Current semester not set!";
+                Username = user?.Username ?? "Username not set!";
+            });
         }
     }
 }
