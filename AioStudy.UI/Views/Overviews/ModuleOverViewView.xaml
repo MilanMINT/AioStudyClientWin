@@ -7,6 +7,9 @@
     xmlns:local="clr-namespace:AioStudy.UI.Views.Overviews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:overview="clr-namespace:AioStudy.UI.ViewModels.Overview"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:util="clr-namespace:AioStudy.Core.Util;assembly=AioStudy.Core"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     d:DataContext="{d:DesignInstance Type=overview:ModuleOverViewViewModel}"
     d:DesignHeight="1800"
     d:DesignWidth="1200"
@@ -177,6 +180,17 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+
+        <!--  expose enum values for ComboBox  -->
+        <ObjectDataProvider
+            x:Key="ModuleStatusValues"
+            MethodName="GetValues"
+            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <!--  nested enum inside Enums class  -->
+                <x:Type TypeName="util:Enums+ModuleStatus" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </UserControl.Resources>
 
     <!--  header  -->
@@ -215,12 +229,29 @@
                     </StackPanel>
                 </Button>
 
-                <TextBlock
-                    Margin="0,0,0,8"
-                    FontSize="36"
-                    FontWeight="Bold"
-                    Foreground="White"
-                    Text="{Binding ModuleName, FallbackValue='Messtechnik'}" />
+                <!--  Module name: display OR edit  -->
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,8"
+                        FontSize="36"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="{Binding ModuleName, FallbackValue='Messtechnik'}"
+                        Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+
+                    <xctk:WatermarkTextBox
+                        Height="44"
+                        Margin="0,0,0,8"
+                        Padding="5,0,5,0"
+                        HorizontalAlignment="Left"
+                        Background="#1F2024"
+                        FontSize="28"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Style="{StaticResource GradientTextBox}"
+                        Text="{Binding NewModuleName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                        Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
 
                 <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
                     <MaIc:MaterialIcon
@@ -244,11 +275,15 @@
                 Grid.Column="1"
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
+
+                <!--  Edit (visible when not editing)  -->
                 <Button
                     Margin="0,0,10,0"
                     Padding="10,8"
+                    Command="{Binding ToggleEditCancelCommand}"
                     Style="{StaticResource GrayGradientButton}"
-                    ToolTip="Edit Module">
+                    ToolTip="Edit Module"
+                    Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
                         <MaIc:MaterialIcon
                             Width="16"
@@ -256,6 +291,42 @@
                             Margin="0,0,6,0"
                             Kind="EditOutline" />
                         <TextBlock FontSize="12" Text="Edit" />
+                    </StackPanel>
+                </Button>
+
+                <!--  Cancel (visible when editing)  -->
+                <Button
+                    Margin="0,0,10,0"
+                    Padding="10,8"
+                    Command="{Binding ToggleEditCancelCommand}"
+                    Style="{StaticResource GrayGradientButton}"
+                    ToolTip="Cancel editing"
+                    Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,6,0"
+                            Kind="Close" />
+                        <TextBlock FontSize="12" Text="Cancel" />
+                    </StackPanel>
+                </Button>
+
+                <!--  Save (visible when editing)  -->
+                <Button
+                    Margin="0,0,10,0"
+                    Padding="10,8"
+                    Command="{Binding SaveModuleCommand}"
+                    Style="{StaticResource GradientButton}"
+                    ToolTip="Save changes"
+                    Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <MaIc:MaterialIcon
+                            Width="16"
+                            Height="16"
+                            Margin="0,0,6,0"
+                            Kind="ContentSave" />
+                        <TextBlock FontSize="12" Text="Save" />
                     </StackPanel>
                 </Button>
 
@@ -310,6 +381,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
+                    <!--  Credits (display / edit)  -->
                     <Border Grid.Column="0" Style="{StaticResource MetricCard}">
                         <StackPanel>
                             <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
@@ -321,11 +393,26 @@
                                     Kind="Star" />
                                 <TextBlock Style="{StaticResource LabelText}" Text="Credits" />
                             </StackPanel>
+
+                            <!--  display  -->
                             <TextBlock
                                 FontSize="24"
                                 FontWeight="Bold"
                                 Foreground="#F6E05E"
-                                Text="{Binding Module.ModuleCredits, FallbackValue=6}" />
+                                Text="{Binding Module.ModuleCredits, FallbackValue=6}"
+                                Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+
+                            <!--  edit  -->
+                            <xctk:WatermarkTextBox
+                                Width="80"
+                                HorizontalAlignment="Left"
+                                Background="#2A2D35"
+                                FontSize="18"
+                                FontWeight="Bold"
+                                Style="{StaticResource GradientTextBox}"
+                                Text="{Binding NewCreditValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                             <TextBlock
                                 FontSize="12"
                                 Foreground="#A0AEC0"
@@ -333,6 +420,7 @@
                         </StackPanel>
                     </Border>
 
+                    <!--  Status (display / edit via ComboBox)  -->
                     <Border Grid.Column="1" Style="{StaticResource MetricCard}">
                         <StackPanel>
                             <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
@@ -344,11 +432,23 @@
                                     Kind="CheckCircle" />
                                 <TextBlock Style="{StaticResource LabelText}" Text="Status" />
                             </StackPanel>
+
                             <TextBlock
                                 FontSize="24"
                                 FontWeight="Bold"
                                 Foreground="#68D391"
-                                Text="{Binding Module.ExamStatus, FallbackValue='In Progress'}" />
+                                Text="{Binding Module.ExamStatus, FallbackValue='In Progress'}"
+                                Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+
+                            <ComboBox
+                                Width="180"
+                                Height="34"
+                                HorizontalAlignment="Left"
+                                ItemsSource="{Binding Source={StaticResource ModuleStatusValues}}"
+                                SelectedItem="{Binding NewModuleStatus, Mode=TwoWay}"
+                                Style="{StaticResource GradientComboBox}"
+                                Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                             <TextBlock
                                 FontSize="12"
                                 Foreground="#A0AEC0"
@@ -356,6 +456,7 @@
                         </StackPanel>
                     </Border>
 
+                    <!--  Grade (display / edit)  -->
                     <Border Grid.Column="2" Style="{StaticResource MetricCard}">
                         <StackPanel>
                             <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
@@ -367,10 +468,12 @@
                                     Kind="Trophy" />
                                 <TextBlock Style="{StaticResource LabelText}" Text="Grade" />
                             </StackPanel>
+
                             <TextBlock
                                 FontSize="24"
                                 FontWeight="Bold"
-                                Foreground="#9F7AEA">
+                                Foreground="#9F7AEA"
+                                Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                                 <TextBlock.Text>
                                     <Binding
                                         FallbackValue="2.3"
@@ -379,6 +482,17 @@
                                         TargetNullValue="N/A" />
                                 </TextBlock.Text>
                             </TextBlock>
+
+                            <!--  replace the xctk:DoubleUpDown with this ComboBox  -->
+                            <ComboBox
+                                Width="120"
+                                Height="34"
+                                HorizontalAlignment="Left"
+                                ItemsSource="{Binding GradesStringListToChoose}"
+                                SelectedItem="{Binding SelectedGradesStringListToChoose, Mode=TwoWay}"
+                                Style="{StaticResource GradientComboBox}"
+                                Visibility="{Binding ShowGradeEdit, Converter={StaticResource BoolToVisibilityConverter}}" />
+
                             <TextBlock
                                 FontSize="12"
                                 Foreground="#A0AEC0"
@@ -386,6 +500,7 @@
                         </StackPanel>
                     </Border>
 
+                    <!--  Study Time card unchanged  -->
                     <Border Grid.Column="3" Style="{StaticResource MetricCard}">
                         <StackPanel>
                             <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
@@ -441,7 +556,24 @@
                                         Grid.Column="0"
                                         Margin="0,0,10,15">
                                         <TextBlock Style="{StaticResource LabelText}" Text="Semester" />
-                                        <TextBlock Style="{StaticResource ValueText}" Text="{Binding Module.Semester.Name, FallbackValue='Winter 2024/25'}" />
+                                        <TextBlock
+                                            Style="{StaticResource ValueText}"
+                                            Text="{Binding Module.Semester.Name, FallbackValue='Winter 2024/25'}"
+                                            Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                        <!--  replace the Semester ComboBox with this (shows Semester.Name)  -->
+                                        <!--  Semester ComboBox: show semester name and use same instance from Semesters collection  -->
+                                        <ComboBox
+                                            ItemsSource="{Binding Semesters}"
+                                            SelectedItem="{Binding NewSelectedSemester, Mode=TwoWay}"
+                                            Style="{StaticResource GradientComboBox}"
+                                            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Foreground="White" Text="{Binding Name}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <!--  If you want semesters list, replace ItemsSource accordingly  -->
                                     </StackPanel>
 
                                     <StackPanel
@@ -457,7 +589,14 @@
                                         Grid.Column="0"
                                         Margin="0,0,10,15">
                                         <TextBlock Style="{StaticResource LabelText}" Text="Exam Date" />
-                                        <TextBlock Style="{StaticResource ValueText}" Text="{Binding Module.ExamDateString, FallbackValue='15.07.2024', TargetNullValue='Not Set'}" />
+                                        <TextBlock
+                                            Style="{StaticResource ValueText}"
+                                            Text="{Binding Module.ExamDateString, FallbackValue='15.07.2024', TargetNullValue='Not Set'}"
+                                            Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
+                                        <DatePicker
+                                            SelectedDate="{Binding NewExameDate, Mode=TwoWay}"
+                                            Style="{StaticResource GradientDatePicker}"
+                                            Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" />
                                     </StackPanel>
 
                                     <StackPanel
@@ -530,6 +669,7 @@
                                 </Button>
 
                                 <Button
+                                    Margin="0,0,0,10"
                                     Padding="12,8"
                                     Command="{Binding OpenModuleStatisticsCommand}"
                                     Style="{StaticResource GrayGradientButton}">
@@ -542,6 +682,31 @@
                                         <TextBlock Text="View Statistics" />
                                     </StackPanel>
                                 </Button>
+                                <Button
+                                    Margin="0,0,0,10"
+                                    Padding="12,8"
+                                    Style="{StaticResource GreenGradientButton}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <MaIc:MaterialIcon
+                                            Width="16"
+                                            Height="16"
+                                            Margin="0,0,8,0"
+                                            Kind="PartyPopper" />
+                                        <TextBlock Text="Exam passed!" />
+                                    </StackPanel>
+                                </Button>
+
+                                <Button Padding="12,8" Style="{StaticResource RedGradientButton}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <MaIc:MaterialIcon
+                                            Width="16"
+                                            Height="16"
+                                            Margin="0,0,8,0"
+                                            Kind="EmojiSad" />
+                                        <TextBlock Text="Exam failed!" />
+                                    </StackPanel>
+                                </Button>
+
                             </StackPanel>
                         </Border>
 

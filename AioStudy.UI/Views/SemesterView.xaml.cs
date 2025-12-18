@@ -20,9 +20,30 @@ namespace AioStudy.UI.Views
     /// </summary>
     public partial class SemesterView : UserControl
     {
+        private const double WideThreshold = 900.0;
+
         public SemesterView()
         {
             InitializeComponent();
+            Loaded += SemesterView_Loaded;
+            SizeChanged += SemesterView_SizeChanged;
+        }
+
+        private void SemesterView_Loaded(object? sender, RoutedEventArgs e)
+        {
+            UpdateAdaptiveState(this.ActualWidth);
+        }
+
+        private void SemesterView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateAdaptiveState(e.NewSize.Width);
+        }
+
+        private void UpdateAdaptiveState(double width)
+        {
+            if (LayoutRoot == null) return;
+            var state = width >= WideThreshold ? "Wide" : "Narrow";
+            VisualStateManager.GoToElementState(LayoutRoot, state, true);
         }
     }
 }

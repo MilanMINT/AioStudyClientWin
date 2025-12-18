@@ -1,5 +1,6 @@
 ﻿using AioStudy.Core.Data.Services;
 using AioStudy.Core.Services;
+using AioStudy.Core.Util;
 using AioStudy.Core.Util.Modules;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
@@ -7,6 +8,11 @@ using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Media;
+using System.Collections.Generic;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AioStudy.UI.ViewModels.Overview
 {
@@ -15,6 +21,7 @@ namespace AioStudy.UI.ViewModels.Overview
         private Module _module;
         private readonly ITimerService _timerService;
         private readonly LearnSessionDbService _learnSessionDbService;
+        private readonly SemesterDbService _semesterDbService;
         private readonly ModulesDbService _modulesDbService;
         private ObservableCollection<LearnSession> _recentSessions = new ObservableCollection<LearnSession>();
         private ModulesViewModel _modulesViewModel;
@@ -25,6 +32,175 @@ namespace AioStudy.UI.ViewModels.Overview
         private string _averageSessionTime;
         private string _sessionCount;
         private string _backToString;
+        private bool _isEditMode = false;
+
+        //Edit Props
+        private ObservableCollection<Semester> _semesters = new ObservableCollection<Semester>();
+        private string? _newCreditValue = string.Empty;
+        private DateTime? _newExameDate;
+        private string? _newModuleName = string.Empty;
+        private Semester? _newSemester;
+        private Enums.ModuleStatus? _newModuleStatus;
+        private float? _newModuleGrade;
+        private Color? _newModuleColor;
+        private Semester _newSelectedSemester;
+
+        private readonly List<float> _gradesFloatListToChoose = new()
+        {
+            0.7f, 1.0f, 1.3f, 1.7f, 2.0f, 2.3f, 2.7f, 3.0f, 3.3f, 3.7f, 4.0f
+        };
+        private readonly List<string> _gradesStringListToChoose = new()
+        {
+            "0,7","1,0","1,3","1,7","2,0","2,3","2,7","3,0","3,3","3,7","4,0"
+        };
+        private string? _selectedGradesStringListToChoose;
+
+        public Semester NewSelectedSemester
+        {
+            get { return _newSelectedSemester; }
+            set
+            {
+                _newSelectedSemester = value;
+                OnPropertyChanged(nameof(NewSelectedSemester));
+            }
+        }
+
+        public ObservableCollection<Semester> Semesters
+        {
+            get { return _semesters; }
+            set
+            {
+                _semesters = value;
+                OnPropertyChanged(nameof(Semesters));
+            }
+        }
+
+        public string? NewCreditValue
+        {
+            get { return _newCreditValue; }
+            set
+            {
+                _newCreditValue = value;
+                OnPropertyChanged(nameof(NewCreditValue));
+            }
+        }
+
+        public DateTime? NewExameDate
+        {
+            get { return _newExameDate; }
+            set
+            {
+                _newExameDate = value;
+                OnPropertyChanged(nameof(NewExameDate));
+            }
+        }
+
+        public string? NewModuleName
+        {
+            get { return _newModuleName; }
+            set
+            {
+                _newModuleName = value;
+                OnPropertyChanged(nameof(NewModuleName));
+            }
+        }
+
+        public Semester? NewSemester
+        {
+            get { return _newSemester; }
+            set
+            {
+                _newSemester = value;
+                OnPropertyChanged(nameof(NewSemester));
+            }
+        }
+
+        public Enums.ModuleStatus? NewModuleStatus
+        {
+            get { return _newModuleStatus; }
+            set
+            {
+                _newModuleStatus = value;
+                // adjust grade depending on status
+                if (_newModuleStatus == Enums.ModuleStatus.NB)
+                {
+                    NewModuleGrade = 5.0f;
+                    SelectedGradesStringListToChoose = null;
+                }
+                else if (_newModuleStatus == Enums.ModuleStatus.Open)
+                {
+                    NewModuleGrade = null;
+                    SelectedGradesStringListToChoose = null;
+                }
+                else if (_newModuleStatus == Enums.ModuleStatus.BE)
+                {
+                    // keep existing grade (already handled in ResetEditProperties)
+                }
+                OnPropertyChanged(nameof(NewModuleStatus));
+                OnPropertyChanged(nameof(ShowGradeEdit));
+            }
+        }
+
+        public float? NewModuleGrade
+        {
+            get { return _newModuleGrade; }
+            set
+            {
+                _newModuleGrade = value;
+                OnPropertyChanged(nameof(NewModuleGrade));
+            }
+        }
+
+        public Color? NewModuleColor
+        {
+            get { return _newModuleColor; }
+            set
+            {
+                _newModuleColor = value;
+                OnPropertyChanged(nameof(NewModuleColor));
+            }
+        }
+
+        public bool IsEditMode
+        {
+            get { return _isEditMode; }
+            set
+            {
+                _isEditMode = value;
+                OnPropertyChanged(nameof(IsEditMode));
+                OnPropertyChanged(nameof(ShowGradeEdit));
+            }
+        }
+
+        // Expose grade strings for ComboBox
+        public List<string> GradesStringListToChoose => _gradesStringListToChoose;
+
+        public string? SelectedGradesStringListToChoose
+        {
+            get => _selectedGradesStringListToChoose;
+            set
+            {
+                _selectedGradesStringListToChoose = value;
+                // map selected string to float grade
+                if (!string.IsNullOrEmpty(_selectedGradesStringListToChoose))
+                {
+                    var idx = _gradesStringListToChoose.IndexOf(_selectedGradesStringListToChoose);
+                    if (idx >= 0 && idx < _gradesFloatListToChoose.Count)
+                    {
+                        NewModuleGrade = _gradesFloatListToChoose[idx];
+                    }
+                }
+                else
+                {
+                    // no selection -> do not change grade when BE? set null
+                    NewModuleGrade = null;
+                }
+                OnPropertyChanged(nameof(SelectedGradesStringListToChoose));
+            }
+        }
+
+        // used for visibility in XAML: show grade selector only when editing AND status == BE
+        public bool ShowGradeEdit => IsEditMode && NewModuleStatus == Enums.ModuleStatus.BE;
 
         public ObservableCollection<LearnSession> RecentSessions
         {
@@ -180,6 +356,8 @@ namespace AioStudy.UI.ViewModels.Overview
         public RelayCommand DeleteModuleCommand { get; }
         public RelayCommand EditModuleCommand { get; }
         public RelayCommand OpenModuleStatisticsCommand { get; }
+        public RelayCommand ToggleEditCancelCommand { get; }
+        public RelayCommand SaveModuleCommand { get; }
 
         public ModuleOverViewViewModel(Module module, ViewModelBase previousViewModel)
         {
@@ -188,10 +366,15 @@ namespace AioStudy.UI.ViewModels.Overview
             _modulesViewModel = App.ServiceProvider.GetRequiredService<ModulesViewModel>();
             _mainViewModel = App.ServiceProvider.GetRequiredService<MainViewModel>();
             _learnSessionDbService = App.ServiceProvider.GetRequiredService<LearnSessionDbService>();
+            _semesterDbService = App.ServiceProvider.GetRequiredService<SemesterDbService>();
             _previousViewModel = previousViewModel;
 
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithNavigation(parameter));
             OpenModuleStatisticsCommand = new RelayCommand(ExecuteOpenModuleStatisticsCommand);
+            ToggleEditCancelCommand = new RelayCommand(ExecuteToggleSaveCancelCommand);
+            SaveModuleCommand = new RelayCommand(ExecuteSaveModuleAfterEditing);
+
+            Semesters = new ObservableCollection<Semester>(_semesterDbService.GetAllSemestersAsync().Result);
 
             // Commands
             BackCommand = new RelayCommand(ExecuteBackCommand);
@@ -202,6 +385,140 @@ namespace AioStudy.UI.ViewModels.Overview
             SetBackToString();
 
             RefreshAll();
+        }
+
+        private void ResetEditProperties()
+        {
+            NewModuleName = _module.Name;
+            NewCreditValue = _module.ModuleCredits?.ToString() ?? string.Empty;
+            NewExameDate = _module.ExamDate;
+
+            // ensure NewSelectedSemester references the instance from Semesters collection
+            if (_module.Semester != null)
+            {
+                var match = Semesters.FirstOrDefault(s => s.Id == _module.Semester.Id);
+                NewSelectedSemester = match ?? _module.Semester;
+            }
+            else
+            {
+                NewSelectedSemester = null;
+            }
+
+            // keep NewSemester for other uses (if you still need it)
+            NewSemester = _module.Semester;
+
+            if (Enum.TryParse<Enums.ModuleStatus>(_module.ExamStatus, out var status))
+            {
+                NewModuleStatus = status;
+            }
+            else
+            {
+                NewModuleStatus = null;
+            }
+
+            NewModuleGrade = _module.Grade;
+
+            try
+            {
+                if (NewModuleGrade.HasValue)
+                {
+                    var rounded = MathF.Round(NewModuleGrade.Value, 1);
+                    var idx = _gradesFloatListToChoose.IndexOf(rounded);
+                    if (idx >= 0 && idx < _gradesStringListToChoose.Count)
+                    {
+                        SelectedGradesStringListToChoose = _gradesStringListToChoose[idx];
+                    }
+                    else
+                    {
+                        SelectedGradesStringListToChoose = null;
+                    }
+                }
+                else
+                {
+                    SelectedGradesStringListToChoose = null;
+                }
+            }
+            catch
+            {
+                SelectedGradesStringListToChoose = null;
+            }
+
+            if (!string.IsNullOrEmpty(_module.Color))
+            {
+                try
+                {
+                    var color = (Color)ColorConverter.ConvertFromString(_module.Color);
+                    NewModuleColor = color;
+                }
+                catch
+                {
+                    NewModuleColor = null;
+                }
+            }
+            else
+            {
+                NewModuleColor = null;
+            }
+
+            // notify dependent bindings
+            OnPropertyChanged(nameof(SelectedGradesStringListToChoose));
+            OnPropertyChanged(nameof(ShowGradeEdit));
+            OnPropertyChanged(nameof(NewSelectedSemester));
+        }
+
+        private void ExecuteToggleSaveCancelCommand(object? obj)
+        {
+            if (IsEditMode)
+            {
+                IsEditMode = false;
+                ResetEditProperties();
+            }
+            else
+            {
+                IsEditMode = true;
+                ResetEditProperties();
+            }
+        }
+
+        private void ExecuteSaveModuleAfterEditing(object? obj)
+        {
+            if (_module != null)
+            {
+                _module.Name = NewModuleName ?? _module.Name;
+                if (int.TryParse(NewCreditValue, out int credits))
+                {
+                    _module.ModuleCredits = credits;
+                }
+                else
+                {
+                    _module.ModuleCredits = null;
+                }
+
+                _module.ExamDate = NewExameDate;
+
+                // IMPORTANT: set both navigation and FK so the DB update persists the semester
+                _module.Semester = NewSelectedSemester;
+                _module.SemesterId = NewSelectedSemester?.Id;
+
+                _module.ExamStatus = NewModuleStatus?.ToString() ?? _module.ExamStatus;
+                _module.Grade = NewModuleGrade;
+                if (NewModuleColor.HasValue)
+                {
+                    _module.Color = NewModuleColor.Value.ToString();
+                }
+                else
+                {
+                    _module.Color = null;
+                }
+
+                _ = _modulesDbService.UpdateModuleAsync(_module);
+
+                IsEditMode = false;
+                ResetEditProperties();
+                OnPropertyChanged(nameof(Module));
+                OnPropertyChanged(nameof(ModuleName));
+            }
+
         }
 
         private void SetBackToString()
@@ -231,7 +548,7 @@ namespace AioStudy.UI.ViewModels.Overview
                     BackToString = "Modules";
                     break;
             }
-        }   
+        }
 
         private void ExecuteOpenModuleStatisticsCommand(object? obj)
         {
@@ -273,9 +590,9 @@ namespace AioStudy.UI.ViewModels.Overview
                         if (success)
                         {
                             _modulesViewModel.Modules.Remove(module);
-                            
+
                             await ToastService.ShowSuccessAsync("Module Deleted!", $"The module '{module.Name}' has been successfully deleted.");
-                            
+
                             _mainViewModel.CurrentViewModel = _modulesViewModel;
                         }
                     }

@@ -24,12 +24,14 @@ namespace AioStudy.UI.Views
     public partial class ModulesView : UserControl
     {
         private SoundPlayer? _soundPlayer;
+        private const double WideThreshold = 900.0;
 
         public ModulesView()
         {
             InitializeComponent();
+            Loaded += ModulesView_Loaded;
+            SizeChanged += ModulesView_SizeChanged;
         }
-
 
         private async Task PlaySoundAsync()
         {
@@ -81,6 +83,23 @@ namespace AioStudy.UI.Views
                                "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
             }
+        }
+
+        private void ModulesView_Loaded(object? sender, RoutedEventArgs e)
+        {
+            UpdateAdaptiveState(this.ActualWidth);
+        }
+
+        private void ModulesView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateAdaptiveState(e.NewSize.Width);
+        }
+
+        private void UpdateAdaptiveState(double width)
+        {
+            if (LayoutRoot == null) return;
+            var state = width >= WideThreshold ? "Wide" : "Narrow";
+            VisualStateManager.GoToElementState(LayoutRoot, state, true);
         }
     }
 }

@@ -20,10 +20,30 @@ namespace AioStudy.UI.Views
     /// </summary>
     public partial class SettingsView : UserControl
     {
+        private const double WideThreshold = 900.0;
+
         public SettingsView()
         {
             InitializeComponent();
+            Loaded += SettingsView_Loaded;
+            SizeChanged += SettingsView_SizeChanged;
+        }
 
+        private void SettingsView_Loaded(object? sender, RoutedEventArgs e)
+        {
+            UpdateAdaptiveState(this.ActualWidth);
+        }
+
+        private void SettingsView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateAdaptiveState(e.NewSize.Width);
+        }
+
+        private void UpdateAdaptiveState(double width)
+        {
+            if (LayoutRoot == null) return;
+            var state = width >= WideThreshold ? "Wide" : "Narrow";
+            VisualStateManager.GoToElementState(LayoutRoot, state, true);
         }
     }
 }

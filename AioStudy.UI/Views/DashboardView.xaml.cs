@@ -20,9 +20,30 @@ namespace AioStudy.UI.Views
     /// </summary>
     public partial class DashboardView : UserControl
     {
+        private const double WideThreshold = 900.0;
+
         public DashboardView()
         {
             InitializeComponent();
+            Loaded += DashboardView_Loaded;
+            SizeChanged += DashboardView_SizeChanged;
+        }
+
+        private void DashboardView_Loaded(object? sender, RoutedEventArgs e)
+        {
+            UpdateAdaptiveState(this.ActualWidth);
+        }
+
+        private void DashboardView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateAdaptiveState(e.NewSize.Width);
+        }
+
+        private void UpdateAdaptiveState(double width)
+        {
+            if (LayoutRoot == null) return;
+            var state = width >= WideThreshold ? "Wide" : "Narrow";
+            VisualStateManager.GoToElementState(LayoutRoot, state, true);
         }
     }
 }

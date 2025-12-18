@@ -523,7 +523,7 @@
                 <!--  Timer Display Border  -->
                 <Border
                     Grid.Row="1"
-                    MinWidth="600"
+                    MinWidth="350"
                     MinHeight="350"
                     MaxWidth="700"
                     MaxHeight="650"
