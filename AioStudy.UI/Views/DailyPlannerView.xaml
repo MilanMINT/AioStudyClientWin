@@ -123,7 +123,6 @@
                         Kind="ChevronRight" />
                 </Button>
 
-
                 <!--  Refresh Button  -->
                 <Button
                     Width="45"
@@ -146,6 +145,77 @@
             Height="1"
             Margin="30,0"
             Background="#3A3D45" />
+
+        <!--  Content  -->
+        <Grid Grid.Row="2" Margin="30,20,30,30">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <!--  Tasks List  -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Tasks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Margin="0,0,0,15"
+                                Padding="15"
+                                Background="#2B2E31"
+                                CornerRadius="8">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="20"
+                                        FontWeight="Bold"
+                                        Foreground="White"
+                                        Text="{Binding Title}" />
+                                    <TextBlock
+                                        Margin="0,5,0,0"
+                                        FontSize="14"
+                                        Foreground="#B0B3BA"
+                                        Text="{Binding Description}" />
+                                    <TextBlock
+                                        Margin="0,5,0,0"
+                                        FontSize="12"
+                                        Foreground="#888A8E"
+                                        Text="{Binding TimeRange}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <!--  Actions Panel  -->
+            <StackPanel
+                x:Name="ActionsPanel"
+                Grid.Column="1"
+                Width="200"
+                Margin="20,0,0,0"
+                VerticalAlignment="Top">
+                <Button
+                    Height="40"
+                    Margin="0,0,0,10"
+                    Command="{Binding AddTaskCommand}"
+                    Style="{StaticResource GradientButton}">
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="+ Add Task" />
+                </Button>
+                <Button
+                    Height="40"
+                    Command="{Binding ClearTasksCommand}"
+                    Style="{StaticResource GradientButton}">
+                    <TextBlock
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="Clear All Tasks" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+
 
 
         <VisualStateManager.VisualStateGroups>

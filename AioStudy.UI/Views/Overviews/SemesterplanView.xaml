@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:MaIc="clr-namespace:Material.Icons.WPF;assembly=Material.Icons.WPF"
+    xmlns:conv="clr-namespace:AioStudy.UI.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:AioStudy.UI.Views.Overviews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -100,6 +101,7 @@
                     <MaIc:MaterialIcon
                         Width="22"
                         Height="22"
+                        Foreground="#B0B3BA"
                         Kind="Refresh" />
                 </Button>
             </StackPanel>
@@ -131,243 +133,326 @@
                 Background="Transparent"
                 ClipToBounds="False">
 
-                <ItemsControl
-                    Width="{Binding ParentContainerWidth}"
-                    HorizontalAlignment="Stretch"
-                    ClipToBounds="False"
-                    ItemsSource="{Binding SemesterRows}">
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="ClipToBounds" Value="False" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type vm:SemesterRowViewModel}">
-                            <Grid Margin="0,15,0,0">
+                <Grid>
+                    <ItemsControl
+                        x:Name="semestersItemsControl"
+                        Width="{Binding ParentContainerWidth}"
+                        HorizontalAlignment="Stretch"
+                        ClipToBounds="False"
+                        ItemsSource="{Binding SemesterRows}"
+                        Visibility="{Binding SemesterRows.Count, Converter={StaticResource IntToVisibilityConverter}}">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="ClipToBounds" Value="False" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:SemesterRowViewModel}">
+                                <Grid Margin="0,15,0,0">
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="{Binding SemesterInfoContainerWidth}" />
-                                    <ColumnDefinition Width="{Binding ModulesContainerWidth}" />
-                                </Grid.ColumnDefinitions>
-
-                                <Grid Grid.Column="0">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="{Binding SemesterInfoContainerWidth}" />
+                                        <ColumnDefinition Width="{Binding ModulesContainerWidth}" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Border
-                                        Grid.Column="0"
-                                        Width="3"
-                                        Height="110"
-                                        Margin="0,0,7,0"
-                                        Background="{Binding Semester.Color, Converter={StaticResource StringToBrushConverter}}"
-                                        CornerRadius="2" />
+                                    <Grid Grid.Column="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <StackPanel
-                                        Grid.Column="1"
-                                        Margin="0,0,12,0"
-                                        VerticalAlignment="Top">
-                                        <DockPanel LastChildFill="True">
-                                            <TextBlock
-                                                FontSize="12"
-                                                FontWeight="SemiBold"
-                                                Foreground="#9FA2A6"
-                                                Text="{Binding SemesterNumber, StringFormat={}{0}. Semester}" />
-                                            <Border
-                                                Width="42"
-                                                Height="16"
-                                                Padding="6,0"
-                                                Background="#DCAA09"
-                                                CornerRadius="4"
-                                                Visibility="{Binding IsCurrentSemester, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                <TextBlock
-                                                    FontSize="11"
-                                                    FontWeight="Bold"
-                                                    Foreground="White"
-                                                    Text="CURR">
-                                                    <TextBlock.Effect>
-                                                        <DropShadowEffect
-                                                            BlurRadius="4"
-                                                            Direction="270"
-                                                            Opacity="0.6"
-                                                            ShadowDepth="1"
-                                                            Color="#000000" />
-                                                    </TextBlock.Effect>
-                                                </TextBlock>
-                                            </Border>
-                                        </DockPanel>
-                                        <TextBlock
-                                            Margin="0,5,0,0"
-                                            FontSize="14"
-                                            FontWeight="Bold"
-                                            Foreground="White"
-                                            Text="{Binding Semester.Name}" />
-                                        <TextBlock
-                                            Margin="0,47,0,0"
-                                            VerticalAlignment="Bottom"
-                                            FontSize="12"
-                                            Foreground="#B0B3BA"
-                                            Text="{Binding TotalCredits, StringFormat={}{0} Credits}" />
                                         <Border
-                                            Height="1"
-                                            Margin="0,6,0,0"
-                                            Background="#CFCFCF"
-                                            Opacity="0.15" />
-                                    </StackPanel>
-                                </Grid>
+                                            Grid.Column="0"
+                                            Width="3"
+                                            Height="110"
+                                            Margin="0,0,7,0"
+                                            Background="{Binding Semester.Color, Converter={StaticResource StringToBrushConverter}}"
+                                            CornerRadius="2" />
+
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Margin="0,0,12,0"
+                                            VerticalAlignment="Top">
+                                            <DockPanel LastChildFill="True">
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="#9FA2A6"
+                                                    Text="{Binding SemesterNumber, StringFormat={}{0}. Semester}" />
+                                                <Border
+                                                    Width="42"
+                                                    Height="16"
+                                                    Padding="6,0"
+                                                    Background="#DCAA09"
+                                                    CornerRadius="4"
+                                                    Visibility="{Binding IsCurrentSemester, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <TextBlock
+                                                        FontSize="11"
+                                                        FontWeight="Bold"
+                                                        Foreground="White"
+                                                        Text="CURR">
+                                                        <TextBlock.Effect>
+                                                            <DropShadowEffect
+                                                                BlurRadius="4"
+                                                                Direction="270"
+                                                                Opacity="0.6"
+                                                                ShadowDepth="1"
+                                                                Color="#000000" />
+                                                        </TextBlock.Effect>
+                                                    </TextBlock>
+                                                </Border>
+                                            </DockPanel>
+                                            <TextBlock
+                                                Margin="0,5,0,0"
+                                                FontSize="14"
+                                                FontWeight="Bold"
+                                                Foreground="White"
+                                                Text="{Binding Semester.Name}" />
+                                            <TextBlock
+                                                Margin="0,47,0,0"
+                                                VerticalAlignment="Bottom"
+                                                FontSize="12"
+                                                Foreground="#B0B3BA"
+                                                Text="{Binding TotalCredits, StringFormat={}{0} Credits}" />
+                                            <Border
+                                                Height="1"
+                                                Margin="0,6,0,0"
+                                                Background="#CFCFCF"
+                                                Opacity="0.15" />
+                                        </StackPanel>
+                                    </Grid>
 
 
-                                <Border
-                                    Grid.Column="1"
-                                    Width="{Binding ModulesContainerWidth}"
-                                    Height="115"
-                                    Background="Transparent">
-                                    <ItemsControl ItemsSource="{Binding Modules}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
+                                    <Border
+                                        Grid.Column="1"
+                                        Width="{Binding ModulesContainerWidth}"
+                                        Height="115"
+                                        Background="Transparent">
+                                        <Grid>
+                                            <ItemsControl ItemsSource="{Binding Modules}">
+                                                <ItemsControl.Template>
+                                                    <ControlTemplate TargetType="ItemsControl">
+                                                        <Border Background="Transparent">
+                                                            <Grid>
+                                                                <ItemsPresenter x:Name="ItemsHost" Visibility="Collapsed" />
 
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border x:Name="ModuleBorder">
-                                                    <Border.Width>
-                                                        <MultiBinding Converter="{StaticResource CreditsToWidthConverter}" ConverterParameter="8">
-                                                            <Binding Path="ModuleCredits" TargetNullValue="0" />
-                                                            <Binding Path="DataContext.TotalCredits" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
-                                                            <Binding Path="DataContext.ModulesContainerWidth" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
-                                                            <Binding Path="DataContext.ModulesCount" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
-                                                        </MultiBinding>
-                                                    </Border.Width>
+                                                                <StackPanel
+                                                                    x:Name="EmptyPanel"
+                                                                    MinWidth="200"
+                                                                    MinHeight="80"
+                                                                    HorizontalAlignment="Center"
+                                                                    VerticalAlignment="Center"
+                                                                    Orientation="Vertical"
+                                                                    Visibility="Collapsed">
+                                                                    <TextBlock
+                                                                        Margin="0,0,0,8"
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="16"
+                                                                        FontWeight="SemiBold"
+                                                                        Foreground="#9FA2A6"
+                                                                        Text="No modules yet" />
+                                                                    <TextBlock
+                                                                        Margin="0,0,0,12"
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="12"
+                                                                        Foreground="#A0A6AC"
+                                                                        Text="Create your first module to see it here." />
+                                                                    <Button
+                                                                        Width="120"
+                                                                        Height="30"
+                                                                        Command="{Binding DataContext.ShowModulesCMD, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                        Content="Open Modules"
+                                                                        Style="{StaticResource GradientButton}" />
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="HasItems" Value="True">
+                                                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+                                                                <Setter TargetName="EmptyPanel" Property="Visibility" Value="Collapsed" />
+                                                            </Trigger>
+                                                            <Trigger Property="HasItems" Value="False">
+                                                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                                                                <Setter TargetName="EmptyPanel" Property="Visibility" Value="Visible" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </ItemsControl.Template>
 
-                                                    <Border.BorderBrush>
-                                                        <LinearGradientBrush>
-                                                            <GradientStop Offset="0.1" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#3A3D45}" />
-                                                            <GradientStop Offset="0.7" Color="#3A3D45" />
-                                                        </LinearGradientBrush>
-                                                    </Border.BorderBrush>
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
 
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="#202126" />
-                                                            <Setter Property="CornerRadius" Value="6" />
-                                                            <Setter Property="BorderBrush" Value="#3A3D45" />
-                                                            <Setter Property="BorderThickness" Value="1" />
-                                                            <Setter Property="Padding" Value="12" />
-                                                            <Setter Property="Height" Value="110" />
-                                                            <Setter Property="MinWidth" Value="48" />
-                                                            <Setter Property="Margin" Value="0,0,8,0" />
-                                                            <Setter Property="VerticalAlignment" Value="Top" />
-                                                            <Setter Property="Effect">
-                                                                <Setter.Value>
-                                                                    <DropShadowEffect
-                                                                        BlurRadius="4"
-                                                                        Opacity="0.36"
-                                                                        ShadowDepth="3"
-                                                                        Color="#000000" />
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border x:Name="ModuleBorder">
+                                                            <Border.Width>
+                                                                <MultiBinding Converter="{StaticResource CreditsToWidthConverter}" ConverterParameter="8">
+                                                                    <Binding Path="ModuleCredits" TargetNullValue="0" />
+                                                                    <Binding Path="DataContext.TotalCredits" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                                    <Binding Path="DataContext.ModulesContainerWidth" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                                    <Binding Path="DataContext.ModulesCount" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                                </MultiBinding>
+                                                            </Border.Width>
+
+                                                            <Border.BorderBrush>
+                                                                <LinearGradientBrush>
+                                                                    <GradientStop Offset="0.1" Color="{Binding Color, TargetNullValue=#608BC1, FallbackValue=#3A3D45}" />
+                                                                    <GradientStop Offset="0.7" Color="#3A3D45" />
+                                                                </LinearGradientBrush>
+                                                            </Border.BorderBrush>
+
+                                                            <Border.Style>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="Background" Value="#202126" />
+                                                                    <Setter Property="CornerRadius" Value="6" />
+                                                                    <Setter Property="BorderBrush" Value="#3A3D45" />
+                                                                    <Setter Property="BorderThickness" Value="1" />
+                                                                    <Setter Property="Padding" Value="12" />
+                                                                    <Setter Property="Height" Value="110" />
+                                                                    <Setter Property="MinWidth" Value="48" />
+                                                                    <Setter Property="Margin" Value="0,0,8,0" />
+                                                                    <Setter Property="VerticalAlignment" Value="Top" />
                                                                     <Setter Property="Effect">
                                                                         <Setter.Value>
                                                                             <DropShadowEffect
-                                                                                BlurRadius="6"
+                                                                                BlurRadius="4"
                                                                                 Opacity="0.36"
-                                                                                ShadowDepth="4"
+                                                                                ShadowDepth="3"
                                                                                 Color="#000000" />
                                                                         </Setter.Value>
                                                                     </Setter>
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
+                                                                    <Style.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Effect">
+                                                                                <Setter.Value>
+                                                                                    <DropShadowEffect
+                                                                                        BlurRadius="6"
+                                                                                        Opacity="0.36"
+                                                                                        ShadowDepth="4"
+                                                                                        Color="#000000" />
+                                                                                </Setter.Value>
+                                                                            </Setter>
+                                                                        </Trigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
 
-                                                    <Grid>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="Auto" MaxHeight="60" />
-                                                            <RowDefinition Height="*" />
-                                                        </Grid.RowDefinitions>
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="Auto" MaxHeight="60" />
+                                                                    <RowDefinition Height="*" />
+                                                                </Grid.RowDefinitions>
 
-                                                        <StackPanel Grid.Row="0">
-                                                            <!--  Module Name  -->
-                                                            <TextBlock
-                                                                Grid.Row="0"
-                                                                Grid.Column="0"
-                                                                Margin="0,0,0,2"
-                                                                FontSize="14"
-                                                                FontWeight="Bold"
-                                                                Foreground="White"
-                                                                Text="{Binding Name}"
-                                                                TextTrimming="CharacterEllipsis"
-                                                                ToolTip="{Binding Name}" />
+                                                                <StackPanel Grid.Row="0">
+                                                                    <!--  Module Name  -->
+                                                                    <TextBlock
+                                                                        Grid.Row="0"
+                                                                        Grid.Column="0"
+                                                                        Margin="0,0,0,2"
+                                                                        FontSize="14"
+                                                                        FontWeight="Bold"
+                                                                        Foreground="White"
+                                                                        Text="{Binding Name}"
+                                                                        TextTrimming="CharacterEllipsis"
+                                                                        ToolTip="{Binding Name}" />
 
-                                                            <Border
-                                                                Margin="0,0,0,0"
-                                                                Padding="3"
-                                                                HorizontalAlignment="Left"
-                                                                Background="{Binding Converter={StaticResource GradeToBackgroundConverter}, FallbackValue=#9F7AEA}"
-                                                                CornerRadius="4"
-                                                                DockPanel.Dock="Right">
-                                                                <TextBlock
-                                                                    FontSize="10"
-                                                                    FontWeight="Bold"
-                                                                    Foreground="White"
-                                                                    Text="{Binding Converter={StaticResource GradeToDisplayTextConverter}}">
-                                                                    <TextBlock.Effect>
-                                                                        <DropShadowEffect
-                                                                            BlurRadius="3"
-                                                                            Direction="270"
-                                                                            Opacity="0.9"
-                                                                            ShadowDepth="2"
-                                                                            Color="#000000" />
-                                                                    </TextBlock.Effect>
-                                                                </TextBlock>
+                                                                    <Border
+                                                                        Margin="0,0,0,0"
+                                                                        Padding="3"
+                                                                        HorizontalAlignment="Left"
+                                                                        Background="{Binding Converter={StaticResource GradeToBackgroundConverter}, FallbackValue=#9F7AEA}"
+                                                                        CornerRadius="4"
+                                                                        DockPanel.Dock="Right">
+                                                                        <TextBlock
+                                                                            FontSize="10"
+                                                                            FontWeight="Bold"
+                                                                            Foreground="White"
+                                                                            Text="{Binding Converter={StaticResource GradeToDisplayTextConverter}}">
+                                                                            <TextBlock.Effect>
+                                                                                <DropShadowEffect
+                                                                                    BlurRadius="3"
+                                                                                    Direction="270"
+                                                                                    Opacity="0.9"
+                                                                                    ShadowDepth="2"
+                                                                                    Color="#000000" />
+                                                                            </TextBlock.Effect>
+                                                                        </TextBlock>
 
-                                                            </Border>
-                                                        </StackPanel>
+                                                                    </Border>
+                                                                </StackPanel>
 
 
-                                                        <DockPanel
-                                                            Grid.Row="1"
-                                                            Grid.ColumnSpan="2"
-                                                            LastChildFill="True">
-                                                            <!--  Module Credits  -->
-                                                            <TextBlock
-                                                                Grid.Row="1"
-                                                                VerticalAlignment="Bottom"
-                                                                FontSize="12"
-                                                                Foreground="#B0B3BA"
-                                                                Text="{Binding ModuleCredits, StringFormat={}{0} Credits}" />
+                                                                <DockPanel
+                                                                    Grid.Row="1"
+                                                                    Grid.ColumnSpan="2"
+                                                                    LastChildFill="True">
+                                                                    <!--  Module Credits  -->
+                                                                    <TextBlock
+                                                                        Grid.Row="1"
+                                                                        VerticalAlignment="Bottom"
+                                                                        FontSize="12"
+                                                                        Foreground="#B0B3BA"
+                                                                        Text="{Binding ModuleCredits, StringFormat={}{0} Credits}" />
 
-                                                            <Button
-                                                                Margin="0,0,0,-2"
-                                                                HorizontalAlignment="Right"
-                                                                VerticalAlignment="Bottom"
-                                                                Command="{Binding DataContext.OpenModuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                                CommandParameter="{Binding}"
-                                                                Style="{StaticResource NoHoverButtonStyle}">
-                                                                <MaIc:MaterialIcon
-                                                                    Width="17"
-                                                                    Height="17"
-                                                                    Foreground="#B0B3BA"
-                                                                    Kind="OpenInNew" />
-                                                            </Button>
-                                                        </DockPanel>
+                                                                    <Button
+                                                                        Margin="0,0,0,-2"
+                                                                        HorizontalAlignment="Right"
+                                                                        VerticalAlignment="Bottom"
+                                                                        Command="{Binding DataContext.OpenModuleCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                                        CommandParameter="{Binding}"
+                                                                        Style="{StaticResource NoHoverButtonStyle}">
+                                                                        <MaIc:MaterialIcon
+                                                                            Width="17"
+                                                                            Height="17"
+                                                                            Foreground="#B0B3BA"
+                                                                            Kind="OpenInNew" />
+                                                                    </Button>
+                                                                </DockPanel>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-                                                    </Grid>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </Border>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                    <Border Background="Transparent" Visibility="{Binding SemesterRows.Count, Converter={StaticResource IntToVisibilityConverter}, ConverterParameter=invert}">
+                        <StackPanel
+                            MinWidth="300"
+                            MinHeight="180"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Vertical">
+                            <TextBlock
+                                Margin="0,0,0,8"
+                                HorizontalAlignment="Center"
+                                FontSize="20"
+                                FontWeight="SemiBold"
+                                Foreground="#9FA2A6"
+                                Text="No semesters yet" />
+                            <TextBlock
+                                Margin="0,0,0,12"
+                                HorizontalAlignment="Center"
+                                FontSize="13"
+                                Foreground="#A0A6AC"
+                                Text="Add a semester to get started." />
+                            <Button
+                                Width="140"
+                                Height="34"
+                                Command="{Binding ShowAddSemesterCommand}"
+                                Content="Add semester"
+                                Style="{StaticResource GradientButton}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Border>
         </ScrollViewer>
     </Grid>

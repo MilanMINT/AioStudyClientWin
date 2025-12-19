@@ -83,6 +83,7 @@ namespace AioStudy.UI
             services.AddTransient<QuickTimerDbService>();
             services.AddTransient<SettingsManager>();
             services.AddTransient<DailyPlanDbService>();
+            services.AddTransient<IGitHubReleaseService, GitHubReleaseService>();
 
             services.AddTransient<ModuleOverViewViewModel>();
 

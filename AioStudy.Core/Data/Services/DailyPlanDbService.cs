@@ -41,5 +41,48 @@ namespace AioStudy.Core.Data.Services
                 throw;
             }
         }
+
+        public async Task<bool> CheckIfPlanAlreadyExist(DateOnly date)
+        {
+            try
+            {
+                var existingPlans = await _dailyPlanRepository.GetAllAsync();
+                return existingPlans.Any(dp => dp.Date == date);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DailyPlan> CreateDailyPlan(DateOnly date)
+        {
+            try
+            {
+                var newDailyPlan = new DailyPlan
+                {
+                    Date = date
+                };
+                var createdPlan = await _dailyPlanRepository.CreateAsync(newDailyPlan);
+                return createdPlan ?? throw new Exception("Failed to create DailyPlan");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DailyPlan?> GetDailyPlanByDate(DateOnly date)
+        {
+            try
+            {
+                var existingPlans = await _dailyPlanRepository.GetAllAsync();
+                return existingPlans.FirstOrDefault(dp => dp.Date == date);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -10,16 +10,8 @@ namespace AioStudy.UI.Converter
 {
     public class StringToEnableConverter : IValueConverter
     {
-        /// <summary>
-        /// Der String-Wert, bei dem das Element enabled sein soll
-        /// </summary>
         public string EnabledValue { get; set; } = "Enabled";
-
-        /// <summary>
-        /// Ob die Logik umgekehrt werden soll (invertiert)
-        /// </summary>
         public bool IsInverted { get; set; } = false;
-
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)

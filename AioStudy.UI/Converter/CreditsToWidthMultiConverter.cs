@@ -6,7 +6,7 @@ namespace AioStudy.UI.Converter
 {
     public class CreditsToWidthMultiConverter : IMultiValueConverter
     {
-        // values: [0]=moduleCredits, [1]=totalCredits, [2]=modulesContainerWidth [3]=marginCompensation
+        //[0]=moduleCredits, [1]=totalCredits, [2]=modulesContainerWidth [3]=marginCompensation
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             try

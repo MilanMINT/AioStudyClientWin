@@ -109,6 +109,7 @@
                 LastChildFill="False"
                 MouseEnter="MainControlBar_MouseEnter"
                 MouseLeftButtonDown="MainControlBar_MouseLeftButtonDown">
+
                 <Button
                     x:Name="btnCloseApp"
                     Click="BtnCloseApp_Click"
@@ -132,6 +133,55 @@
                     Style="{StaticResource controlButton}"
                     WindowChrome.IsHitTestVisibleInChrome="True">
                     <MaIc:MaterialIcon Kind="WindowMinimize" Style="{StaticResource controlButtonIcon}" />
+                </Button>
+
+                <Button
+                    Width="70"
+                    Height="23"
+                    Panel.ZIndex="99999999"
+                    BorderThickness="1"
+                    Command="{Binding OpenUpdateLinkCommand}"
+                    Style="{StaticResource PurpleGradientButton}"
+                    Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}, TargetNullValue=Collapsed}"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="9"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            Text="Update" />
+                        <MaIc:MaterialIcon
+                            Width="12"
+                            Height="12"
+                            Margin="4,0,0,0"
+                            HorizontalAlignment="Center"
+                            Foreground="White"
+                            Kind="Update" />
+                    </StackPanel>
+                </Button>
+
+                <Button
+                    Width="25"
+                    Height="23"
+                    Margin="5,0,0,0"
+                    Panel.ZIndex="99999999"
+                    BorderThickness="1"
+                    Command="{Binding OpenUpdateLinkHelpCommand}"
+                    Style="{StaticResource PurpleGradientButton}"
+                    Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BoolToVisibilityConverter}, TargetNullValue=Collapsed}"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                    <StackPanel Orientation="Horizontal">
+                        <MaIc:MaterialIcon
+                            Width="10"
+                            Height="10"
+                            Margin="1,1,0,0"
+                            HorizontalAlignment="Center"
+                            Foreground="White"
+                            Kind="QuestionMark" />
+
+
+                    </StackPanel>
                 </Button>
 
                 <Image

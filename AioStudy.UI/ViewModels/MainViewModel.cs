@@ -6,20 +6,13 @@ using AioStudy.UI.Commands;
 using AioStudy.UI.ViewModels.Components;
 using AioStudy.UI.ViewModels.Forms;
 using AioStudy.UI.Views.Forms;
-using AioStudy.UI.WpfServices;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.Diagnostics;
 using System.Media;
-using System.Runtime.CompilerServices;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace AioStudy.UI.ViewModels
@@ -27,6 +20,8 @@ namespace AioStudy.UI.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private readonly SettingsManager _settingsManager = SettingsManager.Instance;
+
+        private readonly IGitHubReleaseService _releaseService;
 
         private readonly ITimerService _timerService;
         private readonly UserDbService _userDbService;
@@ -65,6 +60,8 @@ namespace AioStudy.UI.ViewModels
         public RelayCommand ShowGradesCMD { get; }
         public RelayCommand ShowModulesCMD { get; }
         public RelayCommand ShowDailyPlannerCMD { get; }
+        public RelayCommand OpenUpdateLinkCommand {  get; }
+        public RelayCommand OpenUpdateLinkHelpCommand { get; }
 
         private TimeSpan _time;
 
@@ -75,6 +72,29 @@ namespace AioStudy.UI.ViewModels
         private string _firstSecondLetterOfUsername;
         private string _username;
         private string _currentSemester;
+
+        private bool _isUpdateAvailable;
+        private string? _latestVersionUrl;
+
+        public bool IsUpdateAvailable
+        {
+            get => _isUpdateAvailable;
+            set
+            {
+                _isUpdateAvailable = value;
+                OnPropertyChanged(nameof(IsUpdateAvailable));
+            }
+        }
+
+        public string ? LatestVersionUrl
+        {
+            get => _latestVersionUrl;
+            set
+            {
+                _latestVersionUrl = value;
+                OnPropertyChanged(nameof(LatestVersionUrl));
+            }
+        }
 
         public string GradientColor1
         {
@@ -250,6 +270,7 @@ namespace AioStudy.UI.ViewModels
             _timerService = timerService;
             _userDbService = userDbService;
             _semesterDbService = semesterDbService;
+            _releaseService = App.ServiceProvider.GetRequiredService<IGitHubReleaseService>();
 
             // Commands initialisieren
             Dark = new RelayCommand(ExecuteDarkCommand);
@@ -261,6 +282,8 @@ namespace AioStudy.UI.ViewModels
             ShowGradesCMD = new RelayCommand(ExecuteShowGradesCommand);
             ShowModulesCMD = new RelayCommand(ExecuteShowModulesCommand);
             ShowDailyPlannerCMD = new RelayCommand(ExecuteShowDailyPlannerCommand);
+            OpenUpdateLinkCommand = new RelayCommand(ExecuteOpenUpdateLinkCommand);
+            OpenUpdateLinkHelpCommand = new RelayCommand(ExecuteOpenUpdateLinkHelpCommand);
 
             TimerOverlayViewModel = App.ServiceProvider.GetRequiredService<TimerOverlayViewModel>();
 
@@ -304,6 +327,109 @@ namespace AioStudy.UI.ViewModels
             _timerService.BreakEnded += OnBreakEnded;
 
             ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
+
+            _ = CheckForUpdatesAsync();
+        }
+
+        private void ExecuteOpenUpdateLinkHelpCommand(object? obj)
+        {
+            string helpUrl = "https://aiostudy.de/update";
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = helpUrl,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[Update] Failed to open URL '{helpUrl}': {ex}");
+                MessageBox.Show($"Could not open help link.\n{ex.Message}", "Update", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExecuteOpenUpdateLinkCommand(object? obj)
+        {
+            var url = LatestVersionUrl;
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                MessageBox.Show("No update URL available.", "Update", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                var prefixed = "https://" + url;
+                if (Uri.IsWellFormedUriString(prefixed, UriKind.Absolute))
+                    url = prefixed;
+                else
+                {
+                    MessageBox.Show($"Invalid update URL:\n{url}", "Update", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[Update] Failed to open URL '{url}': {ex}");
+                MessageBox.Show($"Could not open update link.\n{ex.Message}", "Update", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private static string? GetRawInformationalVersion()
+        {
+            var asm = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+            return asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        }
+
+        private static string NormalizeVersionString(string? version)
+        {
+            if (string.IsNullOrWhiteSpace(version))
+                return string.Empty;
+
+            var withoutMetadata = version.Split('+')[0].Trim();
+            return withoutMetadata.TrimStart('v', 'V');
+        }
+
+        private async Task CheckForUpdatesAsync()
+        {
+            string? currentVersionRaw = GetRawInformationalVersion();
+            string currentVersion = NormalizeVersionString(currentVersionRaw);
+
+            var latest = await _releaseService.GetLatestReleaseTagAsync();
+            if (latest == null)
+                return;
+
+            string latestRaw = latest.Value.Tag ?? string.Empty;
+            string latestNormalized = NormalizeVersionString(latestRaw);
+
+            Debug.WriteLine($"[Update] Raw Current: {currentVersionRaw ?? "null"}, Normalized Current: {currentVersion}");
+            Debug.WriteLine($"[Update] Raw Latest: {latestRaw}, Normalized Latest: {latestNormalized}");
+
+            if (!string.Equals(currentVersion, latestNormalized, StringComparison.OrdinalIgnoreCase))
+            {
+                LatestVersionUrl = latest.Value.Url;
+                IsUpdateAvailable = true;
+
+                Debug.WriteLine($"[Update] Update available. Current: {currentVersion}, Latest: {latestNormalized}, Url: {LatestVersionUrl}");
+            }
+            else
+            {
+                IsUpdateAvailable = false;
+                LatestVersionUrl = string.Empty;
+
+                Debug.WriteLine("[Update] No update available.");
+            }
         }
 
         private void ExecuteShowDailyPlannerCommand(object? obj)

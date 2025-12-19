@@ -3,11 +3,14 @@ using AioStudy.Models;
 using AioStudy.UI.Commands;
 using AioStudy.UI.ViewModels;
 using AioStudy.UI.ViewModels.Components;
+using AioStudy.UI.ViewModels.Forms;
+using AioStudy.UI.Views.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace AioStudy.UI.ViewModels.Overview
@@ -41,6 +44,7 @@ namespace AioStudy.UI.ViewModels.Overview
 
         public RelayCommand RefreshCommand => new RelayCommand(o => BuildSemesterplan());
         public RelayCommand OpenModule { get; }
+        public RelayCommand ShowAddSemesterCommand { get; }
 
         public SemesterplanViewModel(SemesterViewModel semesterViewModel, MainViewModel mainViewModel, SemesterDbService semesterDbService, ModulesDbService modulesDbService)
         {
@@ -50,10 +54,20 @@ namespace AioStudy.UI.ViewModels.Overview
             _moduleDbService = modulesDbService;
 
             SemesterRows = new ObservableCollection<SemesterRowViewModel>();
-
             OpenModule = new RelayCommand(ExecuteBack);
+            ShowAddSemesterCommand = new RelayCommand(ExecuteOpenAddSemester);
 
             BuildSemesterplan();
+        }
+
+        private void ExecuteOpenAddSemester(object? obj)
+        {
+            var addWindow = new AddSemesterView();
+            var viewModel = App.ServiceProvider.GetRequiredService<AddSemesterViewModel>();
+            addWindow.DataContext = viewModel;
+            addWindow.Owner = Application.Current.MainWindow;
+            addWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            addWindow.ShowDialog();
         }
 
         private void ExecuteBack(object? obj)

@@ -44,6 +44,7 @@
             <converters:GradeToDisplayTextConverter x:Key="GradeToDisplayTextConverter" />
             <converters:CreditsToWidthMultiConverter x:Key="CreditsToWidthConverter" />
             <converters:DateTimeNullableDateOnlyConverter x:Key="DateOnlyConverter" />
+            <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
 
 
 

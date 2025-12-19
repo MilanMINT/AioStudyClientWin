@@ -16,7 +16,7 @@ namespace AioStudy.UI.Converter
             {
                 return TimeSpan.FromSeconds(seconds);
             }
-            return TimeSpan.FromSeconds(0.8); // Fallback
+            return TimeSpan.FromSeconds(0.8);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -21,7 +21,7 @@ namespace AioStudy.UI.Converter
                 !(values[0] is bool) ||
                 !(values[1] is bool))
             {
-                return MaterialIconKind.Play; // Fallback
+                return MaterialIconKind.Play;
             }
 
             bool isRunning = (bool)values[0];

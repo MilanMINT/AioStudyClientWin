@@ -28,7 +28,7 @@ namespace AioStudy.UI.Converter
                 };
             }
 
-            return Color.FromRgb(107, 114, 128); // Grau fallback
+            return Color.FromRgb(107, 114, 128); 
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

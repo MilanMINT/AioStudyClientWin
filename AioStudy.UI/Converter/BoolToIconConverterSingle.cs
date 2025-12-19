@@ -23,7 +23,7 @@ namespace AioStudy.UI.Converter
             {
                 return boolValue ? TrueIcon : FalseIcon;
             } 
-            return FalseIcon; // Fallback
+            return FalseIcon;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
