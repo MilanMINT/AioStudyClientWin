@@ -72,6 +72,7 @@ namespace AioStudy.UI.ViewModels.Components
         public int Seconds => _pomodoroViewModel.Seconds;
         public bool IsRunning => _pomodoroViewModel.IsRunning;
         public bool IsPaused => _pomodoroViewModel.IsPaused;
+        public bool IsBreakActive => _pomodoroViewModel.IsBreakActive;
 
         public RelayCommand CloseCommand { get; }
         public RelayCommand ControlTimerCommand { get; }
@@ -84,7 +85,7 @@ namespace AioStudy.UI.ViewModels.Components
             _timerService = timerService;
             _pomodoroViewModel.SetTimerOverlayViewModel(this);
             CloseCommand = new RelayCommand(_ => IsVisible = false);
-            ControlTimerCommand = new RelayCommand(_ => _pomodoroViewModel.ControlTimerCommand?.Execute(null));
+            ControlTimerCommand = new RelayCommand(_ => _pomodoroViewModel.ControlTimerCommand?.Execute(null), _ => !IsBreakActive);
             ResetTimerCommand = new RelayCommand(_ => _pomodoroViewModel.ResetTimerCommand?.Execute(null));
 
             _pomodoroViewModel.PropertyChanged += OnPomodoroPropertyChanged;

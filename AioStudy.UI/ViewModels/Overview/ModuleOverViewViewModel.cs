@@ -393,7 +393,6 @@ namespace AioStudy.UI.ViewModels.Overview
             NewCreditValue = _module.ModuleCredits?.ToString() ?? string.Empty;
             NewExameDate = _module.ExamDate;
 
-            // ensure NewSelectedSemester references the instance from Semesters collection
             if (_module.Semester != null)
             {
                 var match = Semesters.FirstOrDefault(s => s.Id == _module.Semester.Id);
@@ -404,7 +403,6 @@ namespace AioStudy.UI.ViewModels.Overview
                 NewSelectedSemester = null;
             }
 
-            // keep NewSemester for other uses (if you still need it)
             NewSemester = _module.Semester;
 
             if (Enum.TryParse<Enums.ModuleStatus>(_module.ExamStatus, out var status))
@@ -460,7 +458,6 @@ namespace AioStudy.UI.ViewModels.Overview
                 NewModuleColor = null;
             }
 
-            // notify dependent bindings
             OnPropertyChanged(nameof(SelectedGradesStringListToChoose));
             OnPropertyChanged(nameof(ShowGradeEdit));
             OnPropertyChanged(nameof(NewSelectedSemester));
@@ -496,7 +493,6 @@ namespace AioStudy.UI.ViewModels.Overview
 
                 _module.ExamDate = NewExameDate;
 
-                // IMPORTANT: set both navigation and FK so the DB update persists the semester
                 _module.Semester = NewSelectedSemester;
                 _module.SemesterId = NewSelectedSemester?.Id;
 
@@ -509,6 +505,21 @@ namespace AioStudy.UI.ViewModels.Overview
                 else
                 {
                     _module.Color = null;
+                }
+
+                if (_newModuleStatus == Enums.ModuleStatus.NB)
+                {
+                    _module.Grade = 5.0f;
+                }
+
+                if (_newModuleStatus == Enums.ModuleStatus.Open)
+                {
+                    _module.Grade = null;
+                }
+
+                if (_newModuleStatus == Enums.ModuleStatus.Key)
+                {
+                    _module.Grade = null;
                 }
 
                 _ = _modulesDbService.UpdateModuleAsync(_module);

@@ -79,7 +79,16 @@
 
             <!--  Header  -->
             <Grid Grid.Row="0" Margin="0,0,0,10">
+
+                <Image
+                    Width="18"
+                    Height="18"
+                    HorizontalAlignment="Left"
+                    Source="/Assets/AioStudyLogo.png" />
+
+
                 <TextBlock
+                    Margin="25,0,0,0"
                     VerticalAlignment="Center"
                     FontSize="11"
                     FontWeight="SemiBold"
@@ -136,17 +145,15 @@
                     Width="35"
                     Height="35"
                     Margin="5,0"
-                    Background="#2A2D35"
-                    BorderBrush="#3A3D45"
-                    BorderThickness="1"
                     Command="{Binding ControlTimerCommand}"
-                    Cursor="Hand">
+                    Cursor="Hand"
+                    Style="{StaticResource GradientButton}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderThickness="1"
                                 CornerRadius="8">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
@@ -173,17 +180,15 @@
                     Width="35"
                     Height="35"
                     Margin="5,0"
-                    Background="#4A2020"
-                    BorderBrush="#6A3030"
-                    BorderThickness="1"
                     Command="{Binding ResetTimerCommand}"
-                    Cursor="Hand">
+                    Cursor="Hand"
+                    Style="{StaticResource RedGradientButton}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderThickness="1"
                                 CornerRadius="8">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>

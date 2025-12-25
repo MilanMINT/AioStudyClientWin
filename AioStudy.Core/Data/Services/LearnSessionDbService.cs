@@ -111,5 +111,17 @@ namespace AioStudy.Core.Data.Services
             session.EndTime = DateTime.Now;
             await _learnSessionRepository.UpdateAsync(session);
         }
+
+        /// <summary>
+        /// Return all sessions for the given date. If module is provided, filter by module as well.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <param name="module"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<LearnSession>> GetSessionsByDateAsync(DateOnly date, Module? module = null)
+        {
+            var sessions = await _learnSessionRepository.GetAllWithIncludesAsync("LearnedModule");
+            return sessions.Where(s => s.StartTime.Date == date.ToDateTime(TimeOnly.MinValue).Date && (module == null || s.LearnedModuleId == module.Id)).ToList();
+        }
     }
 }

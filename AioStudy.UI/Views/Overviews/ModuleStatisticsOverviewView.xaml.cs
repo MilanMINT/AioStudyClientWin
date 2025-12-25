@@ -24,5 +24,14 @@ namespace AioStudy.UI.Views.Overviews
         {
             InitializeComponent();
         }
+
+        private void Calendar_SelectedDatesChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (CalendarToggle != null)
+            {
+                CalendarToggle.IsChecked = false;
+            }
+        }
     }
+
 }
