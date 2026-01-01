@@ -85,7 +85,6 @@
                         Color="#000000" />
                 </Setter.Value>
             </Setter>
-
         </Style>
 
         <!--  Metric Card Style  -->

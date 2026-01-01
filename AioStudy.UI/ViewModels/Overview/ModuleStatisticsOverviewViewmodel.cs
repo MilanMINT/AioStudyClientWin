@@ -118,7 +118,7 @@ namespace AioStudy.UI.ViewModels.Overview
                 {
                     new ColumnSeries<double>
                     {
-                        Values = timePerHours.Select(i => (double)i).ToArray(), // materialize
+                        Values = timePerHours.Select(i => (double)i).ToArray(),
                         Fill = new SolidColorPaint(SKColor.Parse("#4FD1C7").WithAlpha(220)),
                         Stroke = null,
                         Rx = 6,
