@@ -113,13 +113,21 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock
-                    Grid.Row="0"
-                    Margin="0,0,0,15"
-                    FontSize="18"
-                    FontWeight="SemiBold"
-                    Foreground="White"
-                    Text="Module Grades" />
+                <DockPanel>
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="0,0,0,15"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="White"
+                        Text="Module Grades" />
+
+                    <TextBlock
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Foreground="White"
+                        Text="{Binding RemainingPlotDisplayTime}" />
+                </DockPanel>
 
                 <charts:CartesianChart
                     Grid.Row="2"

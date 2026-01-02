@@ -36,6 +36,19 @@ namespace AioStudy.UI.ViewModels
         private readonly Dictionary<int, string> _top3TooltipPerDay = new();
         private readonly LearnSessionDbService _learnSessionDbService;
         private string _greetingsString;
+        private string _remainingPlotDisplayTime;
+        private int _remainingSeconds;
+
+        public string RemainingPlotDisplayTime
+        {
+            get { return _remainingPlotDisplayTime; }
+            set
+            {
+                _remainingPlotDisplayTime = value;
+                OnPropertyChanged(nameof(RemainingPlotDisplayTime));
+            }
+        }
+
         public string GreetingsString
         {
             get { return _greetingsString; }
@@ -92,17 +105,29 @@ namespace AioStudy.UI.ViewModels
 
             SetOverviewPlotData();
 
+
             _rotationTimer = new DispatcherTimer
             {
-                Interval = _rotationInterval
+                Interval = TimeSpan.FromSeconds(1)
             };
             _rotationTimer.Tick += RotationTimer_Tick;
             _rotationTimer.Start();
+
+            _remainingSeconds = (int)_rotationInterval.TotalSeconds;
+            RemainingPlotDisplayTime = _remainingSeconds.ToString();
         }
 
         private void RotationTimer_Tick(object? sender, EventArgs e)
         {
-            RotatePlot();
+            _remainingSeconds--;
+            RemainingPlotDisplayTime = Math.Max(0, _remainingSeconds).ToString();
+
+            if (_remainingSeconds <= 0)
+            {
+                RotatePlot();
+                _remainingSeconds = (int)_rotationInterval.TotalSeconds;
+                RemainingPlotDisplayTime = _remainingSeconds.ToString();
+            }
         }
 
         private void RotatePlot()
