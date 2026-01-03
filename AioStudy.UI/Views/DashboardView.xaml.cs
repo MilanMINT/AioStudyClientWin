@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AioStudy.UI.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,22 @@ namespace AioStudy.UI.Views
             if (LayoutRoot == null) return;
             var state = width >= WideThreshold ? "Wide" : "Narrow";
             VisualStateManager.GoToElementState(LayoutRoot, state, true);
+        }
+
+        private void ChartContainer_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (DataContext is DashboardViewModel vm)
+            {
+                vm.PauseRotation();
+            }
+        }
+
+        private void ChartContainer_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (DataContext is DashboardViewModel vm)
+            {
+                vm.ResumeRotation();
+            }
         }
     }
 }

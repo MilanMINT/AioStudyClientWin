@@ -148,6 +148,21 @@ namespace AioStudy.UI.ViewModels
                     break;
             }
         }
+        public void PauseRotation()
+        {
+            if (_rotationTimer.IsEnabled)
+            {
+                _rotationTimer.Stop();
+            }
+        }
+
+        public void ResumeRotation()
+        {
+            if (!_rotationTimer.IsEnabled)
+            {
+                _rotationTimer.Start();
+            }
+        }
 
         private void SetOverviewPlotData()
         {
