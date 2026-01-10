@@ -50,6 +50,8 @@ namespace AioStudy.Core.Data.Services
         private TimeSpan _totalDuration;
         private int _activeMinutesLogged = 0;
 
+        private int _elapsedActiveSeconds = 0;
+
         private LearnSession? _currentSession;
         private Module? _currentModule;
         private DailyModuleStats? _currentDailyModuleStats;
@@ -83,6 +85,7 @@ namespace AioStudy.Core.Data.Services
             _isRunning = true;
             _isPaused = false;
             _activeMinutesLogged = 0;
+            _elapsedActiveSeconds = 0;
             _isBreak = false;
             RunningStateChanged?.Invoke(this, true);
             PausedStateChanged?.Invoke(this, false);
@@ -316,15 +319,16 @@ namespace AioStudy.Core.Data.Services
         // ------------------------------------------------------------------------------------
         private void OnEverySecondActive(int remainingSeconds)
         {
-            var totalSeconds = (int)_totalDuration.TotalSeconds;
-            var activeSecondsElapsed = totalSeconds - remainingSeconds;
-
-            var activeMinutes = activeSecondsElapsed / 60;
-
-            if (activeMinutes > _activeMinutesLogged)
+            lock (_sync)
             {
-                _activeMinutesLogged = activeMinutes;
-                LogOneMinute();
+                _elapsedActiveSeconds++;
+                var activeMinutes = _elapsedActiveSeconds / 60;
+
+                if (activeMinutes > _activeMinutesLogged)
+                {
+                    _activeMinutesLogged = activeMinutes;
+                    LogOneMinute();
+                }
             }
         }
         private async void LogOneMinute()

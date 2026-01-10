@@ -35,9 +35,54 @@ namespace AioStudy.UI.ViewModels
         private MainViewModel _mainViewModel;
         private readonly Dictionary<int, string> _top3TooltipPerDay = new();
         private readonly LearnSessionDbService _learnSessionDbService;
+        private readonly ModulesDbService _modulesDbService;
+        private readonly UserDbService _userDbService;
         private string _greetingsString;
         private string _remainingPlotDisplayTime;
         private int _remainingSeconds;
+        private string _streakDays;
+        private string _nextExamString;
+        private string _nextExamDays;
+        private string _nextExamModuleName;
+
+        public string NextExamModuleName
+        {
+            get { return _nextExamModuleName; }
+            set
+            {
+                _nextExamModuleName = value;
+                OnPropertyChanged(nameof(NextExamModuleName));
+            }
+        }
+
+        public string NextExamDaysString
+        {
+            get { return _nextExamDays; }
+            set
+            {
+                _nextExamDays = value;
+                OnPropertyChanged(nameof(NextExamDaysString));
+            }
+        }
+        public string NextExamDateString
+        {
+            get { return _nextExamString; }
+            set
+            {
+                _nextExamString = value;
+                OnPropertyChanged(nameof(NextExamDateString));
+            }
+        }
+
+        public string StreakDays
+        {
+            get { return _streakDays; }
+            set
+            {
+                _streakDays = value;
+                OnPropertyChanged(nameof(StreakDays));
+            }
+        }
 
         public string RemainingPlotDisplayTime
         {
@@ -100,11 +145,16 @@ namespace AioStudy.UI.ViewModels
         public DashboardViewModel()
         {
             _learnSessionDbService = App.ServiceProvider.GetRequiredService<LearnSessionDbService>();
+            _userDbService = App.ServiceProvider.GetRequiredService<UserDbService>();
+            _modulesDbService = App.ServiceProvider.GetRequiredService<ModulesDbService>();
 
             UpdateGreetingMessage();
 
             SetOverviewPlotData();
 
+            SetStreakDays();
+
+            CheckNextExam();
 
             _rotationTimer = new DispatcherTimer
             {
@@ -115,6 +165,38 @@ namespace AioStudy.UI.ViewModels
 
             _remainingSeconds = (int)_rotationInterval.TotalSeconds;
             RemainingPlotDisplayTime = _remainingSeconds.ToString();
+        }
+
+        private async void CheckNextExam()
+        {
+            var nextExamModule = await _modulesDbService.GetNextExamModule();
+            if (nextExamModule != null && nextExamModule is Module module)
+            {
+                NextExamModuleName = module.Name;
+                NextExamDateString = module.ExamDate.HasValue ? module.ExamDate.Value.ToString("dd.MM.yyyy") : "N/A";
+                if (module.ExamDate.HasValue)
+                {
+                    var daysUntilExam = (module.ExamDate.Value - DateTime.Today).Days;
+                    NextExamDaysString = daysUntilExam >= 0 ? $"{daysUntilExam}" : "Exam passed";
+                }
+                else
+                {
+                    NextExamDaysString = "N/A";
+                }
+            }
+            else
+            {
+                NextExamModuleName = "No upcoming exams";
+                NextExamDateString = "-";
+                NextExamDaysString = "-";
+
+            }
+        }
+
+        private async void SetStreakDays()
+        {
+            var currentStreak = await _userDbService.GetCurrentStreak();
+            StreakDays = currentStreak.ToString();
         }
 
         private void RotationTimer_Tick(object? sender, EventArgs e)
@@ -249,14 +331,14 @@ namespace AioStudy.UI.ViewModels
                 foreach (var s in sessions)
                 {
                     string moduleName = s.LearnedModule?.Name ?? (s.LearnedModuleId.HasValue ? $"Module {s.LearnedModuleId}" : "Without Module");
-                    DateTime start = s.StartTime;
-                    DateTime end = s.EndTime ?? DateTime.Now;
-                    double minutes = (end - start).TotalMinutes;
+
+                    double minutes = s.CurrentLearnedMinutes > 0
+                        ? s.CurrentLearnedMinutes
+                        : ((s.EndTime ?? DateTime.Now) - s.StartTime).TotalMinutes;
 
                     if (!minutesPerModule.ContainsKey(moduleName))
-                    {
                         minutesPerModule[moduleName] = 0;
-                    }
+
                     minutesPerModule[moduleName] += minutes;
                 }
 
@@ -264,35 +346,37 @@ namespace AioStudy.UI.ViewModels
                 {
                     Series = new ISeries[]
                     {
-                        new RowSeries<double>
-                        {
-                            Values = new double[] { 0 },
-                            Fill = new SolidColorPaint(SKColor.Parse("#60A5FA")),
-                            Stroke = null,
-                            MaxBarWidth = 40,
-                            YToolTipLabelFormatter = p => "Keine Daten"
-                        }
+                new RowSeries<double>
+                {
+                    Values = new double[] { 0 },
+                    Fill = new SolidColorPaint(SKColor.Parse("#60A5FA")),
+                    Stroke = null,
+                    MaxBarWidth = 40,
+                    YToolTipLabelFormatter = p => "Keine Daten",
+                    XToolTipLabelFormatter = _ => string.Empty
+                }
                     };
 
                     XAxes = new[]
                     {
-                        new Axis
-                        {
-                            Labeler = value => $"{value:0.#} h",
-                            LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                            Name = "Stunden"
-                        }
-                    };
+                new Axis
+                {
+                    Labeler = value => $"{value:0.#} h",
+                    LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                    Name = "Stunden",
+                    MinLimit = 0
+                }
+            };
 
                     YAxes = new[]
                     {
-                        new Axis
-                        {
-                            Labels = new[] { "Keine Module" },
-                            LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                            Name = "Module"
-                        }
-                    };
+                new Axis
+                {
+                    Labels = new[] { "Keine Module" },
+                    LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                    Name = "Module"
+                }
+            };
 
                     return;
                 }
@@ -306,38 +390,37 @@ namespace AioStudy.UI.ViewModels
 
                 Series = new ISeries[]
                 {
-                    new RowSeries<double>
-                    {
-                        Values = hours,
-                        Fill = new SolidColorPaint(SKColor.Parse("#34D399")) { },
-                        Stroke = null,
-                        MaxBarWidth = 40,
-                        XToolTipLabelFormatter = _ => string.Empty,
-                        YToolTipLabelFormatter = p => FormatHours(p.PrimaryValue)
-                    }
+            new RowSeries<double>
+            {
+                Values = hours,
+                Fill = new SolidColorPaint(SKColor.Parse("#34D399")) { },
+                Stroke = null,
+                MaxBarWidth = 40,
+                XToolTipLabelFormatter = _ => string.Empty,
+                YToolTipLabelFormatter = p => FormatHours(p.PrimaryValue)
+            }
                 };
 
                 XAxes = new[]
                 {
-                    new Axis
-                    {
-                        Labeler = value => $"{value:0.#} h",
-                        LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                        Name = "Stunden",
-
-                        MinLimit = 0
-                    }
-                };
+            new Axis
+            {
+                Labeler = value => $"{value:0.#} h",
+                LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                Name = "Stunden",
+                MinLimit = 0
+            }
+        };
 
                 YAxes = new[]
                 {
-                    new Axis
-                    {
-                        Labels = labels,
-                        LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                        Name = "Module"
-                    }
-                };
+            new Axis
+            {
+                Labels = labels,
+                LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                Name = "Module"
+            }
+        };
             }
             catch (Exception ex)
             {
@@ -365,10 +448,8 @@ namespace AioStudy.UI.ViewModels
                 DateTime today = DateTime.Today;
                 DateTime monday = today;
                 while (monday.DayOfWeek != DayOfWeek.Monday)
-                {
                     monday = monday.AddDays(-1);
 
-                }
                 var dayLabels = new[] { "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So" };
                 double[] minutesPerDay = new double[7];
 
@@ -379,32 +460,44 @@ namespace AioStudy.UI.ViewModels
                     DateTime day = monday.AddDays(i);
                     var sessions = (await _learnSessionDbService.GetSessionsByDateAsync(DateOnly.FromDateTime(day)))?.ToList() ?? new List<LearnSession>();
 
-                    DateTime dayStart = day.Date;
-                    DateTime dayEnd = dayStart.AddDays(1);
-
                     double totalMinutes = 0;
 
                     var minutesPerModule = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
 
                     foreach (var s in sessions)
                     {
-                        DateTime start = s.StartTime;
-                        DateTime end = s.EndTime ?? DateTime.Now;
+                        int sessionLoggedMinutes = s.CurrentLearnedMinutes;
 
-                        DateTime overlapStart = start > dayStart ? start : dayStart;
-                        DateTime overlapEnd = end < dayEnd ? end : dayEnd;
-
-                        if (overlapEnd > overlapStart)
+                        if (sessionLoggedMinutes > 0)
                         {
-                            double overlapMinutes = (overlapEnd - overlapStart).TotalMinutes;
-                            totalMinutes += overlapMinutes;
+                            totalMinutes += sessionLoggedMinutes;
 
                             string moduleName = s.LearnedModule?.Name ?? (s.LearnedModuleId.HasValue ? $"Module {s.LearnedModuleId}" : "Unbekannt");
                             if (!minutesPerModule.ContainsKey(moduleName))
-                            {
                                 minutesPerModule[moduleName] = 0;
+                            minutesPerModule[moduleName] += sessionLoggedMinutes;
+                        }
+                        else
+                        {
+                            DateTime start = s.StartTime;
+                            DateTime end = s.EndTime ?? DateTime.Now;
+
+                            DateTime dayStart = day.Date;
+                            DateTime dayEnd = dayStart.AddDays(1);
+
+                            DateTime overlapStart = start > dayStart ? start : dayStart;
+                            DateTime overlapEnd = end < dayEnd ? end : dayEnd;
+
+                            if (overlapEnd > overlapStart)
+                            {
+                                double overlapMinutes = (overlapEnd - overlapStart).TotalMinutes;
+                                totalMinutes += overlapMinutes;
+
+                                string moduleName = s.LearnedModule?.Name ?? (s.LearnedModuleId.HasValue ? $"Module {s.LearnedModuleId}" : "Unbekannt");
+                                if (!minutesPerModule.ContainsKey(moduleName))
+                                    minutesPerModule[moduleName] = 0;
+                                minutesPerModule[moduleName] += overlapMinutes;
                             }
-                            minutesPerModule[moduleName] += overlapMinutes;
                         }
                     }
 
@@ -421,56 +514,56 @@ namespace AioStudy.UI.ViewModels
                         })
                         .ToArray();
 
-                    _top3TooltipPerDay[i] = top3.Length > 0 ? string.Join("\n", top3) : "No Data";
+                    _top3TooltipPerDay[i] = top3.Length > 0 ? string.Join("\n", top3) : "Keine Lernmodule";
                 }
 
                 double[] hoursPerDay = minutesPerDay.Select(m => Math.Round(m / 60.0, 2)).ToArray();
 
                 Series = new ISeries[]
                 {
-                    new ColumnSeries<double>
-                    {
-                        Values = hoursPerDay,
-                        Fill = new SolidColorPaint(SKColor.Parse("#F472B6")) { },
-                        Stroke = null,
-                        Rx = 6,
-                        Ry = 6,
-                        MaxBarWidth = 40,
-                        YToolTipLabelFormatter = p =>
-                        {
-                            int idx = (int)p.SecondaryValue;
-                            string top3 = _top3TooltipPerDay.TryGetValue(idx, out var t) ? t : "No Data";
-                            return $"{dayLabels[idx]} · {p.PrimaryValue:0.##}h {top3}\n";
-                        }
-                    }
+            new ColumnSeries<double>
+            {
+                Values = hoursPerDay,
+                Fill = new SolidColorPaint(SKColor.Parse("#F472B6")) { },
+                Stroke = null,
+                Rx = 6,
+                Ry = 6,
+                MaxBarWidth = 40,
+                YToolTipLabelFormatter = p =>
+                {
+                    int idx = (int)p.SecondaryValue;
+                    string top3 = _top3TooltipPerDay.TryGetValue(idx, out var t) ? t : "Keine Daten";
+                    return $"{dayLabels[idx]} · {p.PrimaryValue:0.##}h \n{top3}";
+                }
+            }
                 };
 
                 XAxes = new[]
                 {
-                    new Axis
-                    {
-                        Labels = dayLabels,
-                        LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                        SeparatorsPaint = null,
-                        Name = "Weekdays (Mo–So)"
-                    }
-                };
+            new Axis
+            {
+                Labels = dayLabels,
+                LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                SeparatorsPaint = null,
+                Name = "Wochentag (Mo–So)"
+            }
+        };
 
                 YAxes = new[]
                 {
-                    new Axis
-                    {
-                        Name = "Learning Time (Hours)",
-                        MinLimit = 0,
-                        LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                        SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(40)),
-                        Labeler = value => $"{value:0.#} h"
-                    }
-                };
+            new Axis
+            {
+                Name = "Lernzeit (Std)",
+                MinLimit = 0,
+                LabelsPaint = new SolidColorPaint(SKColors.LightGray),
+                SeparatorsPaint = new SolidColorPaint(SKColors.White.WithAlpha(40)),
+                Labeler = value => $"{value:0.#} h"
+            }
+        };
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"error: {ex}");
+                System.Diagnostics.Debug.WriteLine($"SetWeeklyTrendPlotDataAsync error: {ex}");
             }
         }
 

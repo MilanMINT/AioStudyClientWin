@@ -138,5 +138,22 @@ namespace AioStudy.Core.Data.Services
                 
             }
         }
+
+        public async Task<Module?> GetNextExamModule()
+        {
+            try
+            {
+                var allModules = await _moduleRepository.GetAllAsync();
+                var upcomingExams = allModules
+                    .Where(m => m.ExamDate.HasValue && m.ExamDate.Value >= DateTime.Today)
+                    .OrderBy(m => m.ExamDate ?? DateTime.MaxValue)
+                    .ToList();
+                return upcomingExams.FirstOrDefault();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

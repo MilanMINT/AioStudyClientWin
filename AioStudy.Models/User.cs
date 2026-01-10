@@ -28,6 +28,10 @@ namespace AioStudy.Models
         public int? CurrentSemsterId { get; set; }
         [AllowNull]
         public Semester? CurrentSemester { get; set; }
+        [AllowNull]
+        public int? LearningStreak { get; set; } = 0;
+        [AllowNull]
+        public DateOnly? LastLoggedIn { get; set; } = null;
 
         public DateTime Created { get; set; } = DateTime.Now;
 

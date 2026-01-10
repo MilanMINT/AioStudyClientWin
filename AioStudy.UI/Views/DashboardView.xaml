@@ -10,7 +10,7 @@
     xmlns:viewmodels="clr-namespace:AioStudy.UI.ViewModels"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     d:DataContext="{d:DesignInstance Type=viewmodels:DashboardViewModel}"
-    d:DesignHeight="750"
+    d:DesignHeight="1750"
     d:DesignWidth="1200"
     Background="#212226"
     mc:Ignorable="d">
@@ -27,12 +27,63 @@
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect
-                        BlurRadius="12"
-                        Opacity="0.36"
-                        ShadowDepth="3"
+                        BlurRadius="17"
+                        Opacity="0.46"
+                        ShadowDepth="0"
                         Color="#000000" />
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <!--  Label Style  -->
+        <Style x:Key="LabelText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="#A0AEC0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+
+        <!--  Metric Card Style  -->
+        <Style x:Key="MetricCard" TargetType="Border">
+            <Setter Property="Background" Value="#1F2024" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="15" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#3A3D45" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <!--  default shadow  -->
+                    <DropShadowEffect
+                        BlurRadius="8"
+                        Opacity="0.66"
+                        ShadowDepth="0"
+                        Color="#000000" />
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#41444C" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <!--    -->
+                            <DropShadowEffect
+                                BlurRadius="18"
+                                Opacity="0.32"
+                                ShadowDepth="6"
+                                Color="#000000" />
+                        </Setter.Value>
+                    </Setter>
+                    <!--  slight elevation  -->
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <TranslateTransform Y="-2" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
 
@@ -89,56 +140,137 @@
             Margin="30,0"
             Background="#3A3D45" />
 
-        <Border
-            Grid.Row="2"
-            Margin="30,10,30,30"
-            Padding="10">
-            <charts:CartesianChart
-                Grid.Row="2"
-                Background="Transparent"
-                Series="{Binding Series}"
-                XAxes="{Binding XAxes}"
-                YAxes="{Binding YAxes}" />
-        </Border>
-
         <!--  Balkendiagramm: Module Grades  -->
-        <Border
+        <ScrollViewer
             Grid.Row="2"
-            Grid.Column="0"
-            Margin="30,10,30,30"
-            MouseEnter="ChartContainer_MouseEnter"
-            MouseLeave="ChartContainer_MouseLeave"
-            Style="{StaticResource ChartCard}">
-            <Grid>
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <ScrollViewer.Resources>
+                <Style BasedOn="{StaticResource LocalScrollBar}" TargetType="ScrollBar" />
+            </ScrollViewer.Resources>
+
+            <Grid Margin="30">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <DockPanel>
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="0,0,0,15"
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Foreground="White"
-                        Text="Module Grades" />
+                <!--  First Row Cards  -->
+                <Grid Grid.Row="0" Margin="0,0,0,30">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                    <TextBlock
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Foreground="White"
-                        Text="{Binding RemainingPlotDisplayTime, FallbackValue=3}" />
-                </DockPanel>
+                    <!--  Streak Card  -->
+                    <Border Grid.Column="0" Style="{StaticResource MetricCard}">
+                        <StackPanel>
+                            <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                <MaIc:MaterialIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="0,0,8,0"
+                                    Foreground="#F6E05E"
+                                    Kind="Flame" />
+                                <TextBlock Style="{StaticResource LabelText}" Text="Streak" />
+                            </StackPanel>
 
-                <charts:CartesianChart
+                            <!--  display  -->
+                            <TextBlock
+                                FontSize="24"
+                                FontWeight="Bold"
+                                Foreground="#F6E05E">
+                                <Run Text="{Binding StreakDays, FallbackValue=0}" />
+                            </TextBlock>
+
+                            <TextBlock
+                                FontSize="13"
+                                Foreground="#A0AEC0"
+                                Text="Days" />
+                        </StackPanel>
+                    </Border>
+
+                    <!--  NextExam   Card  -->
+                    <Border Grid.Column="2" Style="{StaticResource MetricCard}">
+                        <StackPanel>
+                            <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
+                                <MaIc:MaterialIcon
+                                    Width="20"
+                                    Height="20"
+                                    Margin="0,0,8,0"
+                                    Foreground="#BB3838"
+                                    Kind="Calendar" />
+                                <TextBlock Style="{StaticResource LabelText}" Text="Next Exam" />
+                            </StackPanel>
+
+                            <!--  display  -->
+                            <TextBlock
+                                FontSize="24"
+                                FontWeight="Bold"
+                                Foreground="#BB3838"
+                                TextTrimming="CharacterEllipsis">
+                                <Run Text="{Binding NextExamModuleName, FallbackValue=Digilog}" />
+                            </TextBlock>
+
+                            <TextBlock FontSize="13" Foreground="#A0AEC0">
+                                <Run Text="{Binding NextExamDaysString, FallbackValue=2}" />
+                                <Run Text="days left" />
+                                <Run Text="-" />
+                                <Run Text="{Binding NextExamDateString, FallbackValue='Sample Module'}" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+
+                </Grid>
+
+                <Border
                     Grid.Row="2"
-                    Background="Transparent"
-                    Series="{Binding Series}"
-                    XAxes="{Binding XAxes}"
-                    YAxes="{Binding YAxes}" />
+                    Grid.Column="0"
+                    Height="600"
+                    MouseEnter="ChartContainer_MouseEnter"
+                    MouseLeave="ChartContainer_MouseLeave"
+                    Style="{StaticResource ChartCard}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <DockPanel>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="0,0,0,15"
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="Module Grades" />
+
+                            <TextBlock
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="{Binding RemainingPlotDisplayTime, FallbackValue=3}" />
+                        </DockPanel>
+
+                        <charts:CartesianChart
+                            Grid.Row="2"
+                            Background="Transparent"
+                            Series="{Binding Series}"
+                            XAxes="{Binding XAxes}"
+                            YAxes="{Binding YAxes}" />
+                    </Grid>
+                </Border>
+
             </Grid>
-        </Border>
+
+        </ScrollViewer>
+
 
 
         <VisualStateManager.VisualStateGroups>

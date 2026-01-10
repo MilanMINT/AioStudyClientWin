@@ -272,6 +272,8 @@ namespace AioStudy.UI.ViewModels
             _semesterDbService = semesterDbService;
             _releaseService = App.ServiceProvider.GetRequiredService<IGitHubReleaseService>();
 
+            StreakCheck();
+
             // Commands initialisieren
             Dark = new RelayCommand(ExecuteDarkCommand);
             Light = new RelayCommand(ExecuteLightCommand);
@@ -329,6 +331,11 @@ namespace AioStudy.UI.ViewModels
             ApplyGradientScheme(GradientColorSchemes.TimerBar.Running);
 
             _ = CheckForUpdatesAsync();
+        }
+
+        private async void StreakCheck()
+        {
+            await _userDbService.UpdateLearningStreakOnLoginAsync();
         }
 
         private void ExecuteOpenUpdateLinkHelpCommand(object? obj)

@@ -23,10 +23,6 @@ namespace AioStudy.Core.Data.Services
             return users.FirstOrDefault();
         }
 
-        /// <summary>
-        /// Returns true if the User table is empty, false otherwise.
-        /// </summary>
-        /// <returns></returns>
         public async Task<bool> IsUserTableEmpty()
         {
             var users = await _userRepository.GetAllAsync();
@@ -67,6 +63,64 @@ namespace AioStudy.Core.Data.Services
                 return true;
             }
             return false;
+        }
+
+        public async Task<int> GetCurrentStreak()
+        {
+            var users = await _userRepository.GetAllAsync();
+            var user = users.FirstOrDefault();
+            if (user != null && user.LearningStreak != null)
+            {
+                return user.LearningStreak.Value;
+            }
+            return 0;
+        }
+
+
+        public async Task<int?> UpdateLearningStreakOnLoginAsync()
+        {
+            var users = await _userRepository.GetAllAsync();
+            var user = users.FirstOrDefault();
+            if (user == null) return null;
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var yesterday = today.AddDays(-1);
+
+            if (user.LastLoggedIn == today)
+            {
+                user.LearningStreak ??= 1;
+                await _userRepository.UpdateAsync(user);
+                return user.LearningStreak;
+            }
+
+            if (user.LastLoggedIn == yesterday)
+            {
+                user.LearningStreak = (user.LearningStreak ?? 0) + 1;
+            }
+            else
+            {
+                user.LearningStreak = 1;
+            }
+
+            user.LastLoggedIn = today;
+            await _userRepository.UpdateAsync(user);
+            return user.LearningStreak;
+        }
+
+        public async Task CheckLearningStreak()
+        {
+            var users = await _userRepository.GetAllAsync();
+            var user = users.FirstOrDefault();
+            if (user == null) return;
+            if (user.LastLoggedIn != null)
+            {
+                DateOnly yesterday = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+                if (user.LastLoggedIn < yesterday)
+                {
+                    user.LearningStreak = 0;
+                    await _userRepository.UpdateAsync(user);
+                }
+            }
         }
     }
 }
