@@ -87,8 +87,8 @@ namespace AioStudy.Core.Data.Services
                 existing.SemesterId = module.SemesterId;
                 existing.LearnedMinutes = module.LearnedMinutes;
                 existing.ModuleAttempt = module.ModuleAttempt;
+                existing.IsKeyCompetence = module.IsKeyCompetence;
 
-                // Persist
                 await _moduleRepository.UpdateAsync(existing);
                 return true;
             }

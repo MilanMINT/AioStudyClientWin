@@ -37,8 +37,6 @@ namespace AioStudy.UI.ViewModels.Overview
             }
         }
 
-
-
         public int ParentContainerWidth => _parentContainerWidth;
         public int SemesterInfoContainerWidth => _semesterInfoContainerWidth;
 

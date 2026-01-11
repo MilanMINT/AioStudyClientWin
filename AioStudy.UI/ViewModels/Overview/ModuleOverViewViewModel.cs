@@ -121,7 +121,6 @@ namespace AioStudy.UI.ViewModels.Overview
             set
             {
                 _newModuleStatus = value;
-                // adjust grade depending on status
                 if (_newModuleStatus == Enums.ModuleStatus.NB)
                 {
                     NewModuleGrade = 5.0f;
@@ -131,10 +130,6 @@ namespace AioStudy.UI.ViewModels.Overview
                 {
                     NewModuleGrade = null;
                     SelectedGradesStringListToChoose = null;
-                }
-                else if (_newModuleStatus == Enums.ModuleStatus.BE)
-                {
-                    // keep existing grade (already handled in ResetEditProperties)
                 }
                 OnPropertyChanged(nameof(NewModuleStatus));
                 OnPropertyChanged(nameof(ShowGradeEdit));
@@ -172,7 +167,6 @@ namespace AioStudy.UI.ViewModels.Overview
             }
         }
 
-        // Expose grade strings for ComboBox
         public List<string> GradesStringListToChoose => _gradesStringListToChoose;
 
         public string? SelectedGradesStringListToChoose
@@ -181,7 +175,6 @@ namespace AioStudy.UI.ViewModels.Overview
             set
             {
                 _selectedGradesStringListToChoose = value;
-                // map selected string to float grade
                 if (!string.IsNullOrEmpty(_selectedGradesStringListToChoose))
                 {
                     var idx = _gradesStringListToChoose.IndexOf(_selectedGradesStringListToChoose);
@@ -192,14 +185,12 @@ namespace AioStudy.UI.ViewModels.Overview
                 }
                 else
                 {
-                    // no selection -> do not change grade when BE? set null
                     NewModuleGrade = null;
                 }
                 OnPropertyChanged(nameof(SelectedGradesStringListToChoose));
             }
         }
 
-        // used for visibility in XAML: show grade selector only when editing AND status == BE
         public bool ShowGradeEdit => IsEditMode && NewModuleStatus == Enums.ModuleStatus.BE;
 
         public ObservableCollection<LearnSession> RecentSessions
@@ -376,7 +367,6 @@ namespace AioStudy.UI.ViewModels.Overview
 
             Semesters = new ObservableCollection<Semester>(_semesterDbService.GetAllSemestersAsync().Result);
 
-            // Commands
             BackCommand = new RelayCommand(ExecuteBackCommand);
 
             _timerService = App.ServiceProvider.GetRequiredService<ITimerService>();
@@ -510,16 +500,19 @@ namespace AioStudy.UI.ViewModels.Overview
                 if (_newModuleStatus == Enums.ModuleStatus.NB)
                 {
                     _module.Grade = 5.0f;
+                    _module.IsKeyCompetence = false;
                 }
 
                 if (_newModuleStatus == Enums.ModuleStatus.Open)
                 {
                     _module.Grade = null;
+                    _module.IsKeyCompetence = false;
                 }
 
                 if (_newModuleStatus == Enums.ModuleStatus.Key)
                 {
                     _module.Grade = null;
+                    _module.IsKeyCompetence = true;
                 }
 
                 _ = _modulesDbService.UpdateModuleAsync(_module);
@@ -554,7 +547,6 @@ namespace AioStudy.UI.ViewModels.Overview
                 case SemesterplanViewModel:
                     BackToString = "Semesterplan";
                     break;
-                // fallback
                 default:
                     BackToString = "Modules";
                     break;

@@ -19,8 +19,6 @@
     Height="860"
     MinWidth="950"
     MinHeight="650"
-    MaxWidth="1400"
-    MaxHeight="260"
     d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
     AllowsTransparency="True"
     Background="Transparent"

@@ -8,7 +8,7 @@ namespace AioStudy.UI.Converter
     public class GradeToDisplayTextConverter : IValueConverter
     {
         private const string NoGradeFallback = "BE";
-        private const string KeyText = "Key";
+        private const string KeyText = "KEY";
         private const string OpenText = "Open";
         private const string NotEvaluatedText = "NB";
         private const float NotEvaluatedGrade = 5.0f;
@@ -18,6 +18,9 @@ namespace AioStudy.UI.Converter
         {
             if (value is Module module)
             {
+                if (module.IsKeyCompetence)
+                    return KeyText;
+
                 if (module.Grade.HasValue)
                 {
                     var g = module.Grade.Value;
@@ -26,9 +29,6 @@ namespace AioStudy.UI.Converter
 
                     return g.ToString("F1", CultureInfo.InvariantCulture).Replace(".", ",");
                 }
-
-                if (module.IsKeyCompetence)
-                    return KeyText;
 
                 if (!string.IsNullOrEmpty(module.ExamStatus) &&
                     module.ExamStatus.IndexOf("open", StringComparison.OrdinalIgnoreCase) >= 0)
