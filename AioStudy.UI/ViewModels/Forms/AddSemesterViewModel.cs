@@ -1,6 +1,7 @@
 ﻿using AioStudy.Core.Data.Services;
 using AioStudy.Models;
 using AioStudy.UI.Commands;
+using AioStudy.UI.ViewModels.Overview;
 using AioStudy.UI.Views.Forms;
 using AioStudy.UI.WpfServices;
 using System;
@@ -17,6 +18,7 @@ namespace AioStudy.UI.ViewModels.Forms
     {
         private readonly SemesterViewModel _semesterViewModel;
         private readonly SemesterDbService _semesterDbService;
+        private readonly SemesterplanViewModel? _semesterplanViewModel;
 
         private string _semesterName = string.Empty;
         private string _description = string.Empty; 
@@ -77,10 +79,11 @@ namespace AioStudy.UI.ViewModels.Forms
         public RelayCommand CancelAddSemesterCommand { get; }
         public RelayCommand AddSemesterCommand { get; }
 
-        public AddSemesterViewModel(SemesterViewModel semesterViewModel, SemesterDbService semesterDbService)
+        public AddSemesterViewModel(SemesterViewModel semesterViewModel, SemesterDbService semesterDbService, SemesterplanViewModel? semesterplanViewModel = null)
         {
             _semesterViewModel = semesterViewModel;
             _semesterDbService = semesterDbService;
+            _semesterplanViewModel = semesterplanViewModel;
 
             CancelAddSemesterCommand = new RelayCommand(CancelAddSemester);
             AddSemesterCommand = new RelayCommand(AddSemester);
@@ -130,6 +133,8 @@ namespace AioStudy.UI.ViewModels.Forms
                     _semesterViewModel.RefreshSemesters();
                     Application.Current.Windows.OfType<AddSemesterView>().FirstOrDefault()?.Close();
                     await ToastService.ShowSuccessAsync("Success", $"Semester '{SemesterName}' added successfully!");
+
+                    _semesterplanViewModel?.BuildSemesterplan();
                 }
                 else
                 {

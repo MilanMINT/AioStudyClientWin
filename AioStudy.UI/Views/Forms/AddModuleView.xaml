@@ -154,7 +154,9 @@
                 <!--  Creits Semester - Nebeneinander  -->
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="2*" />
                         <ColumnDefinition Width="15" />
                         <ColumnDefinition Width="6*" />
                     </Grid.ColumnDefinitions>
@@ -169,7 +171,17 @@
                         <xctk:WatermarkTextBox Style="{StaticResource GradientTextBox}" Text="{Binding ModuleCredits, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
 
+                    <!--  Weighting  -->
                     <StackPanel Grid.Column="2">
+                        <Label
+                            Content="Weighting"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="#E6E5E5" />
+                        <xctk:WatermarkTextBox Style="{StaticResource GradientTextBox}" Text="{Binding ModuleWeight, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4">
                         <Label
                             Content="Semester"
                             FontSize="14"

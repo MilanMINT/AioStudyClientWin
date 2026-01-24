@@ -420,7 +420,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!--  Status (display / edit via ComboBox)  -->
+                    <!--  Status  -->
                     <Border Grid.Column="1" Style="{StaticResource MetricCard}">
                         <StackPanel>
                             <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
@@ -428,7 +428,7 @@
                                     Width="20"
                                     Height="20"
                                     Margin="0,0,8,0"
-                                    Foreground="#68D391"
+                                    Foreground="{Binding Module.Grade, Converter={StaticResource GradeToBackgroundConverter}}"
                                     Kind="CheckCircle" />
                                 <TextBlock Style="{StaticResource LabelText}" Text="Status" />
                             </StackPanel>
@@ -436,7 +436,7 @@
                             <TextBlock
                                 FontSize="24"
                                 FontWeight="Bold"
-                                Foreground="#68D391"
+                                Foreground="{Binding Module.Grade, Converter={StaticResource GradeToBackgroundConverter}}"
                                 Text="{Binding Module.ExamStatus, FallbackValue='In Progress'}"
                                 Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
 
@@ -696,7 +696,10 @@
                                     </StackPanel>
                                 </Button>
 
-                                <Button Padding="12,8" Style="{StaticResource RedGradientButton}">
+                                <Button
+                                    Padding="12,8"
+                                    Command="{Binding FailedExamCommand}"
+                                    Style="{StaticResource RedGradientButton}">
                                     <StackPanel Orientation="Horizontal">
                                         <MaIc:MaterialIcon
                                             Width="16"

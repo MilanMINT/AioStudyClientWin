@@ -204,6 +204,12 @@ namespace AioStudy.UI.ViewModels
             DisplayHeaderData();
         }
 
+        public void RefreshDataExtern()
+        {
+            _ = LoadSemesterAsync();
+            DisplayHeaderData();
+        }
+
         public async Task LoadSemesterAsync()
         {
             try

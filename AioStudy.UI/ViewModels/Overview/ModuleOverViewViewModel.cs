@@ -23,6 +23,7 @@ namespace AioStudy.UI.ViewModels.Overview
         private readonly LearnSessionDbService _learnSessionDbService;
         private readonly SemesterDbService _semesterDbService;
         private readonly ModulesDbService _modulesDbService;
+        private readonly GradesViewModel _gradesViewModel;
         private ObservableCollection<LearnSession> _recentSessions = new ObservableCollection<LearnSession>();
         private ModulesViewModel _modulesViewModel;
         private MainViewModel _mainViewModel;
@@ -349,6 +350,7 @@ namespace AioStudy.UI.ViewModels.Overview
         public RelayCommand OpenModuleStatisticsCommand { get; }
         public RelayCommand ToggleEditCancelCommand { get; }
         public RelayCommand SaveModuleCommand { get; }
+        public RelayCommand FailedExamCommand { get; }
 
         public ModuleOverViewViewModel(Module module, ViewModelBase previousViewModel)
         {
@@ -360,10 +362,13 @@ namespace AioStudy.UI.ViewModels.Overview
             _semesterDbService = App.ServiceProvider.GetRequiredService<SemesterDbService>();
             _previousViewModel = previousViewModel;
 
+            _gradesViewModel = App.ServiceProvider.GetRequiredService<GradesViewModel>();
+
             DeleteModuleCommand = new RelayCommand(async parameter => await DeleteModuleWithNavigation(parameter));
             OpenModuleStatisticsCommand = new RelayCommand(ExecuteOpenModuleStatisticsCommand);
             ToggleEditCancelCommand = new RelayCommand(ExecuteToggleSaveCancelCommand);
             SaveModuleCommand = new RelayCommand(ExecuteSaveModuleAfterEditing);
+            FailedExamCommand = new RelayCommand(ExecuteFailedExamCommand);
 
             Semesters = new ObservableCollection<Semester>(_semesterDbService.GetAllSemestersAsync().Result);
 
@@ -375,6 +380,14 @@ namespace AioStudy.UI.ViewModels.Overview
             SetBackToString();
 
             RefreshAll();
+        }
+
+        private void ExecuteFailedExamCommand(object? obj)
+        {
+            Module.ExamStatus = Enums.ModuleStatus.NB.ToString();
+            Module.Grade = 5.0f;
+            _ = _modulesDbService.UpdateModuleAsync(Module);
+            OnPropertyChanged(nameof(Module));
         }
 
         private void ResetEditProperties()
@@ -515,6 +528,7 @@ namespace AioStudy.UI.ViewModels.Overview
                     _module.IsKeyCompetence = true;
                 }
 
+                _gradesViewModel.RefreshDataExtern();
                 _ = _modulesDbService.UpdateModuleAsync(_module);
 
                 IsEditMode = false;

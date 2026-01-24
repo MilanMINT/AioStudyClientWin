@@ -30,8 +30,8 @@ namespace AioStudy.Core.Util.Grades
                             continue;
                         }
 
-                        gpa += module.Grade.Value * module.ModuleCredits.Value;
-                        creditsSum += module.ModuleCredits.Value;
+                        gpa += module.Grade.Value * module.ModuleCredits.Value * module.Weighting;
+                        creditsSum += module.ModuleCredits.Value * module.Weighting;
                     }
                 }
                 return creditsSum > 0 ? gpa / creditsSum : 0.0;

@@ -78,7 +78,7 @@ namespace AioStudy.UI.ViewModels.Overview
             }
         }
 
-        private async void BuildSemesterplan()
+        public async void BuildSemesterplan()
         {
             SemesterRows.Clear();
             var __semesters = await _semesterDbService.GetAllSemestersAsync();

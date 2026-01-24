@@ -251,13 +251,13 @@
                                                                         FontSize="16"
                                                                         FontWeight="SemiBold"
                                                                         Foreground="#9FA2A6"
-                                                                        Text="No modules yet" />
+                                                                        Text="No modules assigned" />
                                                                     <TextBlock
                                                                         Margin="0,0,0,12"
                                                                         HorizontalAlignment="Center"
                                                                         FontSize="12"
                                                                         Foreground="#A0A6AC"
-                                                                        Text="Create your first module to see it here." />
+                                                                        Text="Add your first module to this Semester" />
                                                                     <Button
                                                                         Width="120"
                                                                         Height="30"

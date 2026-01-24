@@ -36,9 +36,20 @@ namespace AioStudy.UI.ViewModels.Forms
         private string _selectedExamStatusOption = string.Empty;
         private string _moduleGrade;
         private string _selectedGradesStringListToChoose;
+        private string _moduleWeight = "1";
 
         public RelayCommand CancelAddModuleCommand { get; }
         public RelayCommand AddModuleCommand { get; }
+
+        public string ModuleWeight 
+        {
+            get => _moduleWeight;
+            set
+            {
+                _moduleWeight = value;
+                OnPropertyChanged(nameof(ModuleWeight));
+            }
+        }
 
         public bool IsKeyCompetenceBool         
         {
@@ -189,6 +200,7 @@ namespace AioStudy.UI.ViewModels.Forms
             CancelAddModuleCommand = new RelayCommand(CancelAddModule);
             AddModuleCommand = new RelayCommand(AddModule);
             _modulesDbService = App.ServiceProvider.GetRequiredService<ModulesDbService>();
+            _moduleWeight = "1";
 
             _ = LoadSemestersAsync();
 
@@ -258,6 +270,18 @@ namespace AioStudy.UI.ViewModels.Forms
                     return;
                 }
 
+                if (string.IsNullOrWhiteSpace(ModuleWeight))
+                {
+                    await ToastService.ShowErrorAsync("Error", "Please enter valid Module Weight");
+                    return;
+                }
+
+                if (!int.TryParse(ModuleWeight, out int weight) || weight <= 0)
+                {
+                    await ToastService.ShowErrorAsync("Error", "Module weight must be greater than 0");
+                    return;
+                }
+
                 if (!IsKeyCompetenceBool)
                 {
                     if (string.IsNullOrEmpty(SelectedExamStatusOption))
@@ -300,6 +324,7 @@ namespace AioStudy.UI.ViewModels.Forms
                 {
                     ExamDate = ModuleExamDate,
                     Color = colorString,
+                    Weighting = int.Parse(ModuleWeight) ,
                     SemesterId = SelectedSemester?.Id,
                     ModuleCredits = credits,
                     ExamStatus = IsKeyCompetenceBool ? Enums.ModuleStatus.Key.ToString() : SelectedExamStatusOption,

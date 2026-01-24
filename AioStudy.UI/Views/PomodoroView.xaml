@@ -771,7 +771,8 @@
                                 Width="150"
                                 Height="60"
                                 Command="{Binding ControlTimerCommand}"
-                                Style="{StaticResource GradientButton}">
+                                Style="{StaticResource GradientButton}"
+                                ToolTip="Hotkey: Alt+Enter">
                                 <MaIc:MaterialIcon
                                     Width="25"
                                     Height="25"
@@ -791,7 +792,8 @@
                                 Height="60"
                                 Margin="20,0,0,0"
                                 Command="{Binding ResetTimerCommand}"
-                                Style="{StaticResource GradientButton}">
+                                Style="{StaticResource GradientButton}"
+                                ToolTip="Hotkey: Alt+Backspace">
                                 <MaIc:MaterialIcon
                                     Width="25"
                                     Height="25"
