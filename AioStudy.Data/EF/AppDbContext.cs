@@ -41,6 +41,12 @@ namespace AioStudy.Data.EF
                 .HasForeignKey(m => m.SemesterId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.CurrentSemester)
+                .WithMany()
+                .HasForeignKey(u => u.CurrentSemsterId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<DailyModuleStats>()
                 .HasOne(d => d.Module)
                 .WithMany()

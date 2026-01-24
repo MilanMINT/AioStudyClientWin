@@ -12,11 +12,13 @@ namespace AioStudy.Core.Data.Services
     {
         private readonly IRepository<Semester> _semesterRepository;
         private readonly IRepository<Module> _moduleRepository;
+        private readonly IRepository<User> _userRepository;
 
-        public SemesterDbService(IRepository<Semester> semesterRepository, IRepository<Module> moduleRepository)
+        public SemesterDbService(IRepository<Semester> semesterRepository, IRepository<Module> moduleRepository, IRepository<User> userRepository)
         {
             _semesterRepository = semesterRepository;
             _moduleRepository = moduleRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<Semester> CreateSemesterAsync(Semester semester)
@@ -31,16 +33,40 @@ namespace AioStudy.Core.Data.Services
                 var semester = await _semesterRepository.GetByIdAsync(semesterId);
                 if (semester == null)
                 {
+                    System.Diagnostics.Debug.WriteLine($"DeleteSemester: semester {semesterId} not found.");
                     return false;
                 }
 
+                var allModules = await _moduleRepository.GetAllAsync();
+                var modulesToUpdate = allModules.Where(m => m.SemesterId == semesterId).ToList();
+                System.Diagnostics.Debug.WriteLine($"DeleteSemester: found {modulesToUpdate.Count} module(s) referencing semester {semesterId}.");
+
+                foreach (var module in modulesToUpdate)
+                {
+                    module.SemesterId = null;
+                    module.Semester = null;
+                    await _moduleRepository.UpdateAsync(module);
+                }
+
+                var allUsers = await _userRepository.GetAllAsync();
+                var usersToUpdate = allUsers.Where(u => u.CurrentSemsterId.HasValue && u.CurrentSemsterId.Value == semesterId).ToList();
+                System.Diagnostics.Debug.WriteLine($"DeleteSemester: found {usersToUpdate.Count} user(s) referencing semester {semesterId}.");
+
+                foreach (var user in usersToUpdate)
+                {
+                    user.CurrentSemsterId = null;
+                    user.CurrentSemester = null;
+                    await _userRepository.UpdateAsync(user);
+                }
+
                 await _semesterRepository.DeleteAsync(semesterId);
+                System.Diagnostics.Debug.WriteLine($"DeleteSemester: semester {semesterId} deleted.");
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return false;
+                System.Diagnostics.Debug.WriteLine($"DeleteSemester failed for id {semesterId}: {ex}");
+                throw;
             }
         }
 
@@ -105,12 +131,6 @@ namespace AioStudy.Core.Data.Services
                 return 0;
             return modules.Where(m => m.SemesterId == semester.Id).Sum(m => m.LearnedMinutes);
         }
-
-        /// <summary>
-        /// Chekc if the start date is valid (not overlapping with existing semesters)
-        /// </summary>
-        /// <param name="startDate"></param>
-        /// <returns></returns>
         public async Task<bool> IsValidStartDate(DateTime startDate)
         {
             var semesters = await _semesterRepository.GetAllAsync();

@@ -448,10 +448,14 @@ namespace AioStudy.UI.ViewModels
         private async void SetCurrentSemester()
         {
             LoadUserBottomInfoPanel();
+
             var currentSemester = await _semesterDbService.GetCurrentSemester();
             if (currentSemester == null) return;
+
             bool result = await _userDbService.SetCurrentSemester(currentSemester);
             if (!result) return;
+
+            LoadUserBottomInfoPanel();
         }
 
 

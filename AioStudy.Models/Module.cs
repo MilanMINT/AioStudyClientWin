@@ -25,7 +25,7 @@ namespace AioStudy.Models
         public int ModuleAttempt { get; set; } = 1;
         [AllowNull]
         public DateTime? ExamDate { get; set; }
-        [Required]
+        [AllowNull]
         public int Weighting { get; set; } = 1;
         [AllowNull]
         public string? ExamStatus { get; set; } = null;
