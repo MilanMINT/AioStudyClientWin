@@ -846,7 +846,7 @@
             </Style>
 
 
-            <!--  Vereinfachter Gradient ColorPicker Style  -->
+            <!--  Gradient ColorPicker Style  -->
             <Style x:Key="GradientColorPicker" TargetType="xctk:ColorPicker">
                 <Setter Property="BorderThickness" Value="1.5" />
                 <Setter Property="FontSize" Value="14" />
@@ -865,7 +865,6 @@
                     </Setter.Value>
                 </Setter>
 
-                <!--  Nur Style-Anpassungen für Hover und Focus  -->
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="#353842" />
@@ -927,7 +926,6 @@
                                         </Border.Width>
                                     </Border>
 
-                                    <!--  overlay percentage text  -->
                                     <TextBlock
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -992,7 +990,6 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!--  TextBox for value input  -->
                                         <xctk:ButtonSpinner
                                             x:Name="PART_Spinner"
                                             Grid.Column="0"
@@ -1112,7 +1109,6 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!--  TextBox for value input  -->
                                         <xctk:ButtonSpinner
                                             x:Name="PART_Spinner"
                                             Grid.Column="0"
@@ -1323,7 +1319,6 @@
                                         </LinearGradientBrush>
                                     </Border.BorderBrush>
 
-                                    <!--  Checkmark Icon  -->
                                     <Grid>
                                         <Path
                                             x:Name="checkMark"
@@ -1336,7 +1331,6 @@
                                             Stroke="#608BC1"
                                             StrokeThickness="2" />
 
-                                        <!--  Indeterminate Indicator  -->
                                         <Border
                                             x:Name="indeterminateMark"
                                             Width="10"
@@ -1359,13 +1353,11 @@
                             </Grid>
 
                             <ControlTemplate.Triggers>
-                                <!--  Checked State  -->
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter TargetName="checkMark" Property="Opacity" Value="1" />
                                     <Setter TargetName="checkBoxBorder" Property="Background" Value="#1A2A3D" />
                                 </Trigger>
 
-                                <!--  Indeterminate State  -->
                                 <Trigger Property="IsChecked" Value="{x:Null}">
                                     <Setter TargetName="indeterminateMark" Property="Opacity" Value="1" />
                                     <Setter TargetName="checkBoxBorder" Property="Background" Value="#1A2A3D" />
@@ -1385,7 +1377,6 @@
                                     </Setter>
                                 </Trigger>
 
-                                <!--  Disabled State  -->
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="checkBoxBorder" Property="Background" Value="#2D2D30" />
                                     <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#4D4D50" />
@@ -1567,8 +1558,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>
