@@ -30,7 +30,6 @@
                 Color="Black" />
         </Border.Effect>
 
-        <!--  Transform für Scaling hinzufügen  -->
         <Border.RenderTransform>
             <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1" />
         </Border.RenderTransform>
@@ -52,7 +51,6 @@
         </Border.Background>
 
         <Border.Triggers>
-            <!--  MouseEnter: Vergrößern + Farbe ändern  -->
             <EventTrigger RoutedEvent="MouseEnter">
                 <BeginStoryboard>
                     <Storyboard>
@@ -105,12 +103,11 @@
                 </BeginStoryboard>
             </EventTrigger>
 
-            <!--  MouseLeave: Zurück zur normalen Größe + Farbe  -->
+            <!--  MouseLeave  -->
             <EventTrigger RoutedEvent="MouseLeave">
                 <BeginStoryboard>
                     <Storyboard>
 
-                        <!--  DropShadow zurück  -->
                         <DoubleAnimation
                             Storyboard.TargetName="CardShadow"
                             Storyboard.TargetProperty="ShadowDepth"
@@ -141,14 +138,12 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
 
-                        <!--  Delete Button ausblenden  -->
                         <DoubleAnimation
                             Storyboard.TargetName="DeleteButton"
                             Storyboard.TargetProperty="Opacity"
                             To="0"
                             Duration="0:0:0.2" />
 
-                        <!--  Edit Button ausblenden  -->
                         <DoubleAnimation
                             Storyboard.TargetName="EditButton"
                             Storyboard.TargetProperty="Opacity"

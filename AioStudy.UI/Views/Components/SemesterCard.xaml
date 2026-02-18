@@ -33,7 +33,6 @@
             </LinearGradientBrush>
         </Border.Background>
 
-        <!--  Transform für Scaling hinzufügen  -->
         <Border.RenderTransform>
             <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1" />
         </Border.RenderTransform>
@@ -227,7 +226,7 @@
             </StackPanel>
 
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <!--  Module Count with better styling  -->
+                <!--  Module Count  -->
                 <Border
                     Grid.Row="2"
                     Grid.Column="0"
@@ -280,7 +279,7 @@
                 </Border>
             </StackPanel>
 
-            <!--  Action Buttons (Edit + Delete)  -->
+            <!--  Action Buttons  -->
             <StackPanel
                 Grid.Row="3"
                 Grid.Column="3"

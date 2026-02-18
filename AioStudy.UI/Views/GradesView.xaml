@@ -693,7 +693,7 @@
                         </Grid>
                     </Border>
 
-                    <!--  Kreisdiagramm: Grade Distribution  -->
+                    <!--  Kreisdiagramm Grade  -->
                     <Border
                         Grid.Row="0"
                         Grid.Column="1"

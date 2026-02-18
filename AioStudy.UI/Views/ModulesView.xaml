@@ -16,7 +16,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <!--  Module Card Style mit Gradient Border  -->
         <Style x:Key="ModuleCard" TargetType="Border">
             <Setter Property="Background" Value="#2A2D35" />
             <Setter Property="CornerRadius" Value="12" />

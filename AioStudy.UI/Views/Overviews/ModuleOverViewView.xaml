@@ -276,7 +276,7 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
 
-                <!--  Edit (visible when not editing)  -->
+                <!--  Edit  -->
                 <Button
                     Margin="0,0,10,0"
                     Padding="10,8"
@@ -294,7 +294,7 @@
                     </StackPanel>
                 </Button>
 
-                <!--  Cancel (visible when editing)  -->
+                <!--  Cancel  -->
                 <Button
                     Margin="0,0,10,0"
                     Padding="10,8"
@@ -312,7 +312,7 @@
                     </StackPanel>
                 </Button>
 
-                <!--  Save (visible when editing)  -->
+                <!--  Save  -->
                 <Button
                     Margin="0,0,10,0"
                     Padding="10,8"
@@ -456,7 +456,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!--  Grade (display / edit)  -->
+                    <!--  Grade displayedit)  -->
                     <Border Grid.Column="2" Style="{StaticResource MetricCard}">
                         <StackPanel>
                             <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
@@ -483,7 +483,6 @@
                                 </TextBlock.Text>
                             </TextBlock>
 
-                            <!--  replace the xctk:DoubleUpDown with this ComboBox  -->
                             <ComboBox
                                 Width="120"
                                 Height="34"
@@ -500,7 +499,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!--  Study Time card unchanged  -->
+                    <!--  Study Time card  -->
                     <Border Grid.Column="3" Style="{StaticResource MetricCard}">
                         <StackPanel>
                             <StackPanel Margin="0,0,0,8" Orientation="Horizontal">
@@ -560,8 +559,6 @@
                                             Style="{StaticResource ValueText}"
                                             Text="{Binding Module.Semester.Name, FallbackValue='Winter 2024/25'}"
                                             Visibility="{Binding IsEditMode, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
-                                        <!--  replace the Semester ComboBox with this (shows Semester.Name)  -->
-                                        <!--  Semester ComboBox: show semester name and use same instance from Semesters collection  -->
                                         <ComboBox
                                             ItemsSource="{Binding Semesters}"
                                             SelectedItem="{Binding NewSelectedSemester, Mode=TwoWay}"
@@ -573,7 +570,6 @@
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
-                                        <!--  If you want semesters list, replace ItemsSource accordingly  -->
                                     </StackPanel>
 
                                     <StackPanel

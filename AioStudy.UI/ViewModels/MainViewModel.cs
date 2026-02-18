@@ -310,8 +310,8 @@ namespace AioStudy.UI.ViewModels
             _dailyPlannerViewModel = App.ServiceProvider.GetRequiredService<DailyPlannerViewModel>();
             _dailyPlannerViewModel.SetMainViewModel(this);
 
-            CurrentViewModel = _dashboardViewModel;
-            CurrentViewName = "Dashboard";
+            CurrentViewModel = _pomodoroViewModel;
+            CurrentViewName = "Pomodoro";
 
             ShowStatusBar = false;
             PlaySoundOnTimerEnd = false;

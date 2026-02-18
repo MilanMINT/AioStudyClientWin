@@ -75,7 +75,6 @@
                                 Color="#000000" />
                         </Setter.Value>
                     </Setter>
-                    <!--  slight elevation  -->
                     <Setter Property="RenderTransform">
                         <Setter.Value>
                             <TranslateTransform Y="-2" />

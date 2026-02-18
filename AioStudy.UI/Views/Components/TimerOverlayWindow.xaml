@@ -29,7 +29,6 @@
         MouseLeftButtonDown="Border_MouseLeftButtonDown">
 
         <Border.Resources>
-            <!--  Storyboard als Resource definieren  -->
             <Storyboard x:Key="ColorChangeStoryboard">
                 <ColorAnimation
                     Storyboard.TargetName="GradStop1"

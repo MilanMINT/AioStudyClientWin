@@ -372,7 +372,7 @@
                             Grid.Row="2"
                             Margin="0,20,0,0"
                             Orientation="Vertical">
-                            <RadioButton
+                            <!--<RadioButton
                                 Command="{Binding ShowDashboardCMD}"
                                 IsChecked="true"
                                 Style="{StaticResource menuButton}"
@@ -384,7 +384,7 @@
                                         Style="{StaticResource menuButtonIcon}" />
                                     <TextBlock Style="{StaticResource menuButtonText}" Text="Dashboard" />
                                 </StackPanel>
-                            </RadioButton>
+                            </RadioButton>-->
 
                             <RadioButton
                                 Command="{Binding ShowPomodoroCMD}"

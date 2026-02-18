@@ -76,7 +76,7 @@ namespace AioStudy.Core.Util.Grades
                 3.7 => "#F97316",  // Dunkelorange
                 4.0 => "#EF4444",  // Rot
                 5.0 => "#DC2626",  // Dunkelrot
-                _ => "#6B7280"     // Grau (Fallback)
+                _ => "#6B7280"     // Grau
             };
         }
     }

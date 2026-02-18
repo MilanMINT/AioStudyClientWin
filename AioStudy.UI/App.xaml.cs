@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
 using System.Data;
 using System.Windows;
+using Velopack;
 
 namespace AioStudy.UI
 {
@@ -34,6 +35,8 @@ namespace AioStudy.UI
             LiveCharts.Configure(config => config.AddDarkTheme());
 
             SQLitePCL.Batteries.Init();
+
+            VelopackApp.Build().Run();
 
             var services = new ServiceCollection();
             ConfigureServices(services);

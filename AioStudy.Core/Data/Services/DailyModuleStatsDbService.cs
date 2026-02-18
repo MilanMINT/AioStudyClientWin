@@ -17,12 +17,6 @@ namespace AioStudy.Core.Data.Services
             _dailyModuleStatsRepository = dailyModuleStatsRepository;
         }
 
-        /// <summary>
-        /// Creates todays stat for the given module if it does not exist.
-        /// If it exists, returns the existing one.
-        /// </summary>
-        /// <param name="module"></param>
-        /// <returns></returns>
         public async Task<DailyModuleStats> CreateDailyModuleStatIfNotExist(Module module)
         {
             var dailyModuleStats = await _dailyModuleStatsRepository.GetAllAsync();
